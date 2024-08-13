@@ -21,6 +21,7 @@ function DashboardStackScreen() {
   return <DashBoardStack.Navigator>
     <DashBoardStack.Screen options={({ route }) => ({
       ...screenSettings,
+      headerShown: false,
     })}
       name="Gestão Operacional" component={Dashboard} />
   </DashBoardStack.Navigator>
