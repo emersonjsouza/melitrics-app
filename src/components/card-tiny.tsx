@@ -1,7 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 import {
-  ImageBackground,
-  ImageSourcePropType,
+  View,
   StyleSheet,
   Text,
 } from 'react-native';
@@ -9,44 +8,43 @@ import {
 type CardProps = PropsWithChildren<{
   title: string,
   amount: Number,
-  amountInPercent?: Number,
-  backgroundColor: string,
-  imageUri: ImageSourcePropType
+  unit: Number,
 }>
 
 export default function (props: CardProps): React.JSX.Element {
   return (
-    <ImageBackground source={props.imageUri}
-      style={{ backgroundColor: props.backgroundColor, ...styles.cardContainer }}>
+    <View
+      style={styles.cardContainer}>
       <Text style={styles.cardTitle}>{props.title}</Text>
       <Text style={styles.cardTotalAmount}>R$ {props.amount.toFixed(2)}</Text>
-      {(props.amountInPercent as number) > 0 && <Text style={styles.cardUnitText}>{props.amountInPercent?.toFixed(2)}%</Text>}
-    </ImageBackground>
+      <Text style={styles.cardUnitText}>{props.unit.toString()} unid.</Text>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   cardContainer: {
+    backgroundColor: '#E5E5EE',
     marginRight: 20,
-    borderBottomRightRadius: 20,
-    width: 135, height: 170, padding: 10, paddingTop: 30
+    borderRadius: 20,
+    alignItems: 'center',
+    width: 135, height: 70, padding: 10
   },
   cardTitle: {
     fontSize: 12,
     color: '#212946',
     fontFamily: 'Roboto-Light',
   },
-  cardTotalAmount: {
-    fontFamily: 'Roboto-Black',
-    marginTop: 10,
-    color: '#212946',
-    fontSize: 15
-  },
   cardUnitText: {
-    textAlign: 'left',
     marginTop: 3,
     fontSize: 10,
     color: '#212946',
     fontFamily: 'Roboto-Thin',
   },
+  cardTotalAmount: {
+    fontFamily: 'Roboto-Black',
+    marginTop: 3,
+    color: '#212946',
+    fontSize: 15
+  }
 });

@@ -52,8 +52,8 @@ export default function () {
 
           return <MaterialCommunityIcons name={iconName as string} color={color} size={size} />;
         },
-        tabBarActiveTintColor: Colors.Main,
-        tabBarInactiveTintColor: 'gray',
+        tabBarActiveTintColor: '#BE9BC7',
+        tabBarInactiveTintColor: '#dcdde1',
         headerShown: false,
       })}>
 
