@@ -8,33 +8,27 @@ import {
 type CardProps = PropsWithChildren<{
   title: string,
   amount: Number,
-  unit: Number,
+  amountInPercent?: Number,
+  backgroundColor: string
 }>
 
 export default function (props: CardProps): React.JSX.Element {
   return (
     <View
-      style={styles.cardContainer}>
-      <View>
-        <Text style={styles.cardTitle}>{props.title}</Text>
-        <Text style={styles.cardTotalAmount}>R$ {props.amount.toFixed(2)}</Text>
-      </View>
-      <Text style={styles.cardUnitText}>{props.unit.toString()} unid.</Text>
+      style={{ ...styles.cardContainer, backgroundColor: props.backgroundColor }}>
+      <Text style={styles.cardTitle}>{props.title}</Text>
+      <Text style={styles.cardTotalAmount}>R$ {props.amount.toFixed(2)}</Text>
+      {(props.amountInPercent as number) > 0 && <Text style={styles.cardUnitText}>{props.amountInPercent?.toString()} %</Text>}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   cardContainer: {
-    backgroundColor: '#ECEAEA',
     marginRight: 20,
     borderRadius: 20,
-    justifyContent: 'space-between',
-    flexDirection: 'row',
-    borderStartColor: '#64FFD3',
-    borderStartWidth:  10,
-    height: 70, padding: 20,
-    marginBottom: 10,
+    alignItems: 'center',
+    width: 140, height: 80, padding: 10
   },
   cardTitle: {
     fontSize: 12,

@@ -1,18 +1,17 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Dashboard from './views/dashboard';
-import { Colors } from './assets/color';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const screenSettings = {
   headerStyle: {
-    backgroundColor: Colors.Main,
+    backgroundColor: '#222222',
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 0,
   },
-  headerTintColor: '#fff',
+  headerTintColor: '#222222',
   headerBackTitleVisible: false
 };
 
@@ -52,7 +51,7 @@ export default function () {
 
           return <MaterialCommunityIcons name={iconName as string} color={color} size={size} />;
         },
-        tabBarActiveTintColor: '#BE9BC7',
+        tabBarActiveTintColor: '#222222',
         tabBarInactiveTintColor: '#dcdde1',
         headerShown: false,
       })}>

@@ -1,67 +1,98 @@
 import React from 'react';
 import {
+  Dimensions,
   ScrollView,
+  StatusBar,
   StyleSheet,
   Text,
   View
 } from 'react-native';
-import CardInsights from '../components/card-insights';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CardTiny from '../components/card-tiny';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import CardFlet from '../components/card-flet';
+
+import {
+  LineChart,
+  BarChart,
+  PieChart,
+  ProgressChart,
+  ContributionGraph,
+  StackedBarChart
+} from "react-native-chart-kit";
+
 
 export default function (): React.JSX.Element {
   return (
     <ScrollView
       contentContainerStyle={styles.mainContainer}
       contentInsetAdjustmentBehavior="automatic">
+      <StatusBar barStyle={'dark-content'} backgroundColor={'#222222'} translucent />
       <View style={styles.headerContainer}>
-        <View style={styles.profileContainer}>
-          <Text style={styles.profileText}>DM</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={styles.profileContainer}>
+            <Text style={styles.profileText}>DM</Text>
+          </View>
+          <View style={styles.greetingContainer}>
+            <Text style={styles.greetingSubText}>Seja bem vindo,</Text>
+            <Text style={styles.greetingText}>Angelica</Text>
+          </View>
         </View>
-        <View style={styles.greetingContainer}>
-          <Text style={styles.greetingSubText}>Boa noite</Text>
-          <Text style={styles.greetingText}>Angelica Pinheiro</Text>
+        <View>
+          <TouchableOpacity>
+            <MaterialCommunityIcons name={'eye-off-outline'} color={'#8D8E8D'} size={30} />
+          </TouchableOpacity>
         </View>
       </View>
-      <ScrollView
-        horizontal={true}
-        style={{ maxHeight: 180 }}
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ marginTop: 20, marginLeft: 20, flexDirection: 'row' }}>
-        <CardInsights
-          title='Faturamento'
-          amount={62233.93}
-          backgroundColor='#BE9BC7'
-          amountInPercent={20.4}
-          imageUri={require('../assets/images/bg1.png')}
-        />
-        <CardInsights
-          title='Custos e Impostos'
-          amount={36607.22}
-          backgroundColor='#B16439'
-          amountInPercent={10.4}
-          imageUri={require('../assets/images/bg2.png')}
-        />
-        <CardInsights
-          title='Margem de Contribuição'
-          amount={9321.52}
-          amountInPercent={7.4}
-          backgroundColor='#079992'
-          imageUri={require('../assets/images/bg3.png')}
-        />
-      </ScrollView>
-      <Text style={{
-        fontFamily: 'Roboto-Medium',
-        marginTop: 10,
-        color: '#212946',
-        fontSize: 18,
-        marginLeft: 20,
-      }}>Minhas Operações</Text>
+      <View style={{ marginTop: 10 }}>
+        <View style={styles.profitContainer}>
+          <View>
+            <Text style={{ fontFamily: 'Robo-Light' }}>Seu Faturamento</Text>
+            <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2 }}>R$ 62.233,93</Text>
+          </View>
+          <TouchableOpacity>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={{ fontFamily: 'Robo-Light', color: '#222222' }}>7 dias</Text>
+              <MaterialCommunityIcons name={'menu-down'} color={'#222222'} size={20} />
+            </View>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <ScrollView
         horizontal={true}
         style={{ maxHeight: 100 }}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ marginTop: 20, marginLeft: 20, flexDirection: 'row' }}>
+        <CardFlet
+          title='Margem'
+          amount={9321.52}
+          amountInPercent={7.4}
+          backgroundColor='#B0FF6D'
+        />
+        <CardFlet
+          title='Custos e Impostos'
+          amount={36607.22}
+          backgroundColor='#64FFD3'
+        />
+        <CardFlet
+          title='Ticket Médio'
+          amount={120.80}
+          amountInPercent={20.4}
+          backgroundColor='#7994F5'
+        />
+      </ScrollView>
+      <Text style={{
+        fontFamily: 'Roboto-Medium',
+        marginTop: 20,
+        color: '#212946',
+        fontSize: 18,
+        marginLeft: 20,
+      }}>Minhas Operações</Text>
+      <ScrollView
+        style={{ maxHeight: 265 }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ marginTop: 20, marginLeft: 20, flexDirection: 'column' }}>
         <CardTiny
           title='Correio & Agencia'
           amount={62233.93}
@@ -78,26 +109,53 @@ export default function (): React.JSX.Element {
           unit={120}
         />
       </ScrollView>
-      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Text style={{
-          fontFamily: 'Roboto-Medium',
-          marginTop: 10,
-          color: '#212946',
-          fontSize: 18,
-          marginLeft: 20,
-        }}>Últimas vendas</Text>
-        <TouchableOpacity>
-          <Text style={{
-            fontFamily: 'Roboto-Light',
-            marginTop: 10,
-            color: '#212946',
-            fontSize: 14,
-            marginRight: 20,
-          }}>Ver todas</Text>
-        </TouchableOpacity>
+
+      <View style={{ alignItems: 'center' }}>
+        <LineChart
+          data={{
+            labels: ["Mar", "Abr", "Mai", "Jun", "Jul", "Ago"],
+            datasets: [
+              {
+                data: [
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100,
+                  Math.random() * 100
+                ]
+              }
+            ]
+          }}
+          width={Dimensions.get("window").width - 50} // from react-native
+          height={220}
+          yAxisLabel=""
+          yAxisSuffix="k"
+          yAxisInterval={1} // optional, defaults to 1
+          chartConfig={{
+            backgroundColor: "#64FFD3",
+            backgroundGradientFrom: "#fb8c00",
+            backgroundGradientTo: "#64FFD3",
+            decimalPlaces: 2, // optional, defaults to 2dp
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            propsForDots: {
+              r: "6",
+              strokeWidth: "2",
+              stroke: "#ffa726"
+            },
+            style: {
+              padding: 100
+            }
+          }}
+          bezier
+          style={{
+            marginVertical: 10,
+            borderRadius: 16
+          }}
+        />
       </View>
     </ScrollView>
-
   )
 }
 
@@ -109,34 +167,45 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 20,
+    marginStart: 20,
+    marginEnd: 20,
   },
   profileContainer: {
-    backgroundColor: '#BE9BC7',
+    backgroundColor: '#222222',
     width: 45, height: 45,
     padding: 2,
     borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 20,
   },
   profileText: {
     alignSelf: 'center',
+    fontFamily: 'Roboto-Regular',
     fontSize: 16,
-    fontWeight: 600,
     color: '#FFF'
   },
   greetingContainer: {
     marginLeft: 5,
     alignContent: 'center'
   },
+  profitContainer: {
+    marginLeft: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginStart: 20,
+    marginEnd: 20,
+  },
   greetingSubText: {
-    color: '#718093'
+    color: '#718093',
+    fontFamily: 'Roboto-Thin',
   },
   greetingText: {
     color: '#2f3640',
     fontSize: 16,
-    fontWeight: 'bold'
+    fontFamily: 'Roboto-Medium',
   },
 });
