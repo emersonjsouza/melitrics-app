@@ -10,22 +10,35 @@ import {
   TouchableOpacity
 } from 'react-native';
 import { Colors } from './src/assets/color';
+import { useAuth0 } from 'react-native-auth0';
 
 function App(props: any): React.JSX.Element {
+  const { authorize } = useAuth0();
+
+  const onPress = async () => {
+    try {
+      await authorize();
+      props.navigation.navigate('Home')
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
-      <StatusBar barStyle={'light-content'}/>
+      <StatusBar barStyle={'light-content'} />
       <ScrollView
         contentContainerStyle={styles.mainContainer}
         contentInsetAdjustmentBehavior="automatic">
-        <View style={{flex: 1, alignItems:'center'}}>
+        <View style={{ flex: 1, alignItems: 'center' }}>
           <Text style={styles.logoText}>MELITRICS</Text>
-          <Text style={{color: '#fff'}}>Gestão Inteligente de Marketplaces</Text>
+          <Text style={{ color: '#fff' }}>Gestão Inteligente de Marketplaces</Text>
         </View>
         <View>
-        <TouchableOpacity style={styles.submit} onPress={()=>  props.navigation.navigate('Home')}>
+          <TouchableOpacity style={styles.submit} onPress={onPress}>
             <Text style={styles.submitText}>acessar minha conta</Text>
-        </TouchableOpacity>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
