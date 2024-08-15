@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   Dimensions,
+  Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
@@ -15,12 +16,13 @@ import CardInsight from '../components/card-insight';
 
 export default function (): React.JSX.Element {
   return (
-    <View style={{flex: 1, marginTop: 20, flexGrow: 1}}>
+    <View style={{flex: 1, flexGrow: 1, backgroundColor: '#FFF'}}>
+      <StatusBar translucent barStyle="dark-content" backgroundColor={'#FFF'} />
       <ScrollView
         contentContainerStyle={styles.mainContainer}
         showsVerticalScrollIndicator={true}
         contentInsetAdjustmentBehavior="automatic">
-        <StatusBar barStyle={'dark-content'} backgroundColor={'#222222'} translucent />
+        
         <View style={styles.headerContainer}>
           <View style={{ flexDirection: 'row' }}>
             <View style={styles.profileContainer}>
@@ -154,6 +156,7 @@ export default function (): React.JSX.Element {
 
 const styles = StyleSheet.create({
   mainContainer: {
+    marginTop: Platform.OS == 'android' ? 40 : 20,
     flexGrow: 1,
     backgroundColor: '#fff',
     flexDirection: 'column',
@@ -162,7 +165,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
     marginStart: 20,
     marginEnd: 20,
   },
