@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -9,21 +9,33 @@ import {
   View,
   TouchableOpacity
 } from 'react-native';
-import { Colors } from './src/assets/color';
-import { useAuth0 } from 'react-native-auth0';
+import { Colors } from '../assets/color';
+import { useAuth } from '../context/AuthContext';
 
 function App(props: any): React.JSX.Element {
-  const { authorize } = useAuth0();
+  const { login, logout, loggedIn } = useAuth()
 
-  const onPress = async () => {
+  const onSignIn = async () => {
     try {
-      await authorize();
-      props.navigation.navigate('Home')
+      await login();
     } catch (e) {
       console.log(e);
     }
   }
 
+  useEffect(() => {
+    if (loggedIn) {
+      props.navigation.navigate('Home')
+    }
+  }, [loggedIn])
+
+  const OnSignOut = async () => {
+    try {
+      await logout()
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
@@ -35,9 +47,13 @@ function App(props: any): React.JSX.Element {
           <Text style={styles.logoText}>MELITRICS</Text>
           <Text style={{ color: '#fff' }}>Gestão Inteligente de Marketplaces</Text>
         </View>
-        <View>
-          <TouchableOpacity style={styles.submit} onPress={onPress}>
+        <View style={{ flexDirection: 'column', alignContent: 'center' }}>
+          <TouchableOpacity style={styles.submit} onPress={onSignIn}>
             <Text style={styles.submitText}>acessar minha conta</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.submit} onPress={OnSignOut}>
+            <Text style={styles.submitText}>deslogar</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -63,15 +79,14 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   submit: {
-    paddingTop: 15,
-    paddingBottom: 15,
-    paddingLeft: 15,
-    paddingRight: 16,
+    width: 180,
+    height: 50,
+    flexDirection: 'column',
+    justifyContent: 'center',
     backgroundColor: '#fff',
     borderRadius: 10,
     borderWidth: 1,
     borderColor: '#fff',
-    alignSelf: 'flex-end',
     marginBottom: 80,
   },
   submitText: {
