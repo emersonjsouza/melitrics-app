@@ -21,15 +21,15 @@ import { useIndicatorsByMonth } from '../hooks/useIndicatorsByMonth';
 import { useAuth } from '../context/AuthContext';
 
 export default function (props: any): React.JSX.Element {
-  const { logout } = useAuth()
+  const { logout, userData } = useAuth()
 
   const orgID = 'cb2a3984-1d36-4435-94b0-32c5cbc2b8fc'
   const start = '2024-08-01'
   const end = '2024-08-31'
 
-  const { isFetching, data: indicators } = useIndicators({ organizationID: orgID, start, end })
-  const { isFetching: isFetchingShippingType, data: indicatorsShippingType } = useIndicatorsByShippingType({ organizationID: orgID, start, end })
-  const { isFetching: isFetchingMonth, monthDataSet, monthRevenueDataSet } = useIndicatorsByMonth({ organizationID: orgID })
+  const { isFetching, data: indicators } = useIndicators({ organizationID: orgID, start, end, enableFetching: !!userData })
+  const { isFetching: isFetchingShippingType, data: indicatorsShippingType } = useIndicatorsByShippingType({ organizationID: orgID, start, end, enableFetching: !!userData })
+  const { isFetching: isFetchingMonth, monthDataSet, monthRevenueDataSet } = useIndicatorsByMonth({ organizationID: orgID, enableFetching: !!userData })
 
   const revenuePercent = isFetching ? 0 : (indicators?.net_income as number) / (indicators?.revenue as number) * 100
 
@@ -61,7 +61,7 @@ export default function (props: any): React.JSX.Element {
             </View>
             <View style={styles.greetingContainer}>
               <Text style={styles.greetingSubText}>Seja bem vindo,</Text>
-              <Text style={styles.greetingText}>Angelica</Text>
+              {userData && <Text style={styles.greetingText}>{userData.name}</Text>}
             </View>
           </View>
           <View>

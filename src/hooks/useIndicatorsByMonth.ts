@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { getIndicatorsByMonth } from "../services/app";
 
-export const useIndicatorsByMonth = (query: { organizationID: string }) => {
+export const useIndicatorsByMonth = (query: { organizationID: string, enableFetching: boolean }) => {
   const { data, isFetching } = useQuery({
     queryKey: [`indicators-month`, query.organizationID],
     queryFn: () => getIndicatorsByMonth(query.organizationID),
+    enabled: query.enableFetching
   });
 
 

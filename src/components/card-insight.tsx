@@ -8,7 +8,7 @@ import {
 
 type CardProps = PropsWithChildren<{
   title: string,
-  amount: Number,
+  amount?: Number,
   amountSub?: Number,
   amountInPercent?: Number,
   backgroundColor: string
@@ -21,7 +21,7 @@ export default function (props: CardProps): React.JSX.Element {
       style={{ ...styles.cardContainer, backgroundColor: props.backgroundColor }}>
       <Text style={styles.cardTitle}>{props.title}</Text>
       {!props.isLoading && <>
-        <Text style={styles.cardTotalAmount}>R$ {props.amount.toFixed(2)}</Text>
+        <Text style={styles.cardTotalAmount}>R$ {props.amount?.toFixed(2)}</Text>
         {(props.amountInPercent as number) > 0 && <Text style={styles.cardUnitText}>{props.amountInPercent?.toFixed(2)} %</Text>}
         {(props.amountSub as number) > 0 && <Text style={styles.cardUnitText}>R$ {props.amountSub?.toFixed(2)}</Text>}
       </>}
