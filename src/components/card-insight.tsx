@@ -3,13 +3,16 @@ import {
   View,
   StyleSheet,
   Text,
+  ActivityIndicator
 } from 'react-native';
 
 type CardProps = PropsWithChildren<{
   title: string,
   amount: Number,
+  amountSub?: Number,
   amountInPercent?: Number,
   backgroundColor: string
+  isLoading: boolean
 }>
 
 export default function (props: CardProps): React.JSX.Element {
@@ -17,8 +20,13 @@ export default function (props: CardProps): React.JSX.Element {
     <View
       style={{ ...styles.cardContainer, backgroundColor: props.backgroundColor }}>
       <Text style={styles.cardTitle}>{props.title}</Text>
-      <Text style={styles.cardTotalAmount}>R$ {props.amount.toFixed(2)}</Text>
-      {(props.amountInPercent as number) > 0 && <Text style={styles.cardUnitText}>{props.amountInPercent?.toString()} %</Text>}
+      {!props.isLoading && <>
+        <Text style={styles.cardTotalAmount}>R$ {props.amount.toFixed(2)}</Text>
+        {(props.amountInPercent as number) > 0 && <Text style={styles.cardUnitText}>{props.amountInPercent?.toFixed(2)} %</Text>}
+        {(props.amountSub as number) > 0 && <Text style={styles.cardUnitText}>R$ {props.amountSub?.toFixed(2)}</Text>}
+      </>}
+
+      {props.isLoading && <ActivityIndicator style={{ marginTop: 20 }} size="small" color="#999" />}
     </View>
   )
 }
@@ -39,7 +47,7 @@ const styles = StyleSheet.create({
     marginTop: 3,
     fontSize: 10,
     color: '#212946',
-    fontFamily: 'Roboto-Thin',
+    fontFamily: 'Roboto-Light',
   },
   cardTotalAmount: {
     fontFamily: 'Roboto-Black',

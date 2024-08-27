@@ -1,14 +1,17 @@
 import React, { useState, useEffect, createContext, useContext } from "react";
 import Auth0 from "react-native-auth0";
 import SInfo from "react-native-sensitive-info";
+import server from "../services/server";
+import settings from "../settings";
 
 const auth0 = new Auth0({
-  domain: "devsouza.us.auth0.com",
-  clientId: "SLENnJUHTocJY4AuDixDu4TeymrLq5DE",
+  domain: settings.AUTH_DOMAIN,
+  clientId: settings.AUTN_CLIENT_ID,
 });
 
 type IAuthContext = {
   login: () => Promise<void>
+  getAccessToken: () => Promise<string>
   logout: () => void
   loggedIn: boolean;
   loading: boolean;
@@ -29,9 +32,16 @@ const AuthContextProvider = (props: any) => {
 
     if (!accessToken) throw new Error("user not authenticated")
 
+    server.defaults.headers['Authorization'] = `bearer ${accessToken}`;
+    
     const data = await auth0.auth.userInfo({ token: accessToken });
     return data;
   };
+
+  const getAccessToken = async () => {
+    const accessToken = await SInfo.getItem("accessToken", {});
+    return accessToken
+  }
 
   // executed on first app load
   useEffect(() => {
@@ -82,6 +92,7 @@ const AuthContextProvider = (props: any) => {
     try {
       const credentials = await auth0.webAuth.authorize({
         scope: "openid offline_access profile email",
+        audience: 'melitrics-api',
       });
 
       await SInfo.setItem("accessToken", credentials.accessToken, {});
@@ -116,6 +127,7 @@ const AuthContextProvider = (props: any) => {
     login,
     logout,
     userData,
+    getAccessToken,
   };
 
   return (

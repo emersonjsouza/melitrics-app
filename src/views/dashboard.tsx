@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
+  ActivityIndicator,
   Dimensions,
   Platform,
   ScrollView,
@@ -9,20 +10,41 @@ import {
   View
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import ContentLoader, { Rect } from 'react-content-loader/native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LineChart } from "react-native-chart-kit";
 import CardTiny from '../components/card-tiny';
 import CardInsight from '../components/card-insight';
+import { useIndicators } from '../hooks/useIndicators';
+import { useIndicatorsByShippingType } from '../hooks/useIndicatorByShippingType';
+import { useIndicatorsByMonth } from '../hooks/useIndicatorsByMonth';
 
 export default function (): React.JSX.Element {
+
+  const orgID = 'cb2a3984-1d36-4435-94b0-32c5cbc2b8fc'
+  const start = '2024-08-01'
+  const end = '2024-08-31'
+
+  const { isFetching, data: indicators } = useIndicators({ organizationID: orgID, start, end })
+  const { isFetching: isFetchingShippingType, data: indicatorsShippingType } = useIndicatorsByShippingType({ organizationID: orgID, start, end })
+  const { isFetching: isFetchingMonth, monthDataSet, monthRevenueDataSet } = useIndicatorsByMonth({ organizationID: orgID })
+
+  const revenuePercent = isFetching ? 0 : (indicators?.net_income as number) / (indicators?.revenue as number) * 100
+
+  const shipping_type = {
+    'fulfillment': 'FULL',
+    'xd_drop_off': 'Agencia',
+    'self_service': 'Flex'
+  }
+
   return (
-    <View style={{flex: 1, flexGrow: 1, backgroundColor: '#FFF'}}>
+    <View style={{ flex: 1, flexGrow: 1, backgroundColor: '#FFF' }}>
       <StatusBar translucent barStyle="dark-content" backgroundColor={'#FFF'} />
       <ScrollView
         contentContainerStyle={styles.mainContainer}
         showsVerticalScrollIndicator={true}
         contentInsetAdjustmentBehavior="automatic">
-        
+
         <View style={styles.headerContainer}>
           <View style={{ flexDirection: 'row' }}>
             <View style={styles.profileContainer}>
@@ -43,7 +65,15 @@ export default function (): React.JSX.Element {
           <View style={styles.profitContainer}>
             <View>
               <Text style={{ fontFamily: 'Robo-Light' }}>Seu Faturamento</Text>
-              <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2 }}>R$ 62.233,93</Text>
+              {!isFetching && <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2 }}>R$ {indicators?.revenue.toFixed(2)}</Text>}
+              {isFetching && <ContentLoader
+                height={20}
+                speed={1}
+                backgroundColor={'#999'}
+                foregroundColor={'#ccc'}
+                viewBox="0 0 380 60">
+                <Rect x="0" y="40" rx="3" ry="10" width="380" height="500" />
+              </ContentLoader>}
             </View>
             <TouchableOpacity>
               <View style={{ flexDirection: 'row' }}>
@@ -53,102 +83,7 @@ export default function (): React.JSX.Element {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{ height: 100, marginTop: 10 }}>
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ height: 100, marginTop: 20, marginLeft: 20, flexDirection: 'row' }}>
-            <CardInsight
-              title='Margem'
-              amount={9321.52}
-              amountInPercent={7.4}
-              backgroundColor='#B0FF6D'
-            />
-            <CardInsight
-              title='Custos e Impostos'
-              amount={36607.22}
-              backgroundColor='#64FFD3'
-            />
-            <CardInsight
-              title='Ticket Médio'
-              amount={120.80}
-              amountInPercent={20.4}
-              backgroundColor='#7994F5'
-            />
-          </ScrollView>
-        </View>
-
-        <Text style={{
-          fontFamily: 'Roboto-Medium',
-          marginTop: 20,
-          color: '#212946',
-          fontSize: 18,
-          marginLeft: 20,
-        }}>Minhas Operações</Text>
-        <View
-          style={{ marginTop: 20, marginLeft: 20, flexDirection: 'column' }}>
-          <CardTiny
-            title='Correio & Agencia'
-            amount={62233.93}
-            unit={20}
-          />
-          <CardTiny
-            title='Flex'
-            amount={36607.22}
-            unit={10}
-          />
-          <CardTiny
-            title='Full'
-            amount={9321.52}
-            unit={120}
-          />
-        </View>
-
-        <View style={{ alignItems: 'center', height: 250 }}>
-          <LineChart
-            data={{
-              labels: ["Mar", "Abr", "Mai", "Jun", "Jul", "Ago"],
-              datasets: [
-                {
-                  data: [
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100,
-                    Math.random() * 100
-                  ]
-                }
-              ]
-            }}
-            width={Dimensions.get("window").width - 50} // from react-native
-            height={220}
-            yAxisLabel=""
-            yAxisSuffix="k"
-            yAxisInterval={1} // optional, defaults to 1
-            chartConfig={{
-              backgroundColor: "#64FFD3",
-              backgroundGradientFrom: "#fb8c00",
-              backgroundGradientTo: "#64FFD3",
-              decimalPlaces: 2, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "#ffa726"
-              },
-              style: {
-                padding: 100
-              }
-            }}
-            bezier
-            style={{
-              marginVertical: 10,
-              borderRadius: 16
-            }}
-          />
-        </View>
+    
       </ScrollView>
     </View>
   )

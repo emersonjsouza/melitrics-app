@@ -5,18 +5,30 @@ import TabNavigator from './tabs';
 import { Colors } from './assets/color';
 import App from './views/App';
 import { AuthContextProvider } from './context/AuthContext';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const Stack = createStackNavigator();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 export default function () {
   return (
     <AuthContextProvider>
-      <NavigationContainer>
-        <StatusBar translucent barStyle="light-content" backgroundColor={Platform.OS == 'ios' ? 'transparent' : Colors.Main} />
-        <Stack.Navigator>
-          <Stack.Screen name="App" component={App} options={{ headerShown: false }} />
-          <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer>
+          <StatusBar translucent barStyle="light-content" backgroundColor={Platform.OS == 'ios' ? 'transparent' : Colors.Main} />
+          <Stack.Navigator>
+            <Stack.Screen name="App" component={App} options={{ headerShown: false }} />
+            <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </QueryClientProvider>
     </AuthContextProvider>
   );
 }

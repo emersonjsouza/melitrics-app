@@ -29,14 +29,6 @@ function App(props: any): React.JSX.Element {
     }
   }, [loggedIn])
 
-  const OnSignOut = async () => {
-    try {
-      await logout()
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <StatusBar barStyle={'light-content'} />
@@ -47,13 +39,9 @@ function App(props: any): React.JSX.Element {
           <Text style={styles.logoText}>MELITRICS</Text>
           <Text style={{ color: '#fff' }}>Gestão Inteligente de Marketplaces</Text>
         </View>
-        <View style={{ flexDirection: 'column', alignContent: 'center' }}>
+        <View>
           <TouchableOpacity style={styles.submit} onPress={onSignIn}>
             <Text style={styles.submitText}>acessar minha conta</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.submit} onPress={OnSignOut}>
-            <Text style={styles.submitText}>deslogar</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
