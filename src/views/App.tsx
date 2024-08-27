@@ -13,7 +13,7 @@ import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
 
 function App(props: any): React.JSX.Element {
-  const { login, logout, loggedIn } = useAuth()
+  const { login, loggedIn } = useAuth()
 
   const onSignIn = async () => {
     try {

@@ -18,8 +18,10 @@ import CardInsight from '../components/card-insight';
 import { useIndicators } from '../hooks/useIndicators';
 import { useIndicatorsByShippingType } from '../hooks/useIndicatorByShippingType';
 import { useIndicatorsByMonth } from '../hooks/useIndicatorsByMonth';
+import { useAuth } from '../context/AuthContext';
 
-export default function (): React.JSX.Element {
+export default function (props: any): React.JSX.Element {
+  const { logout } = useAuth()
 
   const orgID = 'cb2a3984-1d36-4435-94b0-32c5cbc2b8fc'
   const start = '2024-08-01'
@@ -35,6 +37,13 @@ export default function (): React.JSX.Element {
     'fulfillment': 'FULL',
     'xd_drop_off': 'Agencia',
     'self_service': 'Flex'
+  }
+
+  const onSignOut = async () => {
+    logout(() => {
+      props.navigation.navigate('App')
+    })
+
   }
 
   return (
@@ -56,8 +65,8 @@ export default function (): React.JSX.Element {
             </View>
           </View>
           <View>
-            <TouchableOpacity>
-              <MaterialCommunityIcons name={'eye-off-outline'} color={'#8D8E8D'} size={30} />
+            <TouchableOpacity onPress={onSignOut}>
+              <MaterialCommunityIcons name={'logout'} color={'#8D8E8D'} size={20} />
             </TouchableOpacity>
           </View>
         </View>
@@ -83,7 +92,104 @@ export default function (): React.JSX.Element {
             </TouchableOpacity>
           </View>
         </View>
-    
+        <View style={{ height: 100, marginTop: 10 }}>
+          <ScrollView
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{ height: 100, marginTop: 20, marginLeft: 20, flexDirection: 'row' }}>
+            <CardInsight
+              title='Margem'
+              isLoading={isFetching}
+              amount={indicators?.net_income as Number}
+              amountInPercent={revenuePercent}
+              backgroundColor='#B0FF6D'
+            />
+            <CardInsight
+              isLoading={isFetching}
+              title='Custos + Impostos'
+              amount={indicators?.cost as Number}
+              amountSub={indicators?.tax as Number}
+              backgroundColor='#64FFD3'
+            />
+            <CardInsight
+              isLoading={isFetching}
+              title='Tarifas'
+              amount={indicators?.sales_fee as Number}
+              backgroundColor='#ffce00'
+            />
+            <CardInsight
+              isLoading={isFetching}
+              title='Frete Vendedor'
+              amount={indicators?.shipping_cost as Number}
+              backgroundColor='#a471cc'
+            />
+            <CardInsight
+              isLoading={isFetching}
+              title='Ticket Médio'
+              amount={indicators?.ticket_ratio as Number}
+              backgroundColor='#7994F5'
+            />
+          </ScrollView>
+        </View>
+
+        <Text style={{
+          fontFamily: 'Roboto-Medium',
+          marginTop: 20,
+          color: '#212946',
+          fontSize: 18,
+          marginLeft: 20,
+        }}>Minhas Operações</Text>
+        <View
+          style={{ marginTop: 20, marginLeft: 20, flexDirection: 'column' }}>
+          {isFetchingShippingType && <ActivityIndicator style={{ marginTop: 20 }} size="small" color="#999" />}
+          {!isFetchingShippingType && indicatorsShippingType?.map((item, index) => (<CardTiny key={index}
+            title={shipping_type[item.shipping_type] ?? item.shipping_type}
+            amount={item.revenue}
+            unit={item.amount_unit_sold}
+          />))}
+        </View>
+
+        <View style={{ alignItems: 'center', height: 250 }}>
+          {isFetchingMonth && <ActivityIndicator style={{ marginTop: 20 }} size="small" color="#999" />}
+          {!isFetchingMonth && <LineChart
+            data={{
+              labels: monthDataSet,
+              datasets: [
+                {
+                  data: [
+                    ...monthRevenueDataSet
+                  ]
+                }
+              ]
+            }}
+            width={Dimensions.get("window").width - 50} // from react-native
+            height={220}
+            yAxisLabel=""
+            yAxisSuffix="M"
+            yAxisInterval={1} // optional, defaults to 1
+            chartConfig={{
+              backgroundColor: "#64FFD3",
+              backgroundGradientFrom: "#fb8c00",
+              backgroundGradientTo: "#64FFD3",
+              decimalPlaces: 2, // optional, defaults to 2dp
+              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+              propsForDots: {
+                r: "6",
+                strokeWidth: "2",
+                stroke: "#ffa726"
+              },
+              style: {
+                padding: 100
+              }
+            }}
+            bezier
+            style={{
+              marginVertical: 10,
+              borderRadius: 16
+            }}
+          />}
+        </View>
       </ScrollView>
     </View>
   )

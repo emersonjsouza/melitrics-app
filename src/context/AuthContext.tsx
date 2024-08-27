@@ -12,7 +12,7 @@ const auth0 = new Auth0({
 type IAuthContext = {
   login: () => Promise<void>
   getAccessToken: () => Promise<string>
-  logout: () => void
+  logout: (callback?: () => void) => void
   loggedIn: boolean;
   loading: boolean;
   userData: any;
@@ -33,7 +33,7 @@ const AuthContextProvider = (props: any) => {
     if (!accessToken) throw new Error("user not authenticated")
 
     server.defaults.headers['Authorization'] = `bearer ${accessToken}`;
-    
+
     const data = await auth0.auth.userInfo({ token: accessToken });
     return data;
   };
@@ -103,7 +103,7 @@ const AuthContextProvider = (props: any) => {
     }
   };
 
-  const logout = () => {
+  const logout = (callback?: () => void) => {
     try {
       auth0.webAuth.clearSession()
         .then(async success => {
@@ -112,6 +112,9 @@ const AuthContextProvider = (props: any) => {
 
           setLoggedIn(false);
           setUserData(null);
+          if (callback) {
+            callback()
+          }
         })
         .catch(error => {
           console.log('Log out cancelled');

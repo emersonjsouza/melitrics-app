@@ -35,21 +35,21 @@ export const useIndicatorsByMonth = (query: { organizationID: string }) => {
   const monthRevenueDataSet: number[] = []
 
   if (!isFetching) {
-    // const months = data?.map((item) => item.month) as number[]
-    // const latestMonth = Math.max(...months)
+    const months = data?.map((item) => item.month) as number[]
+    const latestMonth = Math.max(...months)
 
-    // let maxMonth = 6;
-    // for (let index = latestMonth; index > 0; index--) {
-    //   const item = data?.find(x => x.month == index)
-    //   monthDataSet.push(month_dict[index as keyof typeof month_dict])
-    //   monthRevenueDataSet.push(formatRevenue(item?.revenue as number))
-    //   if (maxMonth > 1) {
-    //     maxMonth -= 1
-    //   }
-    //   else {
-    //     break
-    //   }
-    // }
+    let maxMonth = 6;
+    for (let index = latestMonth; index > 0; index--) {
+      const item = data?.find(x => x.month == index)
+      monthDataSet.push(month_dict[index as keyof typeof month_dict])
+      monthRevenueDataSet.push(formatRevenue(item?.revenue as number))
+      if (maxMonth > 1) {
+        maxMonth -= 1
+      }
+      else {
+        break
+      }
+    }
   }
 
   monthDataSet.reverse()
