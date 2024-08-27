@@ -24,14 +24,23 @@ export default function (props: any): React.JSX.Element {
   const { logout, userData } = useAuth()
 
   const orgID = 'cb2a3984-1d36-4435-94b0-32c5cbc2b8fc'
-  const start = '2024-08-01'
-  const end = '2024-08-31'
 
-  const { isFetching, data: indicators } = useIndicators({ organizationID: orgID, start, end, enableFetching: !!userData })
-  const { isFetching: isFetchingShippingType, data: indicatorsShippingType } = useIndicatorsByShippingType({ organizationID: orgID, start, end, enableFetching: !!userData })
+  const [startDate, setStartDate] = useState<string>('2024-08-27')
+  const [endDate, setEndDate] = useState<string>('2024-08-27')
+
+  const { isFetching, data: indicators } = useIndicators({ organizationID: orgID, start: startDate, end: endDate, enableFetching: !!userData })
+  const { isFetching: isFetchingShippingType, data: indicatorsShippingType } = useIndicatorsByShippingType({ organizationID: orgID, start: startDate, end: endDate, enableFetching: !!userData })
   const { isFetching: isFetchingMonth, monthDataSet, monthRevenueDataSet } = useIndicatorsByMonth({ organizationID: orgID, enableFetching: !!userData })
 
   const revenuePercent = isFetching ? 0 : (indicators?.net_income as number) / (indicators?.revenue as number) * 100
+
+  useEffect(() => {
+    if (props.route.params?.dateRange) {
+      const { start, end } = props.route.params?.dateRange
+      setStartDate(start)
+      setEndDate(end)
+    }
+  }, [props.route.params?.dateRange]);
 
   const shipping_type = {
     'fulfillment': 'FULL',
@@ -43,7 +52,10 @@ export default function (props: any): React.JSX.Element {
     logout(() => {
       props.navigation.navigate('App')
     })
+  }
 
+  const performFilter = () => {
+    props.navigation.navigate('Dashboard-Filter')
   }
 
   return (
@@ -84,7 +96,7 @@ export default function (props: any): React.JSX.Element {
                 <Rect x="0" y="40" rx="3" ry="10" width="380" height="500" />
               </ContentLoader>}
             </View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={() => performFilter()}>
               <View style={{ flexDirection: 'row' }}>
                 <Text style={{ fontFamily: 'Robo-Light', color: '#222222' }}>7 dias</Text>
                 <MaterialCommunityIcons name={'menu-down'} color={'#222222'} size={20} />

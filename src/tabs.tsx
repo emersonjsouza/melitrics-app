@@ -3,16 +3,18 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Dashboard from './views/dashboard';
+import Filter from './views/filter';
 import Sales from './views/sales';
 
 const screenSettings = {
   headerStyle: {
-    backgroundColor: '#222222',
+    backgroundColor: '#7994F5',
+    
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 0,
   },
-  headerTintColor: '#222222',
+  headerTintColor: '#FFF',
   headerBackTitleVisible: false
 };
 
@@ -23,7 +25,11 @@ function DashboardStackScreen() {
       ...screenSettings,
       headerShown: false,
     })}
-      name="Gestão Operacional" component={Dashboard} />
+      name="Dashboard" component={Dashboard} />
+    <DashBoardStack.Screen options={({ route }) => ({
+      ...screenSettings,
+    })}
+      name="Dashboard-Filter" component={Filter} />
   </DashBoardStack.Navigator>
 }
 
