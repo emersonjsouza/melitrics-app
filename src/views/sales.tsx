@@ -1,9 +1,7 @@
 import React, { useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Dimensions,
   FlatList,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -17,61 +15,45 @@ import { format } from 'date-fns'
 
 export default function (props: any): React.JSX.Element {
   const orgID = 'cb2a3984-1d36-4435-94b0-32c5cbc2b8fc'
-  const [offset, setOffset] = useState<number>(0)
+
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
 
-
-  const { data, total, isFetching } = useOrders({ organizationID: orgID, start: startDate, end: endDate, offset, enableFetching: true })
+  const { data, total, isFetching, fetchNextPage, hasNextPage } = useOrders({
+    organizationID: orgID,
+    start: startDate,
+    end: endDate
+  })
 
   useLayoutEffect(() => {
     props.navigation.setOptions({
-      title: 'Vendas',
+      title: `(${total}) Vendas`,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity>
-            <View style={{ alignItems: "center", justifyContent: "center", height: 50, width: 50 }}>
+            <View style={styles.navigationButton}>
               <MaterialCommunityIcons name="check" color={'#FFF'} size={25} />
             </View>
           </TouchableOpacity>
         </View>
       )
     })
-  }, [])
+  }, [total])
 
   return (
     <View style={styles.mainContainer}>
       <StatusBar translucent barStyle="light-content" backgroundColor={'#7994F5'} />
       <View style={styles.headerContainer}>
-        <View style={{ flexDirection: 'row', height: 100, marginTop: 10, justifyContent: 'space-around' }}>
-          <TouchableOpacity>
-            <View style={{ flexDirection: 'row', borderRadius: 5, padding: 10 }}>
-              <Text style={{ fontFamily: 'Robo-Light', color: '#FFF' }}>Hoje</Text>
-              <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-            <View style={{ flexDirection: 'row', borderRadius: 5, padding: 10 }}>
-              <Text style={{ fontFamily: 'Robo-Light', color: '#FFF' }}>Status da Venda</Text>
-              <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity>
-            <View style={{ flexDirection: 'row', borderRadius: 5, padding: 10 }}>
-              <Text style={{ fontFamily: 'Robo-Light', color: '#FFF' }}>Tipo de Frete</Text>
-              <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
-            </View>
-          </TouchableOpacity>
-        </View>
+        <FilterButton label='Hoje' icon='menu-down' />
+        <FilterButton label='Status da Venda' icon='menu-down' />
+        <FilterButton label='Tipo de Frete' icon='menu-down' />
       </View>
-      <FlatList style={{ paddingTop: 10, paddingHorizontal: 5 }}
-        data={data} keyExtractor={(_, idx) => idx.toString()}
+      <FlatList style={styles.ordersContainer}
+        data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
         renderItem={({ item }) => (<CardSale item={item} />)}
         onEndReached={() => {
-          if (!isFetching && total > offset) {
-            setOffset(offset + 20)
+          if (hasNextPage) {
+            fetchNextPage()
           }
         }}
         onEndReachedThreshold={0.1}
@@ -80,6 +62,13 @@ export default function (props: any): React.JSX.Element {
     </View>
   )
 }
+
+const FilterButton = (props: { icon: string, label: string }) => (<TouchableOpacity>
+  <View style={styles.filterButton}>
+    <Text style={styles.filterButtonText}>{props.label}</Text>
+    <MaterialCommunityIcons name={props.icon} color={'#FFF'} size={20} />
+  </View>
+</TouchableOpacity>)
 
 const FooterListComponent = ({ isFetching }: any) => {
   if (!isFetching)
@@ -97,24 +86,31 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
   },
   headerContainer: {
-    flexDirection: 'column',
-
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     backgroundColor: '#7994F5',
+    paddingTop: 10,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     height: 60
   },
-  greetingContainer: {
-    marginLeft: 5,
-    alignContent: 'center'
+  filterButton: {
+    flexDirection: 'row',
+    borderRadius: 5,
+    padding: 10
   },
-  greetingSubText: {
-    color: '#718093',
-    fontFamily: 'Roboto-Thin',
+  filterButtonText: {
+    fontFamily: 'Robo-Light',
+    color: '#FFF'
   },
-  greetingText: {
-    color: '#2f3640',
-    fontSize: 16,
-    fontFamily: 'Roboto-Medium',
+  ordersContainer: {
+    paddingTop: 10,
+    paddingHorizontal: 5
   },
+  navigationButton: {
+    alignItems: "center",
+    justifyContent: "center",
+    height: 50,
+    width: 50
+  }
 });

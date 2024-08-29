@@ -1,17 +1,27 @@
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { listOrders } from "../services/app";
 
-export const useOrders = (query: { organizationID: string, start: string, end: string, offset: number, enableFetching: boolean }) => {
-  const { data, isFetching, refetch } = useQuery({
-    queryKey: [`orders`, query.organizationID, query.start, query.end, query.offset],
-    queryFn: () => listOrders(query.organizationID, query.start, query.end, query.offset),
-    enabled: query.enableFetching
-  });
+export const useOrders = (query: { organizationID: string, start: string, end: string }) => {
+  const { data, isFetching, fetchNextPage, hasNextPage } = useInfiniteQuery({
+    queryKey: ['orders'],
+    queryFn: ({ pageParam }) => {
+      console.log('props.query', pageParam)
+      return listOrders(query.organizationID, query.start, query.end, pageParam)
+    },
+    getNextPageParam: (lastPage, pages) => {
+      if (pages.flatMap(p => p.items).length < lastPage.total) {
+        return pages.flatMap(p => p.items).length
+      }
+      return undefined
+    },
+    initialPageParam: 0,
+  })
 
   return {
-    data: isFetching ? [] : data?.items,
-    total: data?.total || 0,
+    data: data?.pages,
+    total: data?.pages[0].total || 0,
     isFetching,
-    refetch
+    fetchNextPage,
+    hasNextPage,
   };
 };

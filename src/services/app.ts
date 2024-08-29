@@ -90,7 +90,7 @@ export const listAds = async (organizationID: string, offset: number) => {
 }
 
 export const listOrders = async (organizationID: string, start: string, end: string, offset: number) => {
-  const resp = await server.get<List<Order>>(`/v1/orders/${organizationID}?start_date=${start}&end_date=${end}&offset=${offset}&limit=100`)
+  const resp = await server.get<List<Order>>(`/v1/orders/${organizationID}?start_date=${start}&end_date=${end}&offset=${offset}&limit=20`)
   return resp.data
 }
 
