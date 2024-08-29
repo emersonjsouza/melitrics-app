@@ -4,7 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Dashboard from './views/dashboard/index';
 import Filter from './views/dashboard/filter';
-import Sales from './views/sales';
+import Sales from './views/sales/index';
+import Settings from './views/settings';
+import Ads from './views/ads';
 
 const screenSettings = {
   headerStyle: {
@@ -41,6 +43,24 @@ function SalesStackScreen() {
   </SalesStack.Navigator>
 }
 
+const ConfigStack = createNativeStackNavigator()
+function ConfigStackScreen() {
+  return <ConfigStack.Navigator>
+    <ConfigStack.Screen
+      options={({ route }) => ({ ...screenSettings })}
+      name="Config" component={Settings} />
+  </ConfigStack.Navigator>
+}
+
+const AdsStack = createNativeStackNavigator()
+function AdsStackScreen() {
+  return <AdsStack.Navigator>
+    <AdsStack.Screen
+      options={({ route }) => ({ ...screenSettings })}
+      name="Config" component={Ads} />
+  </AdsStack.Navigator>
+}
+
 const Tab = createBottomTabNavigator();
 export default function () {
   return (
@@ -72,8 +92,8 @@ export default function () {
       })}>
       <Tab.Screen name="Gestão" component={DashboardStackScreen} />
       <Tab.Screen name="Vendas" component={SalesStackScreen} />
-      <Tab.Screen name="Anúncios" component={Dashboard} />
-      <Tab.Screen name="Configurações" component={Dashboard} />
+      <Tab.Screen name="Anúncios" component={AdsStackScreen} />
+      <Tab.Screen name="Configurações" component={ConfigStackScreen} />
     </Tab.Navigator>
   );
 }
