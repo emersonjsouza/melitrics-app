@@ -16,6 +16,7 @@ type IAuthContext = {
   loggedIn: boolean;
   loading: boolean;
   userData: any;
+  currentOrg: string
 }
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
@@ -24,6 +25,7 @@ const AuthContextProvider = (props: any) => {
   const [loading, setLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
   const [userData, setUserData] = useState<any>(null);
+  const [currentOrg, setCurrentOrg] = useState<string>('cb2a3984-1d36-4435-94b0-32c5cbc2b8fc');
 
   const getUserData = async (access_token?: any) => {
     const accessToken = access_token
@@ -131,6 +133,7 @@ const AuthContextProvider = (props: any) => {
     logout,
     userData,
     getAccessToken,
+    currentOrg,
   };
 
   return (

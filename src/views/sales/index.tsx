@@ -4,23 +4,22 @@ import {
   FlatList,
   StatusBar,
   StyleSheet,
-  Text,
   View
 } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import CardSale from '../components/card-sale';
-import { useOrders } from '../hooks/useOrders';
 import { format } from 'date-fns'
+import { useOrders } from '../../hooks/useOrders';
+import { useAuth } from '../../context/AuthContext';
+import Card from './card';
+import FilterButton from './filter-button'
+import NavigationButton from '../../components/navigation-button';
 
 export default function (props: any): React.JSX.Element {
-  const orgID = 'cb2a3984-1d36-4435-94b0-32c5cbc2b8fc'
-
+  const { currentOrg } = useAuth()
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
 
   const { data, total, isFetching, fetchNextPage, hasNextPage } = useOrders({
-    organizationID: orgID,
+    organizationID: currentOrg,
     start: startDate,
     end: endDate
   })
@@ -30,11 +29,7 @@ export default function (props: any): React.JSX.Element {
       title: `(${total}) Vendas`,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
-          <TouchableOpacity>
-            <View style={styles.navigationButton}>
-              <MaterialCommunityIcons name="check" color={'#FFF'} size={25} />
-            </View>
-          </TouchableOpacity>
+          <NavigationButton icon='check' />
         </View>
       )
     })
@@ -50,7 +45,7 @@ export default function (props: any): React.JSX.Element {
       </View>
       <FlatList style={styles.ordersContainer}
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
-        renderItem={({ item }) => (<CardSale item={item} />)}
+        renderItem={({ item }) => (<Card item={item} />)}
         onEndReached={() => {
           if (hasNextPage) {
             fetchNextPage()
@@ -62,13 +57,6 @@ export default function (props: any): React.JSX.Element {
     </View>
   )
 }
-
-const FilterButton = (props: { icon: string, label: string }) => (<TouchableOpacity>
-  <View style={styles.filterButton}>
-    <Text style={styles.filterButtonText}>{props.label}</Text>
-    <MaterialCommunityIcons name={props.icon} color={'#FFF'} size={20} />
-  </View>
-</TouchableOpacity>)
 
 const FooterListComponent = ({ isFetching }: any) => {
   if (!isFetching)
@@ -94,23 +82,8 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 10,
     height: 60
   },
-  filterButton: {
-    flexDirection: 'row',
-    borderRadius: 5,
-    padding: 10
-  },
-  filterButtonText: {
-    fontFamily: 'Robo-Light',
-    color: '#FFF'
-  },
   ordersContainer: {
     paddingTop: 10,
     paddingHorizontal: 5
-  },
-  navigationButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 50,
-    width: 50
   }
 });

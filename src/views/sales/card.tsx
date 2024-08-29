@@ -5,20 +5,15 @@ import {
   Text,
   Platform,
 } from 'react-native';
-import { Order } from '../services/app';
+import { Order } from '../../services/app';
 import { format, parseISO } from 'date-fns';
+import { shipping_type } from '../../utils';
 
 type CardProps = PropsWithChildren<{
   item: Order
 }>
 
 export default function ({ item }: CardProps): React.JSX.Element {
-
-  const shipping_type = {
-    'fulfillment': 'FULL',
-    'xd_drop_off': 'Agencia',
-    'self_service': 'Flex'
-  }
 
   const payment_type = {
     'paid': 'Aprovado',
