@@ -7,8 +7,8 @@ import {
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-export default function (props: { icon: string }) {
-  return (<TouchableOpacity>
+export default function (props: { icon: string, onPress?: () => void }) {
+  return (<TouchableOpacity onPress={props.onPress}>
     <View style={styles.navigationButton}>
       <MaterialCommunityIcons name={props.icon} color={'#FFF'} size={25} />
     </View>

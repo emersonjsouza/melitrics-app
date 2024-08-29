@@ -16,6 +16,7 @@ const screenSettings = {
     borderBottomWidth: 0,
   },
   headerTintColor: '#FFF',
+  headerShadowVisible: false,
   headerBackTitleVisible: false
 };
 

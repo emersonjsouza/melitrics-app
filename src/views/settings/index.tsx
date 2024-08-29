@@ -5,15 +5,17 @@ import {
   View
 } from 'react-native';
 import NavigationButton from '../../components/navigation-button';
+import { useAuth } from '../../context/AuthContext';
 
 export default function (props: any): React.JSX.Element {
-  
+  const { logout } = useAuth()
+
   useLayoutEffect(() => {
     props.navigation.setOptions({
       title: `Configurações`,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
-          <NavigationButton icon='logout' />
+          <NavigationButton onPress={() => logout()} icon='logout' />
         </View>
       )
     })

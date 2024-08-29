@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getIndicators } from "../services/app";
+import { getIndicators } from "../services";
 
 export const useIndicators = (query: { organizationID: string, start: string, end: string, enableFetching: boolean }) => {
   const { data, isFetching, refetch } = useQuery({

@@ -5,7 +5,7 @@ import {
   Text,
   Platform,
 } from 'react-native';
-import { Order } from '../../services/app';
+import { Order } from '../../services/types';
 import { format, parseISO } from 'date-fns';
 import { shipping_type } from '../../utils';
 
