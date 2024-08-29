@@ -28,7 +28,7 @@ export default function (props: any): React.JSX.Element {
   const applyFilter = () => {
     props.navigation.navigate({
       name: 'Dashboard',
-      params: { dateRange: { start: '2024-08-01', end: '2024-08-27' } },
+      params: { dateRange: { start: '2024-08-01', end: '2024-08-31' } },
       merge: true,
     });
   }

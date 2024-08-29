@@ -13,12 +13,12 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LineChart } from "react-native-chart-kit";
-import CardTiny from '../components/card-tiny';
-import CardInsight from '../components/card-insight';
-import { useIndicators } from '../hooks/useIndicators';
-import { useIndicatorsByShippingType } from '../hooks/useIndicatorByShippingType';
-import { useIndicatorsByMonth } from '../hooks/useIndicatorsByMonth';
-import { useAuth } from '../context/AuthContext';
+import CardTiny from '../../components/card-tiny';
+import CardInsight from '../../components/card-insight';
+import { useIndicators } from '../../hooks/useIndicators';
+import { useIndicatorsByShippingType } from '../../hooks/useIndicatorByShippingType';
+import { useIndicatorsByMonth } from '../../hooks/useIndicatorsByMonth';
+import { useAuth } from '../../context/AuthContext';
 import { format } from 'date-fns'
 
 export default function (props: any): React.JSX.Element {
@@ -96,7 +96,7 @@ export default function (props: any): React.JSX.Element {
               </View>
               <TouchableOpacity onPress={() => performFilter()}>
                 <View style={{ flexDirection: 'row' }}>
-                  <Text style={{ fontFamily: 'Robo-Light', color: '#222222' }}>7 dias</Text>
+                  <Text style={{ fontFamily: 'Robo-Light', color: '#222222' }}>Hoje</Text>
                   <MaterialCommunityIcons name={'menu-down'} color={'#222222'} size={20} />
                 </View>
               </TouchableOpacity>

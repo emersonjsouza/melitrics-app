@@ -5,36 +5,54 @@ import {
   Text,
   Platform,
 } from 'react-native';
+import { Order } from '../services/app';
+import { format, parseISO } from 'date-fns';
 
 type CardProps = PropsWithChildren<{
-  title: string,
-  sku?: Number,
-  totalAmount?: Number,
-  tax?: Number,
-  shipping?: Number,
-  unit?: Number,
-  isCanceled?: boolean
+  item: Order
 }>
 
-export default function (props: CardProps): React.JSX.Element {
+export default function ({ item }: CardProps): React.JSX.Element {
+
+  const shipping_type = {
+    'fulfillment': 'FULL',
+    'xd_drop_off': 'Agencia',
+    'self_service': 'Flex'
+  }
+
+  const payment_type = {
+    'paid': 'Aprovado',
+    'cancelled': 'Cancelado',
+  }
+
+  const statusColor = item.status == "paid" ? '#03933B' : '#999'
+
   return (
     <View
-      style={styles.cardContainer}>
+      style={{ borderStartColor: statusColor, ...styles.cardContainer }}>
       <View>
-        <Text style={styles.cardTitle}>LK-160 - Câmera Ip Segurança Wifi Wireless Espiã Anatel Onvif Noturna</Text>
+        <Text style={styles.cardTitle}>{item.sku} - {item.title}</Text>
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
-          <Text style={{ fontSize: 20, color: '#9C9C9C' }}>R$ 70,25</Text>
-          <Text style={{ fontSize: 12, color: '#03933B', marginLeft: 2, }}>38,83%</Text>
+          <Text style={{ fontSize: 20, color: '#9C9C9C' }}>R$ {item.net_income.toFixed(2)}</Text>
+          <Text style={{ fontSize: 12, color: '#03933B', marginLeft: 2, }}>{((item.net_income / item.revenue) * 100).toFixed(2)}%</Text>
         </View>
-        <View style={{justifyContent: 'center', alignItems: 'center'}}>
-          <Text style={{fontSize: 10, fontFamily: 'Robo-Thin', color: '#9C9C9C'}}>margem de contribuição</Text>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ fontSize: 10, fontFamily: 'Robo-Thin', color: '#9C9C9C' }}>margem de contribuição</Text>
         </View>
       </View>
       <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
-        <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}><Text style={{ fontSize: 10, color: '#9C9C9C' }}>5 unid.</Text></View>
-        <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}><Text style={{ fontSize: 10, color: '#9C9C9C' }}>FULL</Text></View>
-        <View style={{ borderWidth: .5, backgroundColor: '#03933B', borderColor: '#03933B', marginRight: 10, padding: 5, borderRadius: 10 }}><Text style={{ fontSize: 10, color: '#fff' }}>Aprovado</Text></View>
-        <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}><Text style={{ fontSize: 10, color: '#9C9C9C' }}>10/04/2024</Text></View>
+        <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}>
+          <Text style={{ fontSize: 10, color: '#9C9C9C' }}>{item.amount_unit} unid.</Text>
+        </View>
+        <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}>
+          <Text style={{ fontSize: 10, color: '#9C9C9C' }}>{shipping_type[item.shipping_type] ?? item.shipping_type}</Text>
+        </View>
+        <View style={{ borderWidth: .5, backgroundColor: statusColor, borderColor: statusColor, marginRight: 10, padding: 5, borderRadius: 10 }}>
+          <Text style={{ fontSize: 10, color: '#fff' }}>{payment_type[item.status] ?? item.status}</Text>
+        </View>
+        <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}>
+          <Text style={{ fontSize: 10, color: '#9C9C9C' }}>{format(parseISO(item.created_at), 'dd/MM/yyyy - HH:mm:ss')}</Text>
+        </View>
       </View>
     </View>
   )
@@ -47,9 +65,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderColor: '#ccc',
     borderWidth: 1,
-    borderStartColor: '#03933B',
     borderStartWidth: 5,
-    height: Platform.OS == 'android' ? 155 : 140, padding: 20,
+    height: Platform.OS == 'android' ? 165 : 150, padding: 20,
     marginBottom: 10,
   },
   cardTitle: {

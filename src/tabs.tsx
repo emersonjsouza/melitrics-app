@@ -1,15 +1,14 @@
 import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import Dashboard from './views/dashboard';
-import Filter from './views/filter';
+import Dashboard from './views/dashboard/index';
+import Filter from './views/dashboard/filter';
 import Sales from './views/sales';
 
 const screenSettings = {
   headerStyle: {
     backgroundColor: '#7994F5',
-    
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 0,
@@ -18,7 +17,7 @@ const screenSettings = {
   headerBackTitleVisible: false
 };
 
-const DashBoardStack = createStackNavigator()
+const DashBoardStack = createNativeStackNavigator()
 function DashboardStackScreen() {
   return <DashBoardStack.Navigator>
     <DashBoardStack.Screen options={({ route }) => ({
@@ -33,14 +32,12 @@ function DashboardStackScreen() {
   </DashBoardStack.Navigator>
 }
 
-const SalesStack = createStackNavigator()
+const SalesStack = createNativeStackNavigator()
 function SalesStackScreen() {
   return <SalesStack.Navigator>
-    <SalesStack.Screen options={({ route }) => ({
-      ...screenSettings,
-      headerShown: false,
-    })}
-      name="Vendas" component={Sales} />
+    <SalesStack.Screen
+      options={({ route }) => ({ ...screenSettings })}
+      name="Sales" component={Sales} />
   </SalesStack.Navigator>
 }
 
@@ -59,7 +56,7 @@ export default function () {
             case "Vendas":
               iconName = 'finance';
               break
-            case "Estoque":
+            case "Anúncios":
               iconName = 'sitemap';
               break
             case "Configurações":
@@ -74,8 +71,8 @@ export default function () {
         headerShown: false,
       })}>
       <Tab.Screen name="Gestão" component={DashboardStackScreen} />
-      <Tab.Screen name="Vendas" component={Sales} />
-      <Tab.Screen name="Estoque" component={Dashboard} />
+      <Tab.Screen name="Vendas" component={SalesStackScreen} />
+      <Tab.Screen name="Anúncios" component={Dashboard} />
       <Tab.Screen name="Configurações" component={Dashboard} />
     </Tab.Navigator>
   );
