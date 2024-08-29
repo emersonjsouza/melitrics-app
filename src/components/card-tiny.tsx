@@ -8,7 +8,7 @@ import {
 type CardProps = PropsWithChildren<{
   title: string,
   amount: Number,
-  unit: Number,
+  amount_sold?: Number,
 }>
 
 export default function (props: CardProps): React.JSX.Element {
@@ -19,7 +19,7 @@ export default function (props: CardProps): React.JSX.Element {
         <Text style={styles.cardTitle}>{props.title}</Text>
         <Text style={styles.cardTotalAmount}>R$ {props.amount.toFixed(2)}</Text>
       </View>
-      <Text style={styles.cardUnitText}>{props.unit.toString()} unid.</Text>
+      <Text style={styles.cardUnitText}>{props.amount_sold?.toString()} vendas</Text>
     </View>
   )
 }

@@ -7,8 +7,6 @@ import {
   Image,
 } from 'react-native';
 import { Ad } from '../../services/types';
-import { format, parseISO } from 'date-fns';
-import { shipping_type } from '../../utils';
 
 type CardProps = PropsWithChildren<{
   item: Ad
@@ -40,7 +38,7 @@ export default function ({ item }: CardProps): React.JSX.Element {
           source={{ uri: item.thumbnail_link.replace('http://', 'https://') }} />
         <View style={{ marginLeft: 20, flex: 1 }}>
           <Text style={styles.cardTitle}>{item.sku}{item.sku && ' - '}{item.title}</Text>
-          <View style={{ flexDirection: 'row', marginTop: 10 }}>
+          <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
             <Text style={{ fontSize: 20, color: '#9C9C9C' }}>R$ {item.price.toFixed(2)}</Text>
           </View>
         </View>
@@ -52,8 +50,8 @@ export default function ({ item }: CardProps): React.JSX.Element {
         <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}>
           <Text style={{ fontSize: 10, color: '#9C9C9C' }}>{item.sold_quantity} vendas</Text>
         </View>
-        <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}>
-          <Text style={{ fontSize: 10, color: '#9C9C9C' }}>{current_status}</Text>
+        <View style={{ borderWidth: .5, borderColor: statusColor, backgroundColor: statusColor, marginRight: 10, padding: 5, borderRadius: 10 }}>
+          <Text style={{ fontSize: 10, color: '#FFF' }}>{current_status}</Text>
         </View>
         <View style={{ borderWidth: .5, borderColor: healthColor, marginRight: 10, padding: 5, borderRadius: 10 }}>
           <Text style={{ fontSize: 10, color: healthColor }}>{item.health * 100}%</Text>

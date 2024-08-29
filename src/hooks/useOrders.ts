@@ -1,4 +1,4 @@
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { listOrders } from "../services";
 
 export const useOrders = (query: { organizationID: string, start: string, end: string }) => {

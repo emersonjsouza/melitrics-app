@@ -147,7 +147,7 @@ export default function (props: any): React.JSX.Element {
           {!isFetchingShippingType && indicatorsShippingType?.map((item, index) => (<CardTiny key={index}
             title={shipping_type[item.shipping_type] ?? item.shipping_type}
             amount={item.revenue}
-            unit={item.amount_unit_sold}
+            amount_sold={item.amount_sold}
           />))}
         </View>
 

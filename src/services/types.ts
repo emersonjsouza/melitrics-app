@@ -17,6 +17,7 @@ export interface IndicatorShippingType {
   shipping_type: "fulfillment" | "xd_drop_off" | "self_service"
   revenue: Number
   amount_unit_sold: Number
+  amount_sold: Number
 }
 
 export interface IndicatorMonth {
