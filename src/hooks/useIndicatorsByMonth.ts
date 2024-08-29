@@ -1,13 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { getIndicatorsByMonth } from "../services";
 
-export const useIndicatorsByMonth = (query: { organizationID: string, enableFetching: boolean }) => {
+export const useIndicatorsByMonth = (query: { organizationID: string }) => {
   const { data, isFetching, refetch } = useQuery({
     queryKey: [`indicators-month`, query.organizationID],
     queryFn: () => getIndicatorsByMonth(query.organizationID),
-    enabled: query.enableFetching
+    enabled: !!query.organizationID
   });
-
 
   const formatRevenue = (revenue: number) => {
     const magnitude = Math.floor(Math.log10(revenue) / 3);
@@ -15,7 +14,6 @@ export const useIndicatorsByMonth = (query: { organizationID: string, enableFetc
     const scaledRevenue = (revenue / Math.pow(1000, magnitude))
     return scaledRevenue
   }
-
 
   const month_dict = {
     1: "Jan",

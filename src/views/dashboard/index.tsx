@@ -1,37 +1,36 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
-  Dimensions,
   Platform,
   ScrollView,
   StatusBar,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableOpacity
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ContentLoader, { Rect } from 'react-content-loader/native'
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { LineChart } from "react-native-chart-kit";
-import CardTiny from '../../components/card-tiny';
-import CardInsight from '../../components/card-insight';
 import { useIndicators } from '../../hooks/useIndicators';
-import { useIndicatorsByShippingType } from '../../hooks/useIndicatorByShippingType';
-import { useIndicatorsByMonth } from '../../hooks/useIndicatorsByMonth';
+
 import { useAuth } from '../../context/AuthContext';
 import { format } from 'date-fns'
-import { shipping_type } from '../../utils';
+import Operations from './operations';
+import Report from './report';
+import Indicators from './indicators';
 
 export default function (props: any): React.JSX.Element {
   const { userData, currentOrg } = useAuth()
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
 
-  const { isFetching, refetch: refreshIndicators, data: indicators } = useIndicators({ organizationID: currentOrg, start: startDate, end: endDate, enableFetching: !!userData })
-  const { isFetching: isFetchingShippingType, refetch: refetchShippingType, data: indicatorsShippingType } = useIndicatorsByShippingType({ organizationID: currentOrg, start: startDate, end: endDate, enableFetching: !!userData })
-  const { isFetching: isFetchingMonth, monthDataSet, refetch: refetchMonth, monthRevenueDataSet } = useIndicatorsByMonth({ organizationID: currentOrg, enableFetching: !!userData })
+  const operationRef = useRef<{ refresh: () => Promise<void> }>()
+  const reportRef = useRef<{ refresh: () => Promise<void> }>()
 
-  const revenuePercent = isFetching ? 0 : (indicators?.net_income as number) / (indicators?.revenue as number) * 100
+  const {
+    isFetching,
+    refetch: refreshIndicators,
+    data: indicators
+  } = useIndicators({ organizationID: currentOrg, start: startDate, end: endDate })
 
   useEffect(() => {
     if (props.route.params?.dateRange) {
@@ -42,7 +41,7 @@ export default function (props: any): React.JSX.Element {
   }, [props.route.params?.dateRange]);
 
   const onRefresh = async () => {
-    await Promise.all([refreshIndicators(), refetchShippingType(), refetchMonth()])
+    await Promise.all([operationRef.current?.refresh(), reportRef.current?.refresh(), refreshIndicators()])
   }
 
   const performFilter = () => {
@@ -94,45 +93,8 @@ export default function (props: any): React.JSX.Element {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{ height: 100, marginTop: 10 }}>
-          <ScrollView
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ height: 100, marginTop: 20, marginLeft: 20, flexDirection: 'row' }}>
-            <CardInsight
-              title='Margem'
-              isLoading={isFetching}
-              amount={indicators?.net_income as Number}
-              amountInPercent={revenuePercent}
-              backgroundColor='#B0FF6D'
-            />
-            <CardInsight
-              isLoading={isFetching}
-              title='Custos + Impostos'
-              amount={indicators?.cost as Number}
-              amountSub={indicators?.tax as Number}
-              backgroundColor='#64FFD3'
-            />
-            <CardInsight
-              isLoading={isFetching}
-              title='Tarifas'
-              amount={indicators?.sales_fee as Number}
-              backgroundColor='#ffce00'
-            />
-            <CardInsight
-              isLoading={isFetching}
-              title='Frete Vendedor'
-              amount={indicators?.shipping_cost as Number}
-              backgroundColor='#a471cc'
-            />
-            <CardInsight
-              isLoading={isFetching}
-              title='Ticket Médio'
-              amount={indicators?.ticket_ratio as Number}
-              backgroundColor='#7994F5'
-            />
-          </ScrollView>
-        </View>
+
+        <Indicators isFetching={isFetching} data={indicators} />
 
         <Text style={{
           fontFamily: 'Roboto-Medium',
@@ -141,57 +103,10 @@ export default function (props: any): React.JSX.Element {
           fontSize: 18,
           marginLeft: 20,
         }}>Minhas Operações</Text>
-        <View
-          style={{ marginTop: 20, marginLeft: 20, flexDirection: 'column' }}>
-          {isFetchingShippingType && <ActivityIndicator style={{ marginTop: 20 }} size="small" color="#999" />}
-          {!isFetchingShippingType && indicatorsShippingType?.map((item, index) => (<CardTiny key={index}
-            title={shipping_type[item.shipping_type] ?? item.shipping_type}
-            amount={item.revenue}
-            amount_sold={item.amount_sold}
-          />))}
-        </View>
 
-        <View style={{ alignItems: 'center', height: 250 }}>
-          {isFetchingMonth && <ActivityIndicator style={{ marginTop: 20 }} size="small" color="#999" />}
-          {!isFetchingMonth && <LineChart
-            data={{
-              labels: monthDataSet,
-              datasets: [
-                {
-                  data: [
-                    ...monthRevenueDataSet
-                  ]
-                }
-              ]
-            }}
-            width={Dimensions.get("window").width - 50} // from react-native
-            height={220}
-            yAxisLabel=""
-            yAxisSuffix="M"
-            yAxisInterval={1} // optional, defaults to 1
-            chartConfig={{
-              backgroundColor: "#64FFD3",
-              backgroundGradientFrom: "#fb8c00",
-              backgroundGradientTo: "#64FFD3",
-              decimalPlaces: 2, // optional, defaults to 2dp
-              color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-              propsForDots: {
-                r: "6",
-                strokeWidth: "2",
-                stroke: "#ffa726"
-              },
-              style: {
-                padding: 100
-              }
-            }}
-            bezier
-            style={{
-              marginVertical: 10,
-              borderRadius: 16
-            }}
-          />}
-        </View>
+        <Operations ref={operationRef} organizationID={currentOrg} startDate={startDate} endDate={endDate} />
+
+        <Report ref={reportRef} organizationID={currentOrg} />
       </ScrollView>
     </View>
   )
