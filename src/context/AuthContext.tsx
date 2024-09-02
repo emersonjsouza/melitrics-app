@@ -3,6 +3,8 @@ import Auth0 from "react-native-auth0";
 import SInfo from "react-native-sensitive-info";
 import server from "../services/server";
 import settings from "../settings";
+import { useOrganizations } from "../hooks/useOrganizations";
+import { Organization } from "../services/types";
 
 const auth0 = new Auth0({
   domain: settings.AUTH_DOMAIN,
@@ -19,6 +21,8 @@ type IAuthContext = {
   loading: boolean;
   adInfoVisibility: boolean;
   orderInfoVisibility: boolean;
+  isFetchingOrganizations: boolean;
+  organizations: Organization[]
   userData: any;
   currentOrg: string
 }
@@ -31,6 +35,7 @@ const AuthContextProvider = (props: any) => {
   const [adInfoVisibility, setAdInfoVisibility] = useState<boolean>(true);
   const [orderInfoVisibility, setOrderInfoVisibility] = useState<boolean>(true);
   const [userData, setUserData] = useState<any>(null);
+  const { organizations, isFetching: isFetchingOrganizations } = useOrganizations({ userID: userData?.userID, enabled: !!userData })
 
   const [currentOrg, setCurrentOrg] = useState<string>('cb2a3984-1d36-4435-94b0-32c5cbc2b8fc');
 
@@ -176,6 +181,8 @@ const AuthContextProvider = (props: any) => {
     getAccessToken,
     saveAdInfoVisibility,
     saveOrderInfoVisibility,
+    isFetchingOrganizations,
+    organizations: organizations || [],
   };
 
   return (

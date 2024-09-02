@@ -1,4 +1,14 @@
 
+export interface Organization {
+  organization_id: string
+  type: string
+  name: string
+}
+
+export interface User {
+  organizations: Organization[]
+}
+
 export interface Indicator {
   revenue: Number
   cost: Number
@@ -64,4 +74,20 @@ export interface Order {
   status: "paid" | "cancelled"
   shipping_type: "fulfillment" | "xd_drop_off" | "self_service"
   created_at: string
+}
+
+export interface UserRegister {
+  given_name: string
+  family_name: string
+  email: string
+  password: string
+  company_name: string
+}
+
+export interface APIError extends Error {
+  response?: {
+    data?: {
+      error: string
+    }
+  }
 }

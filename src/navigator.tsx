@@ -4,6 +4,8 @@ import { Platform, StatusBar } from 'react-native'
 import TabNavigator from './tabs';
 import { Colors } from './assets/color';
 import App from './views/App';
+import Register from './views/Register';
+import Connect from './views/Connect';
 import { AuthContextProvider } from './context/AuthContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -19,17 +21,19 @@ const queryClient = new QueryClient({
 
 export default function () {
   return (
-    <AuthContextProvider>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthContextProvider>
         <NavigationContainer>
           <StatusBar translucent barStyle="light-content" backgroundColor={Platform.OS == 'ios' ? 'transparent' : Colors.Main} />
           <Stack.Navigator>
             <Stack.Screen name="App" component={App} options={{ headerShown: false }} />
+            <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+            <Stack.Screen name="Connect" component={Connect} options={{ headerShown: false }} />
             <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>
-      </QueryClientProvider>
-    </AuthContextProvider>
+      </AuthContextProvider>
+    </QueryClientProvider>
   );
 }
 

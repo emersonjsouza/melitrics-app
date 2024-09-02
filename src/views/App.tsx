@@ -10,13 +10,14 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
-  Dimensions
+  Dimensions,
+  Linking
 } from 'react-native';
 import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
 
 function App(props: any): React.JSX.Element {
-  const { login, loggedIn, loading } = useAuth()
+  const { login, loggedIn, loading, organizations, isFetchingOrganizations } = useAuth()
 
   const onSignIn = async () => {
     try {
@@ -27,10 +28,14 @@ function App(props: any): React.JSX.Element {
   }
 
   useEffect(() => {
-    if (loggedIn) {
-      props.navigation.navigate('Home')
+    if (loggedIn && !isFetchingOrganizations) {
+      if (organizations.length == 0) {
+        props.navigation.navigate('Connect')
+      } else {
+        props.navigation.navigate('Home')
+      }
     }
-  }, [loggedIn])
+  }, [loggedIn, organizations, isFetchingOrganizations])
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
@@ -47,7 +52,7 @@ function App(props: any): React.JSX.Element {
         {!loading && !loggedIn && <><TouchableOpacity style={styles.signButton} onPress={onSignIn}>
           <Text style={styles.submitText}>acessar minha conta</Text>
         </TouchableOpacity>
-          <TouchableOpacity style={styles.signUpButton} onPress={onSignIn}>
+          <TouchableOpacity onPressIn={() => props.navigation.navigate('Register')} style={styles.signUpButton}>
             <Text style={styles.signUpText}>cadastre-se grátis</Text>
           </TouchableOpacity>
         </>}
