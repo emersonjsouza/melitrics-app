@@ -12,12 +12,16 @@ import {
 } from 'react-native';
 import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
+import settings from '../settings';
 
-function App(props: any): React.JSX.Element {
+
+function App({ navigation, route }: any): React.JSX.Element {
   const { userData } = useAuth()
 
+  console.log('props==>', JSON.stringify(route.params))
+
   const onConnect = () => {
-    Linking.openURL(`https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=666608762505712&redirect_uri=https://melitrics-core.onrender.com/mercadolivre/callback`)
+    Linking.openURL(Platform.OS == 'ios' ? settings.MELI_CONNECT_IOS : settings.MELI_CONNECT_ANDROID)
   }
 
   return (
@@ -36,7 +40,7 @@ function App(props: any): React.JSX.Element {
             <Text style={styles.submitText}>Conectar ao Mercado Livre</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPressIn={() => props.navigation.navigate('App')} style={styles.signUpButton}>
+        <TouchableOpacity onPressIn={() => navigation.navigate('App')} style={styles.signUpButton}>
           <Text style={styles.signUpText}>desconectar minha conta</Text>
         </TouchableOpacity>
 

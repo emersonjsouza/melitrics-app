@@ -20,10 +20,19 @@ const queryClient = new QueryClient({
 });
 
 export default function () {
+  const linking = {
+    prefixes: ['https://melitrics.com', 'org.reactjs.native.example.melitricsapp://'],
+    config: {
+      screens: {
+        Connect: 'connect/:code',
+      },
+    },
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthContextProvider>
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
           <StatusBar translucent barStyle="light-content" backgroundColor={Platform.OS == 'ios' ? 'transparent' : Colors.Main} />
           <Stack.Navigator>
             <Stack.Screen name="App" component={App} options={{ headerShown: false }} />
