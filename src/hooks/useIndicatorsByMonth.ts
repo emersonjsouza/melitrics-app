@@ -34,7 +34,7 @@ export const useIndicatorsByMonth = (query: { organizationID: string }) => {
   const monthRevenueDataSet: number[] = []
 
   if (!isFetching) {
-    const months = data?.map((item) => item.month) as number[]
+    const months = data?.map((item) => item.month) as number[] || []
     const latestMonth = Math.max(...months)
 
     let maxMonth = 6;

@@ -11,9 +11,10 @@ import { shipping_type } from '../../utils';
 
 type CardProps = PropsWithChildren<{
   item: Order
+  visibility?: boolean
 }>
 
-export default function ({ item }: CardProps): React.JSX.Element {
+export default function ({ item, visibility }: CardProps): React.JSX.Element {
 
   const payment_type = {
     'paid': 'Aprovado',
@@ -26,7 +27,8 @@ export default function ({ item }: CardProps): React.JSX.Element {
     <View
       style={{ borderStartColor: statusColor, ...styles.cardContainer }}>
       <View>
-        <Text style={styles.cardTitle}>{item.sku} - {item.title}</Text>
+        {visibility  && <Text style={styles.cardTitle}>{item.sku} - {item.title}</Text>}
+        {!visibility && <Text style={styles.cardTitle}>{item.external_id}</Text>}
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
           <Text style={{ fontSize: 20, color: '#9C9C9C' }}>R$ {item.net_income.toFixed(2)}</Text>
           <Text style={{ fontSize: 12, color: '#03933B', marginLeft: 2, }}>{((item.net_income / item.revenue) * 100).toFixed(2)}%</Text>

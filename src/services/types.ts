@@ -38,7 +38,7 @@ export interface Ad {
   price: number
   base_price: number
   health: number
-  logistic_type: string
+  logistic_type: "fulfillment" | "xd_drop_off" | "self_service"
   permalink: string
   thumbnail_link: string
   sold_quantity: number
@@ -50,6 +50,7 @@ export interface Ad {
 }
 
 export interface Order {
+  external_id: string
   title: string
   unit_price: number
   revenue: number

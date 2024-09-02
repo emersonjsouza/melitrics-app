@@ -12,9 +12,13 @@ const auth0 = new Auth0({
 type IAuthContext = {
   login: () => Promise<void>
   getAccessToken: () => Promise<string>
+  saveAdInfoVisibility: () => Promise<void>
+  saveOrderInfoVisibility: () => Promise<void>
   logout: (callback?: () => void) => void
   loggedIn: boolean;
   loading: boolean;
+  adInfoVisibility: boolean;
+  orderInfoVisibility: boolean;
   userData: any;
   currentOrg: string
 }
@@ -24,7 +28,10 @@ const AuthContext = createContext<IAuthContext | undefined>(undefined);
 const AuthContextProvider = (props: any) => {
   const [loading, setLoading] = useState(true);
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
+  const [adInfoVisibility, setAdInfoVisibility] = useState<boolean>(true);
+  const [orderInfoVisibility, setOrderInfoVisibility] = useState<boolean>(true);
   const [userData, setUserData] = useState<any>(null);
+
   const [currentOrg, setCurrentOrg] = useState<string>('cb2a3984-1d36-4435-94b0-32c5cbc2b8fc');
 
   const getUserData = async (access_token?: any) => {
@@ -40,6 +47,27 @@ const AuthContextProvider = (props: any) => {
     return data;
   };
 
+
+  const saveAdInfoVisibility = async () => {
+    setAdInfoVisibility((value) => !value)
+    await SInfo.setItem("ad_visibility", String(!adInfoVisibility), {});
+  }
+
+  const getAdInfoVisibility = async () => {
+    const value = await SInfo.getItem("ad_visibility", {});
+    return value == 'true'
+  }
+
+  const saveOrderInfoVisibility = async () => {
+    setOrderInfoVisibility((value) => !value)
+    await SInfo.setItem("order_visibility", String(!orderInfoVisibility), {});
+  }
+
+  const getOrderInfoVisibility = async () => {
+    const value = await SInfo.getItem("order_visibility", {});
+    return value == 'true'
+  }
+
   const getAccessToken = async () => {
     const accessToken = await SInfo.getItem("accessToken", {});
     return accessToken
@@ -52,7 +80,17 @@ const AuthContextProvider = (props: any) => {
         const data = await getUserData();
         setLoggedIn(true);
         setUserData(data);
+        setLoading(false)
+
+        const adVisibility = await getAdInfoVisibility()
+        setAdInfoVisibility(adVisibility)
+
+
+        const oderVisibility = await getOrderInfoVisibility()
+        setOrderInfoVisibility(oderVisibility)
+
       } catch (err) {
+        setLoading(false)
         try {
           const refreshToken = await SInfo.getItem("refreshToken", {});
           const newAccessTokenResponse = await auth0.auth.refreshToken({
@@ -129,11 +167,15 @@ const AuthContextProvider = (props: any) => {
   const value: IAuthContext = {
     loading,
     loggedIn,
+    currentOrg,
+    userData,
+    adInfoVisibility,
+    orderInfoVisibility,
     login,
     logout,
-    userData,
     getAccessToken,
-    currentOrg,
+    saveAdInfoVisibility,
+    saveOrderInfoVisibility,
   };
 
   return (

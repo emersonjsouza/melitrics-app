@@ -14,7 +14,7 @@ import FilterButton from './filter-button'
 import NavigationButton from '../../components/navigation-button';
 
 export default function (props: any): React.JSX.Element {
-  const { currentOrg } = useAuth()
+  const { currentOrg, orderInfoVisibility, saveOrderInfoVisibility } = useAuth()
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
 
@@ -29,11 +29,11 @@ export default function (props: any): React.JSX.Element {
       title: `(${total}) Vendas`,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
-          <NavigationButton icon='check' />
+          <NavigationButton onPress={saveOrderInfoVisibility} icon={orderInfoVisibility ? 'eye-off-outline' : 'eye-outline'} />
         </View>
       )
     })
-  }, [total])
+  }, [total, orderInfoVisibility])
 
   return (
     <View style={styles.mainContainer}>
@@ -45,7 +45,7 @@ export default function (props: any): React.JSX.Element {
       </View>
       <FlatList style={styles.ordersContainer}
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
-        renderItem={({ item }) => (<Card item={item} />)}
+        renderItem={({ item }) => (<Card visibility={orderInfoVisibility} item={item} />)}
         onEndReached={() => {
           if (hasNextPage) {
             fetchNextPage()

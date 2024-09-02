@@ -7,13 +7,16 @@ import {
   Text,
   Platform,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  ActivityIndicator,
+  Image,
+  Dimensions
 } from 'react-native';
 import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
 
 function App(props: any): React.JSX.Element {
-  const { login, loggedIn } = useAuth()
+  const { login, loggedIn, loading } = useAuth()
 
   const onSignIn = async () => {
     try {
@@ -31,54 +34,66 @@ function App(props: any): React.JSX.Element {
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
-      <StatusBar barStyle={'light-content'} />
-      <ScrollView
-        contentContainerStyle={styles.mainContainer}
-        contentInsetAdjustmentBehavior="automatic">
-        <View style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={styles.logoText}>MELITRICS</Text>
-          <Text style={{ color: '#fff' }}>Gestão Inteligente de Marketplaces</Text>
-        </View>
-        <View>
-          <TouchableOpacity style={styles.submit} onPress={onSignIn}>
-            <Text style={styles.submitText}>acessar minha conta</Text>
+      <StatusBar barStyle={'dark-content'} />
+      <View style={{ alignItems: 'center' }}>
+        <Text style={styles.logoText}>MELITRICS</Text>
+        <Text style={{ color: Colors.Main }}>Gestão Inteligente de qualquer lugar</Text>
+      </View>
+      <View style={{ justifyContent: 'center', height: Dimensions.get('screen').height * 0.5 }}>
+        <Image source={require('../assets/images/banner.png')} style={{ width: 200, resizeMode: 'contain' }} />
+      </View>
+      <View>
+        {loading && <ActivityIndicator size="large" color={Colors.Main} />}
+        {!loading && !loggedIn && <><TouchableOpacity style={styles.signButton} onPress={onSignIn}>
+          <Text style={styles.submitText}>acessar minha conta</Text>
+        </TouchableOpacity>
+          <TouchableOpacity style={styles.signUpButton} onPress={onSignIn}>
+            <Text style={styles.signUpText}>cadastre-se grátis</Text>
           </TouchableOpacity>
-        </View>
-      </ScrollView>
+        </>}
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   safeAreaContainer: {
-    backgroundColor: Colors.Main,
-    flex: 1,
-    paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) * 1.5 : 0,
-  },
-  mainContainer: {
     flex: 1,
     alignItems: 'center',
-    flexDirection: 'column'
+    backgroundColor: '#fff',
+    paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) * 1.5 : 0,
   },
   logoText: {
     marginTop: 80,
     fontSize: 30,
-    color: '#FFF',
+    color: Colors.Main,
     fontWeight: 'bold',
   },
-  submit: {
-    width: 180,
+  signButton: {
+    width: Dimensions.get('screen').width * .8,
     height: 50,
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.Main,
+    borderColor: Colors.Main,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#fff',
-    marginBottom: 80,
+  },
+  signUpButton: {
+    width: Dimensions.get('screen').width * .8,
+    height: 50,
+    marginTop: 30,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    borderRadius: 10,
+
+  },
+  signUpText: {
+    color: Colors.Main,
+    textAlign: 'center',
   },
   submitText: {
-    color: Colors.Main,
+    color: '#FFF',
     textAlign: 'center',
   }
 });
