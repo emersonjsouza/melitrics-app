@@ -22,7 +22,7 @@ type IAuthContext = {
   adInfoVisibility: boolean;
   orderInfoVisibility: boolean;
   isFetchingOrganizations: boolean;
-  organizations: Organization[]
+  organizations: Organization[] | undefined
   userData: any;
   currentOrg: string
 }
@@ -35,7 +35,7 @@ const AuthContextProvider = (props: any) => {
   const [adInfoVisibility, setAdInfoVisibility] = useState<boolean>(true);
   const [orderInfoVisibility, setOrderInfoVisibility] = useState<boolean>(true);
   const [userData, setUserData] = useState<any>(null);
-  const { organizations, isFetching: isFetchingOrganizations } = useOrganizations({ userID: userData?.userID, enabled: !!userData })
+  const { organizations, isLoading: isFetchingOrganizations } = useOrganizations({ userID: userData?.sub, enabled: !!userData })
 
   const [currentOrg, setCurrentOrg] = useState<string>('cb2a3984-1d36-4435-94b0-32c5cbc2b8fc');
 
@@ -182,7 +182,7 @@ const AuthContextProvider = (props: any) => {
     saveAdInfoVisibility,
     saveOrderInfoVisibility,
     isFetchingOrganizations,
-    organizations: organizations || [],
+    organizations: organizations,
   };
 
   return (

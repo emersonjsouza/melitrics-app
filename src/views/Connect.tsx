@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -10,19 +10,21 @@ import {
   Dimensions,
   Linking,
 } from 'react-native';
-import SInfo from "react-native-sensitive-info";
 import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
 import settings from '../settings';
 
-
 function App({ navigation, route }: any): React.JSX.Element {
-  const { userData } = useAuth()
-
-  console.log('props==>', JSON.stringify(route.params))
+  const { logout } = useAuth()
 
   const onConnect = () => {
     Linking.openURL(Platform.OS == 'ios' ? settings.MELI_CONNECT_IOS : settings.MELI_CONNECT_ANDROID)
+  }
+
+  const onSignOut = () => {
+    logout(() => {
+      navigation.navigate('App')
+    })
   }
 
   return (
@@ -30,7 +32,6 @@ function App({ navigation, route }: any): React.JSX.Element {
       <StatusBar barStyle={'dark-content'} />
       <View style={{ alignItems: 'center' }}>
         <Text style={styles.logoText}>MELITRICS</Text>
-
       </View>
       <View style={{ marginTop: Dimensions.get('screen').height * 0.2, flex: 1, justifyContent: 'space-between' }}>
         <View>
@@ -41,10 +42,9 @@ function App({ navigation, route }: any): React.JSX.Element {
             <Text style={styles.submitText}>Conectar ao Mercado Livre</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPressIn={() => navigation.navigate('App')} style={styles.signUpButton}>
+        <TouchableOpacity onPressIn={onSignOut} style={styles.signUpButton}>
           <Text style={styles.signUpText}>desconectar minha conta</Text>
         </TouchableOpacity>
-
       </View>
     </KeyboardAvoidingView >
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -10,7 +10,6 @@ import {
   ActivityIndicator,
   Image,
   Dimensions,
-  Linking
 } from 'react-native';
 import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
@@ -27,14 +26,13 @@ function App(props: any): React.JSX.Element {
   }
 
   useEffect(() => {
-    if (loggedIn && !isFetchingOrganizations) {
+    if (loggedIn && organizations) {
       if (organizations.length == 0) {
         props.navigation.navigate('connect')
       } else {
         props.navigation.navigate('Home')
       }
     }
-
   }, [loggedIn, organizations, isFetchingOrganizations])
 
   return (
