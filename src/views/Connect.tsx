@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -10,6 +10,7 @@ import {
   Dimensions,
   Linking,
 } from 'react-native';
+import SInfo from "react-native-sensitive-info";
 import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
 import settings from '../settings';

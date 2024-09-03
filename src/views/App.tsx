@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
-  ScrollView,
   StatusBar,
   StyleSheet,
   Text,
@@ -30,11 +29,12 @@ function App(props: any): React.JSX.Element {
   useEffect(() => {
     if (loggedIn && !isFetchingOrganizations) {
       if (organizations.length == 0) {
-        props.navigation.navigate('Connect')
+        props.navigation.navigate('connect')
       } else {
         props.navigation.navigate('Home')
       }
     }
+
   }, [loggedIn, organizations, isFetchingOrganizations])
 
   return (

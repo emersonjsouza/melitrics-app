@@ -1,15 +1,15 @@
-import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
-import { Platform, StatusBar } from 'react-native'
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import TabNavigator from './tabs';
-import { Colors } from './assets/color';
 import App from './views/App';
 import Register from './views/Register';
 import Connect from './views/Connect';
 import { AuthContextProvider } from './context/AuthContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Platform, StatusBar } from 'react-native';
+import { Colors } from './assets/color';
 
-const Stack = createStackNavigator();
+const Stack = createNativeStackNavigator();
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -21,10 +21,10 @@ const queryClient = new QueryClient({
 
 export default function () {
   const linking = {
-    prefixes: ['https://melitrics.com', 'org.reactjs.native.example.melitricsapp://'],
+    prefixes: ['https://melitrics.com', 'org.reactjs.native.example.melitricsapp://', 'melitricsapp://melitricsapp'],
     config: {
       screens: {
-        Connect: 'connect/:code',
+        connect: 'connect/:code',
       },
     },
   };
@@ -34,10 +34,10 @@ export default function () {
       <AuthContextProvider>
         <NavigationContainer linking={linking}>
           <StatusBar translucent barStyle="light-content" backgroundColor={Platform.OS == 'ios' ? 'transparent' : Colors.Main} />
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName='App'>
             <Stack.Screen name="App" component={App} options={{ headerShown: false }} />
             <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
-            <Stack.Screen name="Connect" component={Connect} options={{ headerShown: false }} />
+            <Stack.Screen name="connect" component={Connect} options={{ headerShown: false }} />
             <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
           </Stack.Navigator>
         </NavigationContainer>
