@@ -24,7 +24,7 @@ type IAuthContext = {
   isFetchingOrganizations: boolean;
   organizations: Organization[] | undefined
   userData: any;
-  currentOrg: string
+  currentOrg: Organization | undefined
 }
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
@@ -37,7 +37,7 @@ const AuthContextProvider = (props: any) => {
   const [userData, setUserData] = useState<any>(null);
   const { organizations, isLoading: isFetchingOrganizations } = useOrganizations({ userID: userData?.sub, enabled: !!userData })
 
-  const [currentOrg, setCurrentOrg] = useState<string>('cb2a3984-1d36-4435-94b0-32c5cbc2b8fc');
+  //const [currentOrg, setCurrentOrg] = useState<string>('cb2a3984-1d36-4435-94b0-32c5cbc2b8fc');
 
   const getUserData = async (access_token?: any) => {
     const accessToken = access_token
@@ -172,7 +172,7 @@ const AuthContextProvider = (props: any) => {
   const value: IAuthContext = {
     loading,
     loggedIn,
-    currentOrg,
+    currentOrg: organizations && organizations.length > 0 ? organizations[0] : undefined,
     userData,
     adInfoVisibility,
     orderInfoVisibility,

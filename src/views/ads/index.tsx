@@ -17,7 +17,7 @@ export default function (props: any): React.JSX.Element {
   const { currentOrg, adInfoVisibility, saveAdInfoVisibility } = useAuth()
 
   const { data, total, isFetching, fetchNextPage, hasNextPage } = useAds({
-    organizationID: currentOrg
+    organizationID: currentOrg?.organization_id || '',
   })
 
   useLayoutEffect(() => {

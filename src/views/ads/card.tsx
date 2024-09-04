@@ -15,7 +15,6 @@ type CardProps = PropsWithChildren<{
 }>
 
 export default function ({ item, visibility }: CardProps): React.JSX.Element {
-
   const ad_status = {
     'paused': 'Pausado',
     'active': 'Ativo',
@@ -36,9 +35,8 @@ export default function ({ item, visibility }: CardProps): React.JSX.Element {
     <View
       style={{ borderStartColor: statusColor, ...styles.cardContainer }}>
       <View style={{ flexDirection: 'row', }}>
-        {visibility && <Image style={{ height: 40, width: 40, padding: 10, borderRadius: 10 }}
+        <Image style={{ height: 40, width: 40, padding: 10, borderRadius: 10 }} blurRadius={!visibility ? 10 : 0}
           source={{ uri: item.thumbnail_link.replace('http://', 'https://') }} />
-        }
         <View style={{ marginLeft: 20, flex: 1 }}>
           {visibility && <Text style={styles.cardTitle}>{item.sku.toUpperCase()}{item.sku && ' - '}{item.title}</Text>}
           {!visibility && <Text style={styles.cardTitle}>{item.external_id}</Text>}

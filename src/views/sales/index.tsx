@@ -19,7 +19,7 @@ export default function (props: any): React.JSX.Element {
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
 
   const { data, total, isFetching, fetchNextPage, hasNextPage } = useOrders({
-    organizationID: currentOrg,
+    organizationID: currentOrg?.organization_id || '',
     start: startDate,
     end: endDate
   })

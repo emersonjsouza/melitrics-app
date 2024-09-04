@@ -26,8 +26,8 @@ function App(props: any): React.JSX.Element {
   }
 
   useEffect(() => {
-    if (loggedIn && organizations) {
-      if (organizations.length == 0) {
+    if (loggedIn && organizations != undefined) {
+      if (organizations.length == 0 || organizations.findIndex(x => x.has_channel) == -1) {
         props.navigation.navigate('connect')
       } else {
         props.navigation.navigate('Home')

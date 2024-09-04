@@ -2,6 +2,7 @@ import React, { PropsWithChildren, forwardRef, useImperativeHandle } from 'react
 import {
   ActivityIndicator,
   Dimensions,
+  Text,
   View
 } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
@@ -27,7 +28,8 @@ export default forwardRef(({ organizationID }: Props, ref) => {
 
   return (<View style={{ alignItems: 'center', height: 250 }}>
     {isFetching && <ActivityIndicator style={{ marginTop: 20 }} size="small" color="#999" />}
-    {!isFetching && <LineChart
+    {!isFetching && monthDataSet.length == 0 && <Text style={{color: '#ccc'}}>nenhum informação disponível</Text>}
+    {!isFetching && monthDataSet.length > 0 && <LineChart
       data={{
         labels: monthDataSet,
         datasets: [

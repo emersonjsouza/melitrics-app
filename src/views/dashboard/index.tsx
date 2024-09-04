@@ -30,7 +30,7 @@ export default function (props: any): React.JSX.Element {
     isFetching,
     refetch: refreshIndicators,
     data: indicators
-  } = useIndicators({ organizationID: currentOrg, start: startDate, end: endDate })
+  } = useIndicators({ organizationID: currentOrg?.organization_id || '', start: startDate, end: endDate })
 
   useEffect(() => {
     if (props.route.params?.dateRange) {
@@ -58,7 +58,7 @@ export default function (props: any): React.JSX.Element {
         <View style={styles.headerContainer}>
           <View style={{ flexDirection: 'row' }}>
             <View style={styles.profileContainer}>
-              <Text style={styles.profileText}>DM</Text>
+              <Text style={styles.profileText}>{currentOrg?.name.substring(0, 2).toUpperCase()}</Text>
             </View>
             <View style={styles.greetingContainer}>
               <Text style={styles.greetingSubText}>Seja bem vindo,</Text>
@@ -104,9 +104,9 @@ export default function (props: any): React.JSX.Element {
           marginLeft: 20,
         }}>Minhas Operações</Text>
 
-        <Operations ref={operationRef} organizationID={currentOrg} startDate={startDate} endDate={endDate} />
+        <Operations ref={operationRef} organizationID={currentOrg?.organization_id || ''} startDate={startDate} endDate={endDate} />
 
-        <Report ref={reportRef} organizationID={currentOrg} />
+        <Report ref={reportRef} organizationID={currentOrg?.organization_id || ''} />
       </ScrollView>
     </View>
   )

@@ -1,4 +1,4 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import TabNavigator from './tabs';
 import App from './views/App';
@@ -8,8 +8,9 @@ import { AuthContextProvider } from './context/AuthContext';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Platform, StatusBar } from 'react-native';
 import { Colors } from './assets/color';
+import { createStackNavigator } from '@react-navigation/stack';
 
-const Stack = createNativeStackNavigator();
+const Stack = createStackNavigator();
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

@@ -27,7 +27,7 @@ export default function ({ item, visibility }: CardProps): React.JSX.Element {
     <View
       style={{ borderStartColor: statusColor, ...styles.cardContainer }}>
       <View>
-        {visibility  && <Text style={styles.cardTitle}>{item.sku} - {item.title}</Text>}
+        {visibility  && <Text style={styles.cardTitle}>{item.sku.toUpperCase()} - {item.title}</Text>}
         {!visibility && <Text style={styles.cardTitle}>{item.external_id}</Text>}
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
           <Text style={{ fontSize: 20, color: '#9C9C9C' }}>R$ {item.net_income.toFixed(2)}</Text>

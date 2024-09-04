@@ -2,6 +2,7 @@
 export interface Organization {
   organization_id: string
   type: string
+  has_channel: boolean
   name: string
 }
 
@@ -84,10 +85,25 @@ export interface UserRegister {
   company_name: string
 }
 
+export interface ChannelRegister {
+  organization_id: string
+  marketplace_code: string
+  external_id: string
+  access_token: string
+  refresh_token: string
+}
+
 export interface APIError extends Error {
   response?: {
     data?: {
       error: string
     }
   }
+}
+
+export interface MeliToken {
+  access_token: string
+  refresh_token: string
+  user_id: number
+  expires_in: number
 }

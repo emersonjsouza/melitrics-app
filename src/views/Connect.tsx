@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -9,16 +9,22 @@ import {
   TouchableOpacity,
   Dimensions,
   Linking,
+  ActivityIndicator,
 } from 'react-native';
 import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
 import settings from '../settings';
+import { useMeliToken } from '../hooks/useMeliToken';
+import { useChannel } from '../hooks/useChannel';
 
 function App({ navigation, route }: any): React.JSX.Element {
-  const { logout } = useAuth()
+  const { logout, currentOrg } = useAuth()
+  const { mutateAsync: getTokenMutate, isPending: isTookenPending } = useMeliToken()
+  const { mutateAsync: channelMutate, isPending: isChannelPending } = useChannel()
 
+  const callbackURL = Platform.OS == 'ios' ? settings.MELI_CONNECT_IOS : settings.MELI_CONNECT_ANDROID
   const onConnect = () => {
-    Linking.openURL(Platform.OS == 'ios' ? settings.MELI_CONNECT_IOS : settings.MELI_CONNECT_ANDROID)
+    Linking.openURL(settings.MELI_CONNECT + callbackURL)
   }
 
   const onSignOut = () => {
@@ -26,6 +32,31 @@ function App({ navigation, route }: any): React.JSX.Element {
       navigation.navigate('App')
     })
   }
+
+  useEffect(() => {
+    (async () => {
+      let code: string = route?.params?.code;
+      if (code) {
+        if (Platform.OS == "android" && code.startsWith('1')) {
+          code = code.substring(1)
+        }
+
+        const resp = await getTokenMutate({ code: code, callbackUrl: callbackURL })
+
+        if (resp.access_token) {
+          await channelMutate({
+            access_token: resp.access_token,
+            refresh_token: resp.refresh_token,
+            organization_id: currentOrg?.organization_id || '',
+            external_id: resp.user_id.toString(),
+            marketplace_code: 'mlb',
+          })
+
+          navigation.navigate('Home')
+        }
+      }
+    })()
+  }, [route?.params?.code])
 
   return (
     <KeyboardAvoidingView style={styles.safeAreaContainer}>
@@ -39,7 +70,8 @@ function App({ navigation, route }: any): React.JSX.Element {
           <Text style={{ color: '#718093', flexWrap: 'wrap', width: Dimensions.get('window').width * .8, textAlign: 'left' }}>Você ainda não possui nenhuma conta do Mercado Livre conectado</Text>
 
           <TouchableOpacity style={styles.signButton} onPress={onConnect}>
-            <Text style={styles.submitText}>Conectar ao Mercado Livre</Text>
+            {!isTookenPending && !isChannelPending && <Text style={styles.submitText}>Conectar ao Mercado Livre</Text>}
+            {isTookenPending || isChannelPending && <ActivityIndicator size="large" color={'#FFF'} />}
           </TouchableOpacity>
         </View>
         <TouchableOpacity onPressIn={onSignOut} style={styles.signUpButton}>
