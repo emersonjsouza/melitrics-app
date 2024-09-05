@@ -13,13 +13,16 @@ import ContentLoader, { Rect } from 'react-content-loader/native'
 import { useIndicators } from '../../hooks/useIndicators';
 
 import { useAuth } from '../../context/AuthContext';
-import { format } from 'date-fns'
+import { format, subDays } from 'date-fns'
 import Operations from './operations';
 import Report from './report';
 import Indicators from './indicators';
+import RNPickerSelect from "react-native-picker-select";
+import { formatToBRL } from '../../utils';
 
 export default function (props: any): React.JSX.Element {
   const { userData, currentOrg } = useAuth()
+  const [dateSelect, setDateSelect] = useState('0')
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
 
@@ -75,7 +78,7 @@ export default function (props: any): React.JSX.Element {
           <View style={styles.profitContainer}>
             <View>
               <Text style={{ fontFamily: 'Robo-Light' }}>Seu Faturamento</Text>
-              {!isFetching && <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2 }}>R$ {indicators?.revenue.toFixed(2)}</Text>}
+              {!isFetching && <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2 }}>{formatToBRL(indicators?.revenue)}</Text>}
               {isFetching && <ContentLoader
                 height={20}
                 speed={1}
@@ -85,12 +88,36 @@ export default function (props: any): React.JSX.Element {
                 <Rect x="0" y="40" rx="3" ry="10" width="380" height="500" />
               </ContentLoader>}
             </View>
-            <TouchableOpacity onPress={() => performFilter()}>
-              <View style={{ flexDirection: 'row' }}>
-                <Text style={{ fontFamily: 'Robo-Light', color: '#222222' }}>Hoje</Text>
-                <MaterialCommunityIcons name={'menu-down'} color={'#222222'} size={20} />
-              </View>
-            </TouchableOpacity>
+            <View style={{ flexDirection: 'row' }}>
+              <RNPickerSelect
+                key={dateSelect}
+                value={dateSelect}
+                placeholder={{ label: 'selecione um período', value: '' }}
+                doneText='Filtrar'
+                onValueChange={(value) => {
+                  setDateSelect(value);
+                  if (value) {
+                    let startDate = subDays(new Date(), parseInt(value))
+                    setStartDate(format(startDate, 'yyyy-MM-dd'))
+
+                    if (value == '1') {
+                      setEndDate(format(startDate, 'yyyy-MM-dd'))
+                    }
+                    else {
+                      setEndDate(format(new Date(), 'yyyy-MM-dd'))
+                    }
+                  }
+                }}
+                items={[
+                  { label: 'Hoje', value: '0' },
+                  { label: 'Ontem', value: '1' },
+                  { label: 'Últimos 7 dias', value: '6' },
+                  { label: 'Últimos 15 dias', value: '14' },
+                  { label: 'Últimos 30 dias', value: '29' },
+                ]}
+              />
+              <MaterialCommunityIcons name={'menu-down'} color={'#222222'} size={20} />
+            </View>
           </View>
         </View>
 
@@ -107,8 +134,8 @@ export default function (props: any): React.JSX.Element {
         <Operations ref={operationRef} organizationID={currentOrg?.organization_id || ''} startDate={startDate} endDate={endDate} />
 
         <Report ref={reportRef} organizationID={currentOrg?.organization_id || ''} />
-      </ScrollView>
-    </View>
+      </ScrollView >
+    </View >
   )
 }
 

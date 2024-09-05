@@ -15,6 +15,7 @@ import {
 import axios from 'axios';
 
 export const getIndicators = async (organizationID: string, start: string, end: string) => {
+  console.log(`start=${start} end=${end}`)
   const resp = await server.get<Indicator>(`/v1/indicators/${organizationID}?start_date=${start}&end_date=${end}`)
   return resp.data
 }
@@ -34,8 +35,9 @@ export const listAds = async (organizationID: string, offset: number) => {
   return resp.data
 }
 
-export const listOrders = async (organizationID: string, start: string, end: string, offset: number) => {
-  const resp = await server.get<List<Order>>(`/v1/orders/${organizationID}?start_date=${start}&end_date=${end}&offset=${offset}&limit=20`)
+export const listOrders = async (organizationID: string, status: string, shippingType: string, start: string, end: string, offset: number) => {
+  let request = `/v1/orders/${organizationID}?start_date=${start}&end_date=${end}&offset=${offset}&limit=20&status=${status}&shipping_type=${shippingType}`
+  const resp = await server.get<List<Order>>(request)
   return resp.data
 }
 

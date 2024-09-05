@@ -11,29 +11,29 @@ export interface User {
 }
 
 export interface Indicator {
-  revenue: Number
-  cost: Number
-  tax: Number
-  shipping_cost: Number
-  sales_fee: Number
-  ticket_ratio: Number
-  net_income: Number
-  amount_unit_sold: Number
-  amount_sold: Number
-  revenue_canceled: Number
-  amount_canceled: Number
+  revenue: number
+  cost: number
+  tax: number
+  shipping_cost: number
+  sales_fee: number
+  ticket_ratio: number
+  net_income: number
+  amount_unit_sold: number
+  amount_sold: number
+  revenue_canceled: number
+  amount_canceled: number
 }
 
 export interface IndicatorShippingType {
   shipping_type: "fulfillment" | "xd_drop_off" | "self_service"
-  revenue: Number
-  amount_unit_sold: Number
-  amount_sold: Number
+  revenue: number
+  amount_unit_sold: number
+  amount_sold: number
 }
 
 export interface IndicatorMonth {
-  month: Number
-  revenue: Number
+  month: number
+  revenue: number
 }
 
 export interface List<T> {

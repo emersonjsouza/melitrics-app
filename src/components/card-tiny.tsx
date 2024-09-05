@@ -4,11 +4,12 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
+import { formatToBRL } from '../utils';
 
 type CardProps = PropsWithChildren<{
   title: string,
-  amount: Number,
-  amount_sold?: Number,
+  amount: number,
+  amount_sold?: number,
 }>
 
 export default function (props: CardProps): React.JSX.Element {
@@ -17,7 +18,7 @@ export default function (props: CardProps): React.JSX.Element {
       style={styles.cardContainer}>
       <View>
         <Text style={styles.cardTitle}>{props.title}</Text>
-        <Text style={styles.cardTotalAmount}>R$ {props.amount.toFixed(2)}</Text>
+        <Text style={styles.cardTotalAmount}>{formatToBRL(props.amount)}</Text>
       </View>
       <Text style={styles.cardUnitText}>{props.amount_sold?.toString()} vendas</Text>
     </View>

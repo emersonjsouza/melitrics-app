@@ -5,12 +5,13 @@ import {
   Text,
   ActivityIndicator
 } from 'react-native';
+import { formatToBRL } from '../utils';
 
 type CardProps = PropsWithChildren<{
   title: string,
-  amount?: Number,
-  amountSub?: Number,
-  amountInPercent?: Number,
+  amount?: number,
+  amountSub?: number,
+  amountInPercent?: number,
   backgroundColor: string
   isLoading: boolean
 }>
@@ -21,9 +22,9 @@ export default function (props: CardProps): React.JSX.Element {
       style={{ ...styles.cardContainer, backgroundColor: props.backgroundColor }}>
       <Text style={styles.cardTitle}>{props.title}</Text>
       {!props.isLoading && <>
-        <Text style={styles.cardTotalAmount}>R$ {props.amount?.toFixed(2)}</Text>
+        <Text style={styles.cardTotalAmount}>{formatToBRL(props.amount)}</Text>
         {(props.amountInPercent as number) > 0 && <Text style={styles.cardUnitText}>{props.amountInPercent?.toFixed(2)} %</Text>}
-        {(props.amountSub as number) > 0 && <Text style={styles.cardUnitText}>R$ {props.amountSub?.toFixed(2)}</Text>}
+        {(props.amountSub as number) > 0 && <Text style={styles.cardUnitText}>{formatToBRL(props.amountSub)}</Text>}
       </>}
 
       {props.isLoading && <ActivityIndicator style={{ marginTop: 20 }} size="small" color="#999" />}

@@ -4,13 +4,13 @@ import {
   FlatList,
   StatusBar,
   StyleSheet,
-  Text,
   View
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import Card from './card';
 import NavigationButton from '../../components/navigation-button';
 import { useAds } from '../../hooks/useAds';
+import RNPickerSelect from "react-native-picker-select";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function (props: any): React.JSX.Element {
@@ -34,10 +34,53 @@ export default function (props: any): React.JSX.Element {
   return (
     <View style={styles.mainContainer}>
       <StatusBar translucent barStyle="light-content" backgroundColor={'#7994F5'} />
-      <View style={{ flexDirection: 'row', padding: 10, marginHorizontal: 10, marginVertical: 10, borderRadius: 10, backgroundColor: 'orange' }}>
-        <MaterialCommunityIcons name='alert-circle-outline' color={'#FFF'} size={25} />
-        <Text style={{ color: '#fff', marginHorizontal: 10, paddingRight: 10 }}>
-          você possui (8) produtos com estoque próximo de acabar, clique aqui para visualizar </Text>
+      <View style={styles.headerContainer}>
+        <View style={styles.filterButton}>
+          <RNPickerSelect
+            placeholder={{ label: 'Situação', value: '' }}
+            doneText='Filtrar'
+            style={{ placeholder: { color: '#FFF' }, inputAndroid: { color: '#FFF' }, inputIOS: { color: '#FFF' } }}
+            onValueChange={(value) => { }}
+            items={[
+              { label: 'Todos', value: '' },
+              { label: 'Ativo', value: '1' },
+              { label: 'Inativo', value: '2' },
+            ]}
+          />
+          <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
+        </View>
+        <View style={styles.filterButton}>
+          <RNPickerSelect
+            placeholder={{ label: 'Estoque', value: '' }}
+            doneText='Filtrar'
+            style={{ placeholder: { color: '#FFF' }, inputAndroid: { color: '#FFF' }, inputIOS: { color: '#FFF' } }}
+            onValueChange={(value) => { }}
+            items={[
+              { label: 'Com estoque', value: '' },
+              { label: 'Sem estoque', value: '1' },
+              { label: 'Estoque no FULL', value: '2' },
+              { label: 'Com estoque mínimo', value: '3' },
+              { label: 'Com estoque alto', value: '4' },
+            ]}
+          />
+          <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
+        </View>
+
+        <View style={styles.filterButton}>
+          <RNPickerSelect
+            placeholder={{ label: 'Margem', value: '' }}
+            doneText='Filtrar'
+            style={{ placeholder: { color: '#FFF' }, inputAndroid: { color: '#FFF' }, inputIOS: { color: '#FFF' } }}
+            onValueChange={(value) => { }}
+            items={[
+              { label: 'Negativa', value: '0' },
+              { label: 'Até 5%', value: '1' },
+              { label: 'de 5% à 10%', value: '2' },
+              { label: 'Acima de 10%', value: '3' },
+            ]}
+          />
+          <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
+        </View>
       </View>
       <FlatList style={styles.adsContainer}
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
@@ -80,5 +123,14 @@ const styles = StyleSheet.create({
   },
   adsContainer: {
     paddingTop: 10
+  },
+  filterButton: {
+    flexDirection: 'row',
+    borderRadius: 5,
+    padding: 10
+  },
+  filterButtonText: {
+    fontFamily: 'Robo-Light',
+    color: '#FFF'
   }
 });

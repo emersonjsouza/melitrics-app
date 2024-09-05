@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { Order } from '../../services/types';
 import { format, parseISO } from 'date-fns';
-import { shipping_type } from '../../utils';
+import { formatToBRL, shipping_type } from '../../utils';
 
 type CardProps = PropsWithChildren<{
   item: Order
@@ -30,7 +30,7 @@ export default function ({ item, visibility }: CardProps): React.JSX.Element {
         {visibility  && <Text style={styles.cardTitle}>{item.sku.toUpperCase()} - {item.title}</Text>}
         {!visibility && <Text style={styles.cardTitle}>{item.external_id}</Text>}
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
-          <Text style={{ fontSize: 20, color: '#9C9C9C' }}>R$ {item.net_income.toFixed(2)}</Text>
+          <Text style={{ fontSize: 20, color: '#9C9C9C' }}>{formatToBRL(item.net_income)}</Text>
           <Text style={{ fontSize: 12, color: '#03933B', marginLeft: 2, }}>{((item.net_income / item.revenue) * 100).toFixed(2)}%</Text>
         </View>
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
