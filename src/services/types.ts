@@ -47,6 +47,7 @@ export interface Ad {
   sku: string
   title: string
   price: number
+  net_income: number
   base_price: number
   health: number
   logistic_type: "fulfillment" | "xd_drop_off" | "self_service"
@@ -54,6 +55,8 @@ export interface Ad {
   thumbnail_link: string
   sold_quantity: number
   available_quantity: number
+  catalog_enabled: boolean
+  flex_enabled: boolean
   status: 'active' | 'paused'
   sub_status: 'out_of_stock' | 'deleted'
   created_at: string

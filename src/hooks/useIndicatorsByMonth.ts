@@ -9,6 +9,7 @@ export const useIndicatorsByMonth = (query: { organizationID: string }) => {
   });
 
   const formatRevenue = (revenue: number) => {
+    if (revenue == 0) return 0
     const magnitude = Math.floor(Math.log10(revenue) / 3);
 
     const scaledRevenue = (revenue / Math.pow(1000, magnitude))
@@ -41,7 +42,7 @@ export const useIndicatorsByMonth = (query: { organizationID: string }) => {
     for (let index = latestMonth; index > 0; index--) {
       const item = data?.find(x => x.month == index)
       monthDataSet.push(month_dict[index as keyof typeof month_dict])
-      monthRevenueDataSet.push(formatRevenue(item?.revenue as number))
+      monthRevenueDataSet.push(formatRevenue(item?.revenue || 0))
       if (maxMonth > 1) {
         maxMonth -= 1
       }
