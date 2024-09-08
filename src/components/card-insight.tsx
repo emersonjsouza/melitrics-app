@@ -13,7 +13,7 @@ type CardProps = PropsWithChildren<{
   amountSub?: number,
   amountInPercent?: number,
   backgroundColor: string
-  isLoading: boolean
+  isLoading?: boolean
 }>
 
 export default function (props: CardProps): React.JSX.Element {
@@ -34,7 +34,7 @@ export default function (props: CardProps): React.JSX.Element {
 
 const styles = StyleSheet.create({
   cardContainer: {
-    marginRight: 20,
+    marginRight: 10,
     borderRadius: 20,
     alignItems: 'center',
     width: 140, height: 80, padding: 10

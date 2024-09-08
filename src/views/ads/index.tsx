@@ -12,11 +12,12 @@ import NavigationButton from '../../components/navigation-button';
 import { useAds } from '../../hooks/useAds';
 import RNPickerSelect from "react-native-picker-select";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function (props: any): React.JSX.Element {
   const { currentOrg, adInfoVisibility, saveAdInfoVisibility } = useAuth()
 
-  const { data, total, isFetching, fetchNextPage, hasNextPage } = useAds({
+  const { data, total, isFetching, fetchNextPage, hasNextPage, refetch } = useAds({
     organizationID: currentOrg?.organization_id || '',
   })
 
@@ -30,6 +31,12 @@ export default function (props: any): React.JSX.Element {
       )
     })
   }, [total, adInfoVisibility])
+
+  useFocusEffect(() => {
+    if (!isFetching) {
+      refetch()
+    }
+  })
 
   return (
     <View style={styles.mainContainer}>
@@ -84,7 +91,7 @@ export default function (props: any): React.JSX.Element {
       </View>
       <FlatList style={styles.adsContainer}
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
-        renderItem={({ item }) => (<Card visibility={adInfoVisibility} item={item} />)}
+        renderItem={({ item }) => (<Card visibility={adInfoVisibility} navigate={props.navigation.navigate} item={item} />)}
         onEndReached={() => {
           if (hasNextPage) {
             fetchNextPage()

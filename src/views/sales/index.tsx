@@ -13,6 +13,7 @@ import Card from './card';
 import NavigationButton from '../../components/navigation-button';
 import RNPickerSelect from "react-native-picker-select";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function (props: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
@@ -22,7 +23,7 @@ export default function (props: any): React.JSX.Element {
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
 
-  const { data, total, isFetching, fetchNextPage, hasNextPage } = useOrders({
+  const { data, total, isFetching, fetchNextPage, hasNextPage, refetch } = useOrders({
     organizationID: currentOrg?.organization_id || '',
     start: startDate,
     end: endDate,
@@ -45,6 +46,12 @@ export default function (props: any): React.JSX.Element {
       )
     })
   }, [total, orderInfoVisibility])
+
+  useFocusEffect(() => {
+    if (!isFetching) {
+      refetch()
+    }
+  })
 
   return (
     <View style={styles.mainContainer}>

@@ -28,9 +28,13 @@ function App(props: any): React.JSX.Element {
   useEffect(() => {
     if (loggedIn && organizations != undefined) {
       if (organizations.length == 0 || organizations.findIndex(x => x.has_channel) == -1) {
-        props.navigation.navigate('connect')
+        props.navigation.navigate('connect', {
+          merge: true,
+        })
       } else {
-        props.navigation.navigate('Home')
+        props.navigation.navigate('Home', {
+          merge: true,
+        })
       }
     }
   }, [loggedIn, organizations, isFetchingOrganizations])
@@ -46,7 +50,7 @@ function App(props: any): React.JSX.Element {
         <Image source={require('../assets/images/banner.png')} style={{ width: 200, resizeMode: 'contain' }} />
       </View>
       <View>
-        {loading && <ActivityIndicator size="large" color={Colors.Main} />}
+        {loading || isFetchingOrganizations && <ActivityIndicator size="large" color={Colors.Main} />}
         {!loading && !loggedIn && <><TouchableOpacity style={styles.signButton} onPress={onSignIn}>
           <Text style={styles.submitText}>acessar minha conta</Text>
         </TouchableOpacity>

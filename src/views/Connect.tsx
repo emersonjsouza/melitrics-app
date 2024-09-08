@@ -29,7 +29,7 @@ function App({ navigation, route }: any): React.JSX.Element {
 
   const onSignOut = () => {
     logout(() => {
-      navigation.navigate('App')
+      navigation.navigate('App', { merge: true })
     })
   }
 
@@ -52,7 +52,7 @@ function App({ navigation, route }: any): React.JSX.Element {
             marketplace_code: 'mlb',
           })
 
-          navigation.navigate('Home')
+          navigation.navigate('Home', { merge: true })
         }
       }
     })()

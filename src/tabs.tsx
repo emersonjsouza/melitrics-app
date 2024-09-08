@@ -7,6 +7,7 @@ import Filter from './views/dashboard/filter';
 import Sales from './views/sales/index';
 import Settings from './views/settings';
 import Ads from './views/ads';
+import AdDetail from './views/ads/detail';
 
 const screenSettings = {
   headerStyle: {
@@ -58,7 +59,10 @@ function AdsStackScreen() {
   return <AdsStack.Navigator>
     <AdsStack.Screen
       options={({ route }) => ({ ...screenSettings })}
-      name="Config" component={Ads} />
+      name="Ads" component={Ads} />
+    <AdsStack.Screen
+      options={({ route }) => ({ ...screenSettings })}
+      name="Ad" component={AdDetail} />
   </AdsStack.Navigator>
 }
 

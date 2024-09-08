@@ -2,7 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { listAds } from "../services";
 
 export const useAds = (query: { organizationID: string }) => {
-  const { data, isFetching, fetchNextPage, hasNextPage } = useInfiniteQuery({
+  const { data, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
     queryKey: ['ads'],
     queryFn: ({ pageParam }) => {
       return listAds(query.organizationID, pageParam)
@@ -22,5 +22,6 @@ export const useAds = (query: { organizationID: string }) => {
     isFetching,
     fetchNextPage,
     hasNextPage,
+    refetch,
   };
 };

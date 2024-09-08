@@ -49,6 +49,10 @@ export interface Ad {
   price: number
   net_income: number
   base_price: number
+  cost: number
+  sales_fee: number
+  shipping_cost: number
+  tax_rate: number
   health: number
   logistic_type: "fulfillment" | "xd_drop_off" | "self_service"
   permalink: string
