@@ -9,6 +9,7 @@ import {
   List,
   MeliToken,
   Order,
+  Tax,
   TaxRegister,
   User,
   UserRegister
@@ -64,6 +65,12 @@ export const createTax = async (payload: TaxRegister) => {
 export const getUser = async (userID: string) => {
   console.log('fetching get user')
   const resp = await server.get<User>(`/v1/users/${userID}`)
+  return resp.data
+}
+
+export const getTax = async (organizationID: string, taxID: string) => {
+  console.log('fetching get tax')
+  const resp = await server.get<Tax>(`/v1/taxes/${organizationID}/${taxID}`)
   return resp.data
 }
 

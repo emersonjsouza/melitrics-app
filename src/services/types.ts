@@ -43,7 +43,7 @@ export interface List<T> {
 
 export interface Ad {
   id: string
-  taxID: string
+  tax_id: string
   external_id: string
   sku: string
   title: string
@@ -108,6 +108,14 @@ export interface TaxRegister {
   tax_rate: number | null
   item_id?: string
 }
+
+export interface Tax {
+  id: string
+  sku: string
+  cost: number | null
+  tax_rate: number | null
+}
+
 
 export interface APIError extends Error {
   response?: {

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState } from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -13,15 +13,17 @@ import {
   Alert
 } from 'react-native';
 import { Colors } from '../../assets/color';
-import { useTax } from '../../hooks/useTax';
+import { useTaxMutation } from '../../hooks/useTaxMutation';
 import { APIError, TaxRegister } from '../../services/types';
 import { useAuth } from '../../context/AuthContext';
 import CurrencyInput from 'react-native-currency-input';
+import { useTax } from '../../hooks/useTax';
 
 export default function ({ route, navigation }: any): React.JSX.Element {
-  const itemID = route?.params.item_id as string
-
+  const { itemID, taxID } = route?.params
   const { currentOrg } = useAuth()
+  const { data, isFetching } = useTax({ organizationID: currentOrg?.organization_id, id: taxID })
+
   const [inputRequest, setInputRequest] = useState<TaxRegister>({
     organization_id: currentOrg?.organization_id || '',
     cost: 0,
@@ -29,7 +31,19 @@ export default function ({ route, navigation }: any): React.JSX.Element {
     item_id: itemID,
     tax_rate: 0
   });
-  const { mutateAsync, error, isPending } = useTax()
+
+  const { mutateAsync, isPending } = useTaxMutation()
+
+  useEffect(() => {
+    if (!isFetching && taxID) {
+      setInputRequest((value) => ({
+        ...value,
+        cost: data?.cost || null,
+        tax_rate: data?.tax_rate || null,
+        sku: data?.sku || ''
+      }))
+    }
+  }, [data])
 
   const onCreate = async () => {
     if (!inputRequest?.cost && !inputRequest?.tax_rate) {

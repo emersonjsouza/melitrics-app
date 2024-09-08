@@ -55,7 +55,7 @@ export default function ({ route, navigation }: any) {
 
   const pieData = [
     {
-      value: item.net_income,
+      value: item.net_income > 0 ? item.net_income : 0,
       color: '#B0FF6D',
       gradientCenterColor: '#B0FF6D',
       focused: true,
@@ -218,7 +218,7 @@ export default function ({ route, navigation }: any) {
           {renderLegendComponent()}
         </View>
       </View>
-      <TouchableOpacity onPress={() => navigation.navigate('Tax', { item_id: item.id, taxID: item.taxID })}>
+      <TouchableOpacity onPress={() => navigation.navigate('Tax', { itemID: item.id, taxID: item.tax_id })}>
         <View style={{ backgroundColor: Colors.Main, borderRadius: 10, margin: 10, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
           <MaterialCommunityIcons name={'plus'} color={'#FFF'} size={20} />
           {item.cost == 0 && <Text style={{ color: '#FFF' }}>ADICIONAR CUSTO E IMPOSTO</Text>}

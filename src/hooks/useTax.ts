@@ -1,13 +1,16 @@
-import { useMutation } from "@tanstack/react-query";
-import { TaxRegister } from "../services/types";
-import { createTax } from "../services";
+import { useQuery } from "@tanstack/react-query";
+import { getTax } from "../services";
 
-export const useTax = () => {
-  const { mutateAsync, isPending, error } = useMutation({
-    mutationFn: (payload: TaxRegister) => createTax(payload)
-  })
+export const useTax = (query: { organizationID: string | undefined, id: string | undefined }) => {
+  const { data, isFetching, refetch } = useQuery({
+    queryKey: [`indicators`, query.organizationID, query.id],
+    queryFn: () => getTax(query?.organizationID || '', query?.id || ''),
+    enabled: !!query.id && !!query.organizationID
+  });
 
   return {
-    mutateAsync, isPending, error
+    data: data,
+    isFetching,
+    refetch
   };
 };
