@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,7 +7,6 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-import { Ad } from '../../services/types';
 import { formatToBRL, shipping_type } from '../../utils';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -15,17 +14,26 @@ import { PieChart } from "react-native-gifted-charts";
 import { Colors } from '../../assets/color';
 import NavigationButton from '../../components/navigation-button';
 import { useAuth } from '../../context/AuthContext';
-
-type CardProps = PropsWithChildren<{
-  item: Ad
-  visibility?: boolean
-  navigate: any
-}>
+import { useAd } from '../../hooks/useAd';
 
 export default function ({ route, navigation }: any) {
-  const { adInfoVisibility, saveAdInfoVisibility } = useAuth()
+  const { adInfoVisibility, saveAdInfoVisibility, currentOrg } = useAuth()
+  const itemID = route?.params.itemID
 
-  const item = route?.params.item as Ad
+  const { item, isFetching, refetch } = useAd({
+    organizationID: currentOrg?.organization_id,
+    id: itemID
+  })
+
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if(route.params?.tax) {
+        refetch()
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, route.params?.tax]);
 
   const ad_status = {
     'paused': 'Pausado',
@@ -40,7 +48,7 @@ export default function ({ route, navigation }: any) {
 
   const statusColor = item.status == "active" ? '#03933B' : '#999'
 
-  const current_status = ad_status[item.status] == ad_status.active ? 'Ativo' : (ad_sub_status[item.sub_status] ?? ad_status[item.status])
+  const current_status = ad_status[item.status] == ad_status.active ? 'Ativo' : (ad_sub_status[item?.sub_status] ?? ad_status[item?.status])
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -136,7 +144,7 @@ export default function ({ route, navigation }: any) {
 
   return (<View style={styles.cardContainer}>
     <ScrollView>
-      <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
+      {!isFetching && <><View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
         {item.catalog_enabled && <View style={{ backgroundColor: '#00c1d4', width: 100, marginBottom: 5, borderBottomStartRadius: 10, borderBottomEndRadius: 10, height: 25, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ color: '#FFF', fontSize: 10, fontWeight: 600 }}>Catalogo</Text>
         </View>}
@@ -146,85 +154,85 @@ export default function ({ route, navigation }: any) {
         </View>}
       </View>
 
-      <View style={{ marginTop: 20 }}>
-        {/* <View style={{ justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+        <View style={{ marginTop: 20 }}>
+          {/* <View style={{ justifyContent: 'center', alignItems: 'center', padding: 10 }}>
           {adInfoVisibility && <Image style={{ height: 160, width: 160, borderRadius: 10, resizeMode: 'contain' }}
             source={{ uri: item.thumbnail_link.replace('http://', 'https://').replace('-I.', '-O.') }} />}
         </View> */}
-        <View style={{ flexDirection: 'row' }}>
-          <View style={{ marginLeft: 10, flex: 1 }}>
-            <Text style={styles.cardTitle}>{adInfoVisibility ? item.title : 'Informação indisponível'}</Text>
-            <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
-              <Text style={{ fontSize: 20, color: '#718093', textAlign: 'center' }}>{formatToBRL(item.price)}</Text>
-            </View>
-            <View style={{ marginTop: 10 }}>
-              <Text style={styles.cardSubText}>SKU: {adInfoVisibility ? item.sku.toUpperCase() : ''}{!item.sku && ' - '}</Text>
-              <Text style={styles.cardSubText}><MaterialCommunityIcons name={'barcode-scan'} color={'#c2c2c2'} size={12} /> {adInfoVisibility ? item.external_id : '-'}</Text>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={{ marginLeft: 10, flex: 1 }}>
+              <Text style={styles.cardTitle}>{adInfoVisibility ? item.title : 'Informação indisponível'}</Text>
+              <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#718093', textAlign: 'center' }}>{formatToBRL(item.price)}</Text>
+              </View>
+              <View style={{ marginTop: 10 }}>
+                <Text style={styles.cardSubText}>SKU: {adInfoVisibility ? item.sku.toUpperCase() : ''}{!item.sku && ' - '}</Text>
+                <Text style={styles.cardSubText}><MaterialCommunityIcons name={'barcode-scan'} color={'#c2c2c2'} size={12} /> {adInfoVisibility ? item.external_id : '-'}</Text>
+              </View>
             </View>
           </View>
         </View>
-      </View>
-      <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'flex-start' }}>
-        <View style={{ borderWidth: .5, borderColor: '#718093', marginRight: 10, padding: 5, borderRadius: 10 }}>
-          <Text style={{ fontSize: 10, color: '#718093' }}>{item.available_quantity} disponível</Text>
+        <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'flex-start' }}>
+          <View style={{ borderWidth: .5, borderColor: '#718093', marginRight: 10, padding: 5, borderRadius: 10 }}>
+            <Text style={{ fontSize: 10, color: '#718093' }}>{item.available_quantity} disponível</Text>
+          </View>
+          <View style={{ borderWidth: .5, borderColor: '#718093', marginRight: 10, padding: 5, borderRadius: 10 }}>
+            <Text style={{ fontSize: 10, color: '#718093' }}>{item.sold_quantity} vendas</Text>
+          </View>
+          {item.flex_enabled && <View style={{ flexDirection: 'row', backgroundColor: statusColor, justifyContent: 'center', alignItems: 'center', marginRight: 10, padding: 5, borderRadius: 10 }}>
+            <MaterialCommunityIcons name={'motorbike'} color={'#FFF'} size={10} />
+            <Text style={{ marginLeft: 2, fontSize: 10, color: '#FFF' }}>Flex</Text>
+          </View>}
+          <View style={{ borderWidth: .5, borderColor: statusColor, backgroundColor: statusColor, marginRight: 10, padding: 5, borderRadius: 10 }}>
+            <Text style={{ fontSize: 10, color: '#FFF' }}>{current_status}</Text>
+          </View>
         </View>
-        <View style={{ borderWidth: .5, borderColor: '#718093', marginRight: 10, padding: 5, borderRadius: 10 }}>
-          <Text style={{ fontSize: 10, color: '#718093' }}>{item.sold_quantity} vendas</Text>
-        </View>
-        {item.flex_enabled && <View style={{ flexDirection: 'row', backgroundColor: statusColor, justifyContent: 'center', alignItems: 'center', marginRight: 10, padding: 5, borderRadius: 10 }}>
-          <MaterialCommunityIcons name={'motorbike'} color={'#FFF'} size={10} />
-          <Text style={{ marginLeft: 2, fontSize: 10, color: '#FFF' }}>Flex</Text>
-        </View>}
-        <View style={{ borderWidth: .5, borderColor: statusColor, backgroundColor: statusColor, marginRight: 10, padding: 5, borderRadius: 10 }}>
-          <Text style={{ fontSize: 10, color: '#FFF' }}>{current_status}</Text>
-        </View>
-      </View>
-      <View
-        style={{
-          flex: 1,
-        }}>
         <View
           style={{
-            margin: 10,
-            padding: 16,
-            borderRadius: 20,
-            backgroundColor: Colors.Main,
+            flex: 1,
           }}>
-          <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
-            Desempenho do Anúncio
-          </Text>
-          <View style={{ padding: 20, alignItems: 'center' }}>
-            <PieChart
-              data={pieData}
-              donut
-              showGradient
-              sectionAutoFocus
-              radius={100}
-              innerRadius={60}
-              innerCircleColor={Colors.Main}
-              centerLabelComponent={() => {
-                return (
-                  <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                    <Text
-                      style={{ fontSize: 22, color: 'white', fontWeight: 'bold' }}>
-                      {((item.net_income / item.price) * 100).toFixed(2)}%
-                    </Text>
-                    <Text style={{ fontSize: 14, color: 'white' }}>MARGEM</Text>
-                  </View>
-                );
-              }}
-            />
+          <View
+            style={{
+              margin: 10,
+              padding: 16,
+              borderRadius: 20,
+              backgroundColor: Colors.Main,
+            }}>
+            <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
+              Desempenho do Anúncio
+            </Text>
+            <View style={{ padding: 20, alignItems: 'center' }}>
+              <PieChart
+                data={pieData}
+                donut
+                showGradient
+                sectionAutoFocus
+                radius={100}
+                innerRadius={60}
+                innerCircleColor={Colors.Main}
+                centerLabelComponent={() => {
+                  return (
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                      <Text
+                        style={{ fontSize: 22, color: 'white', fontWeight: 'bold' }}>
+                        {((item.net_income / item.price) * 100).toFixed(2)}%
+                      </Text>
+                      <Text style={{ fontSize: 14, color: 'white' }}>MARGEM</Text>
+                    </View>
+                  );
+                }}
+              />
+            </View>
+            {renderLegendComponent()}
           </View>
-          {renderLegendComponent()}
         </View>
-      </View>
-      <TouchableOpacity onPress={() => navigation.navigate('Tax', { itemID: item.id, taxID: item.tax_id })}>
-        <View style={{ backgroundColor: Colors.Main, borderRadius: 10, margin: 10, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-          <MaterialCommunityIcons name={'plus'} color={'#FFF'} size={20} />
-          {item.cost == 0 && <Text style={{ color: '#FFF' }}>ADICIONAR CUSTO E IMPOSTO</Text>}
-          {item.cost > 0 && <Text style={{ color: '#FFF' }}>ATUALIZAR CUSTO E IMPOSTO</Text>}
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Tax', { itemID: item.id, taxID: item.tax_id })}>
+          <View style={{ backgroundColor: Colors.Main, borderRadius: 10, margin: 10, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+            <MaterialCommunityIcons name={'plus'} color={'#FFF'} size={20} />
+            {item.cost == 0 && <Text style={{ color: '#FFF' }}>ADICIONAR CUSTO E IMPOSTO</Text>}
+            {item.cost > 0 && <Text style={{ color: '#FFF' }}>ATUALIZAR CUSTO E IMPOSTO</Text>}
+          </View>
+        </TouchableOpacity></>}
     </ScrollView>
   </View>)
 }

@@ -14,15 +14,29 @@ import RNPickerSelect from "react-native-picker-select";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from '../../assets/color';
 
-export default function (props: any): React.JSX.Element {
+export default function ({ navigation }: any): React.JSX.Element {
   const { currentOrg, adInfoVisibility, saveAdInfoVisibility } = useAuth()
+  const [status, setStatus] = useState('')
+  const [subStatus, setSubStatus] = useState('')
+  const [logisticType, setLogisticType] = useState('')
 
   const { data, total, isFetching, fetchNextPage, hasNextPage, refetch } = useAds({
     organizationID: currentOrg?.organization_id || '',
+    status,
+    subStatus,
+    logisticType
   })
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      refetch()
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   useLayoutEffect(() => {
-    props.navigation.setOptions({
+    navigation.setOptions({
       title: `(${total}) Anúncios`,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
@@ -41,11 +55,13 @@ export default function (props: any): React.JSX.Element {
             placeholder={{ label: 'Situação', value: '' }}
             doneText='Filtrar'
             style={{ placeholder: { color: '#FFF' }, inputAndroid: { color: '#FFF' }, inputIOS: { color: '#FFF' } }}
-            onValueChange={(value) => { }}
+            key={status}
+            value={status}
+            onValueChange={value => setStatus(value)}
             items={[
               { label: 'Todos', value: '' },
-              { label: 'Ativo', value: '1' },
-              { label: 'Inativo', value: '2' },
+              { label: 'Ativo', value: 'active' },
+              { label: 'Pausado', value: 'paused' }
             ]}
           />
           <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
@@ -55,13 +71,12 @@ export default function (props: any): React.JSX.Element {
             placeholder={{ label: 'Estoque', value: '' }}
             doneText='Filtrar'
             style={{ placeholder: { color: '#FFF' }, inputAndroid: { color: '#FFF' }, inputIOS: { color: '#FFF' } }}
-            onValueChange={(value) => { }}
+            key={subStatus}
+            value={subStatus}
+            onValueChange={value => setSubStatus(value)}
             items={[
-              { label: 'Com estoque', value: '' },
-              { label: 'Sem estoque', value: '1' },
-              { label: 'Estoque no FULL', value: '2' },
-              { label: 'Com estoque mínimo', value: '3' },
-              { label: 'Com estoque alto', value: '4' },
+              { label: 'Todos', value: '' },
+              { label: 'Sem estoque', value: 'out_of_stock' },
             ]}
           />
           <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
@@ -69,15 +84,17 @@ export default function (props: any): React.JSX.Element {
 
         <View style={styles.filterButton}>
           <RNPickerSelect
-            placeholder={{ label: 'Margem', value: '' }}
+            placeholder={{ label: 'Logistica', value: '' }}
             doneText='Filtrar'
+            key={logisticType}
+            value={logisticType}
+            onValueChange={value => setLogisticType(value)}
             style={{ placeholder: { color: '#FFF' }, inputAndroid: { color: '#FFF' }, inputIOS: { color: '#FFF' } }}
-            onValueChange={(value) => { }}
             items={[
-              { label: 'Negativa', value: '0' },
-              { label: 'Até 5%', value: '1' },
-              { label: 'de 5% à 10%', value: '2' },
-              { label: 'Acima de 10%', value: '3' },
+              { label: 'Todos', value: '' },
+              { label: 'FULL', value: 'fulfillment' },
+              { label: 'Flex', value: 'self_service' },
+              { label: 'Agencia/Correios', value: 'xd_drop_off' },
             ]}
           />
           <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
@@ -85,7 +102,7 @@ export default function (props: any): React.JSX.Element {
       </View>
       <FlatList style={styles.adsContainer}
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
-        renderItem={({ item }) => (<Card visibility={adInfoVisibility} navigate={props.navigation.navigate} item={item} />)}
+        renderItem={({ item }) => (<Card visibility={adInfoVisibility} navigate={navigation.navigate} item={item} />)}
         onEndReached={() => {
           if (hasNextPage) {
             fetchNextPage()

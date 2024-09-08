@@ -34,9 +34,9 @@ export const getIndicatorsByMonth = async (organizationID: string) => {
   return resp.data
 }
 
-export const listAds = async (organizationID: string, offset: number) => {
+export const listAds = async (organizationID: string, offset: number, status: string, subStatus: string, logisticType: string) => {
   console.log('fetching ads')
-  const resp = await server.get<List<Ad>>(`/v1/items/${organizationID}?offset=${offset}`)
+  const resp = await server.get<List<Ad>>(`/v1/items/${organizationID}?offset=${offset}&status=${status}&sub_status=${subStatus}&logistic_type=${logisticType}`)
   return resp.data
 }
 
@@ -71,6 +71,12 @@ export const getUser = async (userID: string) => {
 export const getTax = async (organizationID: string, taxID: string) => {
   console.log('fetching get tax')
   const resp = await server.get<Tax>(`/v1/taxes/${organizationID}/${taxID}`)
+  return resp.data
+}
+
+export const getAd = async (organizationID: string, itemID: string) => {
+  console.log('fetching get item')
+  const resp = await server.get<Ad>(`/v1/items/${organizationID}/${itemID}`)
   return resp.data
 }
 

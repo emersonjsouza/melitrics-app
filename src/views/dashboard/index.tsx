@@ -20,7 +20,7 @@ import Indicators from './indicators';
 import RNPickerSelect from "react-native-picker-select";
 import { formatToBRL } from '../../utils';
 
-export default function (props: any): React.JSX.Element {
+export default function ({ navigation, route }: any): React.JSX.Element {
   const { userData, currentOrg } = useAuth()
   const [dateSelect, setDateSelect] = useState('0')
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
@@ -35,20 +35,20 @@ export default function (props: any): React.JSX.Element {
     data: indicators
   } = useIndicators({ organizationID: currentOrg?.organization_id || '', start: startDate, end: endDate })
 
-  useEffect(() => {
-    if (props.route.params?.dateRange) {
-      const { start, end } = props.route.params?.dateRange
-      setStartDate(start)
-      setEndDate(end)
-    }
-  }, [props.route.params?.dateRange]);
-
   const onRefresh = async () => {
     await Promise.all([operationRef.current?.refresh(), reportRef.current?.refresh(), refreshIndicators()])
   }
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      onRefresh()
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   const performFilter = () => {
-    props.navigation.navigate('Dashboard-Filter')
+    navigation.navigate('Dashboard-Filter')
   }
 
   return (

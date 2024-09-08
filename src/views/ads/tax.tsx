@@ -24,6 +24,8 @@ export default function ({ route, navigation }: any): React.JSX.Element {
   const { currentOrg } = useAuth()
   const { data, isFetching } = useTax({ organizationID: currentOrg?.organization_id, id: taxID })
 
+  console.log('data', data)
+
   const [inputRequest, setInputRequest] = useState<TaxRegister>({
     organization_id: currentOrg?.organization_id || '',
     cost: 0,
@@ -35,14 +37,12 @@ export default function ({ route, navigation }: any): React.JSX.Element {
   const { mutateAsync, isPending } = useTaxMutation()
 
   useEffect(() => {
-    if (!isFetching && taxID) {
-      setInputRequest((value) => ({
-        ...value,
-        cost: data?.cost || null,
-        tax_rate: data?.tax_rate || null,
-        sku: data?.sku || ''
-      }))
-    }
+    setInputRequest((value) => ({
+      ...value,
+      cost: data?.cost || null,
+      tax_rate: data?.tax_rate || null,
+      sku: data?.sku || ''
+    }))
   }, [data])
 
   const onCreate = async () => {
@@ -57,9 +57,14 @@ export default function ({ route, navigation }: any): React.JSX.Element {
     }
 
     try {
+      console.log('inputRequest', inputRequest)
       await mutateAsync(inputRequest)
       Alert.alert('Sucesso!', taxID ? 'Custos atualizado com sucesso' : 'Custos cadastrado com sucesso')
-      navigation.goBack()
+      navigation.navigate({
+        name: 'Ad',
+        params: { tax: inputRequest },
+        merge: true,
+      });
     } catch (err: unknown) {
       if (err as APIError) {
         Alert.alert('Alerta!', 'Ocorreu um erro ao cadastrar os custos, tente novamente')

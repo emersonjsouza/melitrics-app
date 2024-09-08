@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -16,7 +16,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useFocusEffect } from '@react-navigation/native';
 import { Colors } from '../../assets/color';
 
-export default function (props: any): React.JSX.Element {
+export default function ({ navigation }: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
   const [status, setStatus] = useState('')
   const [shippingType, setShippingType] = useState('')
@@ -32,8 +32,16 @@ export default function (props: any): React.JSX.Element {
     shippingType
   })
 
+  React.useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+        refetch()
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
   useLayoutEffect(() => {
-    props.navigation.setOptions({
+    navigation.setOptions({
       title: `(${total}) Vendas`,
       headerLeft: () => {
         <View style={{ flexDirection: 'row' }}>

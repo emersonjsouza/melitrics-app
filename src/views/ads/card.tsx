@@ -36,7 +36,7 @@ export default function ({ item, visibility, navigate }: CardProps): React.JSX.E
 
   return (
     <TouchableOpacity onPress={() => {
-      navigate("Ad", { item })
+      navigate("Ad", { itemID: item.id })
     }}>
       <View
         style={{ borderStartColor: statusColor, ...styles.cardContainer }}>

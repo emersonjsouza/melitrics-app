@@ -28,13 +28,23 @@ function App(props: any): React.JSX.Element {
   useEffect(() => {
     if (loggedIn && organizations != undefined) {
       if (organizations.length == 0 || organizations.findIndex(x => x.has_channel) == -1) {
-        props.navigation.navigate('connect', {
-          merge: true,
-        })
+        props.navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: "connect",
+            },
+          ],
+        });
       } else {
-        props.navigation.navigate('Home', {
-          merge: true,
-        })
+        props.navigation.reset({
+          index: 0,
+          routes: [
+            {
+              name: "Home",
+            },
+          ],
+        });
       }
     }
   }, [loggedIn, organizations, isFetchingOrganizations])
