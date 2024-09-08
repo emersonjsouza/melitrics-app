@@ -58,7 +58,7 @@ export default function ({ route, navigation }: any): React.JSX.Element {
 
     try {
       await mutateAsync(inputRequest)
-      Alert.alert('Sucesso!', 'Custos cadastrado com sucesso')
+      Alert.alert('Sucesso!', taxID ? 'Custos atualizado com sucesso' : 'Custos cadastrado com sucesso')
       navigation.goBack()
     } catch (err: unknown) {
       if (err as APIError) {
@@ -111,7 +111,7 @@ export default function ({ route, navigation }: any): React.JSX.Element {
       </View>
       <View>
         <TouchableOpacity style={styles.register} onPress={onCreate} disabled={isPending}>
-          {!isPending && <Text style={styles.submitText}>cadastrar</Text>}
+          {!isPending && <Text style={styles.submitText}>{taxID ? 'atualizar' : 'cadastrar'}</Text>}
           {isPending && <ActivityIndicator size="large" color={'#fff'} />}
         </TouchableOpacity>
       </View>
