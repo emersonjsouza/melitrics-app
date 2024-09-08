@@ -14,6 +14,7 @@ import NavigationButton from '../../components/navigation-button';
 import RNPickerSelect from "react-native-picker-select";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
+import { Colors } from '../../assets/color';
 
 export default function (props: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
@@ -46,12 +47,6 @@ export default function (props: any): React.JSX.Element {
       )
     })
   }, [total, orderInfoVisibility])
-
-  useFocusEffect(() => {
-    if (!isFetching) {
-      refetch()
-    }
-  })
 
   return (
     <View style={styles.mainContainer}>
@@ -155,7 +150,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#7994F5',
+    backgroundColor: Colors.Main,
     paddingTop: 10,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,

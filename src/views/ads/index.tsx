@@ -12,7 +12,7 @@ import NavigationButton from '../../components/navigation-button';
 import { useAds } from '../../hooks/useAds';
 import RNPickerSelect from "react-native-picker-select";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useFocusEffect } from '@react-navigation/native';
+import { Colors } from '../../assets/color';
 
 export default function (props: any): React.JSX.Element {
   const { currentOrg, adInfoVisibility, saveAdInfoVisibility } = useAuth()
@@ -32,15 +32,9 @@ export default function (props: any): React.JSX.Element {
     })
   }, [total, adInfoVisibility])
 
-  useFocusEffect(() => {
-    if (!isFetching) {
-      refetch()
-    }
-  })
-
   return (
     <View style={styles.mainContainer}>
-      <StatusBar translucent barStyle="light-content" backgroundColor={'#7994F5'} />
+      <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
       <View style={styles.headerContainer}>
         <View style={styles.filterButton}>
           <RNPickerSelect
@@ -122,7 +116,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    backgroundColor: '#7994F5',
+    backgroundColor: Colors.Main,
     paddingTop: 10,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,

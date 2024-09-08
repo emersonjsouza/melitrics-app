@@ -17,8 +17,6 @@ import { useSignUp } from '../hooks/useSignup';
 import { APIError } from '../services/types';
 
 function App(props: any): React.JSX.Element {
-
-  //Linking.openURL("https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=666608762505712&redirect_uri=https://melitrics-core.onrender.com/mercadolivre/callback")
   const [inputRequest, setInputRequest] = useState<{ full_name: string, email: string, company_name: string, password: string }>({
     full_name: '',
     email: '',

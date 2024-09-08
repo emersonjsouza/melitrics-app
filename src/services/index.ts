@@ -9,33 +9,38 @@ import {
   List,
   MeliToken,
   Order,
+  TaxRegister,
   User,
   UserRegister
 } from "./types"
 import axios from 'axios';
 
 export const getIndicators = async (organizationID: string, start: string, end: string) => {
-  console.log(`start=${start} end=${end}`)
+  console.log('fetching indicators')
   const resp = await server.get<Indicator>(`/v1/indicators/${organizationID}?start_date=${start}&end_date=${end}`)
   return resp.data
 }
 
 export const getIndicatorsByShippingType = async (organizationID: string, start: string, end: string) => {
+  console.log('fetching indicator by shipping type')
   const resp = await server.get<IndicatorShippingType[]>(`/v1/indicators-shipping-type/${organizationID}?start_date=${start}&end_date=${end}`)
   return resp.data
 }
 
 export const getIndicatorsByMonth = async (organizationID: string) => {
+  console.log('fetching indicator by month')
   const resp = await server.get<IndicatorMonth[]>(`/v1/indicators-month/${organizationID}`)
   return resp.data
 }
 
 export const listAds = async (organizationID: string, offset: number) => {
+  console.log('fetching ads')
   const resp = await server.get<List<Ad>>(`/v1/items/${organizationID}?offset=${offset}`)
   return resp.data
 }
 
 export const listOrders = async (organizationID: string, status: string, shippingType: string, start: string, end: string, offset: number) => {
+  console.log('fetching orders')
   let request = `/v1/orders/${organizationID}?start_date=${start}&end_date=${end}&offset=${offset}&limit=20&status=${status}&shipping_type=${shippingType}`
   const resp = await server.get<List<Order>>(request)
   return resp.data
@@ -51,7 +56,13 @@ export const createChannel = async (payload: ChannelRegister) => {
   return resp.data
 }
 
+export const createTax = async (payload: TaxRegister) => {
+  const resp = await server.post<any>(`/v1/tax`, payload)
+  return resp.data
+}
+
 export const getUser = async (userID: string) => {
+  console.log('fetching get user')
   const resp = await server.get<User>(`/v1/users/${userID}`)
   return resp.data
 }

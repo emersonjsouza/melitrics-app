@@ -43,6 +43,7 @@ export interface List<T> {
 
 export interface Ad {
   id: string
+  taxID: string
   external_id: string
   sku: string
   title: string
@@ -98,6 +99,14 @@ export interface ChannelRegister {
   external_id: string
   access_token: string
   refresh_token: string
+}
+
+export interface TaxRegister {
+  organization_id: string
+  sku: string
+  cost: number | null
+  tax_rate: number | null
+  item_id?: string
 }
 
 export interface APIError extends Error {

@@ -42,14 +42,13 @@ export default forwardRef(({ organizationID }: Props, ref) => {
       }}
       width={Dimensions.get("window").width - 50} // from react-native
       height={220}
-      yAxisLabel=""
-      yAxisSuffix="M"
-      yAxisInterval={1} // optional, defaults to 1
+      yLabelsOffset={-1}
+      yAxisSuffix="mil"
       chartConfig={{
         backgroundColor: "#64FFD3",
         backgroundGradientFrom: "#fb8c00",
         backgroundGradientTo: "#64FFD3",
-        decimalPlaces: 2, // optional, defaults to 2dp
+        decimalPlaces: 1, // optional, defaults to 2dp
         color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
         labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
         propsForDots: {

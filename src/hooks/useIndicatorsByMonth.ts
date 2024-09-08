@@ -33,6 +33,7 @@ export const useIndicatorsByMonth = (query: { organizationID: string }) => {
 
   const monthDataSet: string[] = []
   const monthRevenueDataSet: number[] = []
+  const dataset: { label: string, value: number }[] = []
 
   if (!isFetching) {
     const months = data?.map((item) => item.month) as number[] || []
@@ -43,6 +44,11 @@ export const useIndicatorsByMonth = (query: { organizationID: string }) => {
       const item = data?.find(x => x.month == index)
       monthDataSet.push(month_dict[index as keyof typeof month_dict])
       monthRevenueDataSet.push(formatRevenue(item?.revenue || 0))
+      dataset.push({
+        label: month_dict[index as keyof typeof month_dict],
+        value: formatRevenue(item?.revenue || 0)
+      })
+
       if (maxMonth > 1) {
         maxMonth -= 1
       }
@@ -54,10 +60,12 @@ export const useIndicatorsByMonth = (query: { organizationID: string }) => {
 
   monthDataSet.reverse()
   monthRevenueDataSet.reverse()
+  dataset.reverse()
 
   return {
     monthDataSet,
     monthRevenueDataSet,
+    dataset,
     isFetching,
     refetch
   };

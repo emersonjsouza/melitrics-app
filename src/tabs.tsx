@@ -2,16 +2,18 @@ import * as React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Colors } from './assets/color';
 import Dashboard from './views/dashboard/index';
 import Filter from './views/dashboard/filter';
 import Sales from './views/sales/index';
 import Settings from './views/settings';
 import Ads from './views/ads';
 import AdDetail from './views/ads/detail';
+import Tax from './views/ads/tax';
 
 const screenSettings = {
   headerStyle: {
-    backgroundColor: '#7994F5',
+    backgroundColor: Colors.Main,
     elevation: 0,
     shadowOpacity: 0,
     borderBottomWidth: 0,
@@ -63,6 +65,9 @@ function AdsStackScreen() {
     <AdsStack.Screen
       options={({ route }) => ({ ...screenSettings })}
       name="Ad" component={AdDetail} />
+    <AdsStack.Screen
+      options={({ route }) => ({ ...screenSettings })}
+      name="Tax" component={Tax} />
   </AdsStack.Navigator>
 }
 

@@ -142,7 +142,6 @@ export default function (props: any): React.JSX.Element {
 const styles = StyleSheet.create({
   mainContainer: {
     marginTop: Platform.OS == 'android' ? 40 : 20,
-    flexGrow: 1,
     backgroundColor: '#fff',
     flexDirection: 'column',
   },
