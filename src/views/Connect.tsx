@@ -16,12 +16,13 @@ import { useAuth } from '../context/AuthContext';
 import settings from '../settings';
 import { useMeliToken } from '../hooks/useMeliToken';
 import { useChannel } from '../hooks/useChannel';
+import { usePostHog } from 'posthog-react-native';
 
 function App({ navigation, route }: any): React.JSX.Element {
   const { logout, currentOrg } = useAuth()
   const { mutateAsync: getTokenMutate, isPending: isTookenPending } = useMeliToken()
   const { mutateAsync: channelMutate, isPending: isChannelPending } = useChannel()
-
+  const posthog = usePostHog()
   const callbackURL = Platform.OS == 'ios' ? settings.MELI_CONNECT_IOS : settings.MELI_CONNECT_ANDROID
   const onConnect = () => {
     Linking.openURL(settings.MELI_CONNECT + callbackURL)
@@ -51,6 +52,8 @@ function App({ navigation, route }: any): React.JSX.Element {
         const resp = await getTokenMutate({ code: code, callbackUrl: callbackURL })
 
         if (resp.access_token) {
+          posthog.reloadFeatureFlags()
+          
           await channelMutate({
             access_token: resp.access_token,
             refresh_token: resp.refresh_token,
