@@ -1,5 +1,5 @@
 
-import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native';
 import TabNavigator from './tabs';
 import App from './views/App';
 import Register from './views/Register';
@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Platform, StatusBar } from 'react-native';
 import { Colors } from './assets/color';
 import { createStackNavigator } from '@react-navigation/stack';
-import { usePostHog, PostHogProvider } from 'posthog-react-native'
+import { PostHogProvider } from 'posthog-react-native'
 
 const Stack = createStackNavigator();
 const queryClient = new QueryClient({

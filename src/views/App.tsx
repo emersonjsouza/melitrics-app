@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -11,6 +11,8 @@ import {
   Image,
   Dimensions,
   AppState,
+  Linking,
+  Alert,
 } from 'react-native';
 import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
@@ -19,8 +21,8 @@ import DeviceInfo from 'react-native-device-info';
 
 function App(props: any): React.JSX.Element {
   const { login, loggedIn, loading, organizations, isFetchingOrganizations } = useAuth()
-  const signupFlag = useFeatureFlag('signup-page')
-  const appVersionControl = useFeatureFlag('app-version-control')
+  const signupFlag = useFeatureFlag('new-signup')
+  
   const posthog = usePostHog()
 
   const onSignIn = async () => {
@@ -32,12 +34,35 @@ function App(props: any): React.JSX.Element {
   }
 
   const deviceVersion = DeviceInfo.getVersion() + "." + DeviceInfo.getBuildNumber()
+  const [deviceControlChecked, setDeviceControlChecked] = useState(false)
+  const appVersionControl = useFeatureFlag('app-version-control')
 
   useEffect(() => {
     if (appVersionControl) {
-      const matchedFlagPayload = posthog.getFeatureFlagPayload('app-version-control')
-      console.log(`matchedFlagPayload`, matchedFlagPayload)
+      let deviceFlagPayload = posthog.getFeatureFlagPayload('app-version-control')
+      if (deviceFlagPayload) {
+        const deviceFlag = JSON.parse(JSON.stringify(deviceFlagPayload)) as { android: string, ios: string }
 
+        const currentVersion = parseInt(deviceVersion.replace(/\./g, ""))
+        const iosTargetVersion = parseInt(deviceFlag.ios.replace(/\./g, ""))
+        const androidTargetVersion = parseInt(deviceFlag.ios.replace(/\./g, ""))
+
+        if (Platform.OS == "ios" && currentVersion < iosTargetVersion) {
+          Alert.alert("Atenção", "Melitrics tem uma nova versão obrigatória, atualize seu aplicativo")
+          return
+        } else if (currentVersion < androidTargetVersion) {
+          Alert.alert("Atenção", "Melitrics tem uma nova versão obrigatória, atualize seu aplicativo")
+          Linking.openURL("http://play.google.com/store/apps/details?id=com.melitricsapp")
+          return
+        }
+      }
+
+      setDeviceControlChecked(true)
+    }
+  }, [appVersionControl])
+
+  useEffect(() => {
+    if (deviceControlChecked) {
       if (loggedIn && organizations != undefined) {
         if (organizations.length == 0 || organizations.findIndex(x => x.has_channel) == -1) {
           props.navigation.reset({
@@ -60,7 +85,7 @@ function App(props: any): React.JSX.Element {
         }
       }
     }
-  }, [loggedIn, organizations, isFetchingOrganizations, appVersionControl])
+  }, [loggedIn, organizations, isFetchingOrganizations, deviceControlChecked])
 
   const appState = React.useRef(AppState.currentState);
 

@@ -11,7 +11,8 @@ import Ads from './views/ads';
 import AdDetail from './views/ads/detail';
 import Tax from './views/ads/tax';
 import { useFeatureFlag, usePostHog } from 'posthog-react-native'
-import { AppState } from 'react-native';
+import { Alert, AppState, Linking, Platform } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 
 const screenSettings = {
   headerStyle: {
@@ -79,11 +80,33 @@ export default function ({ navigation }: any) {
   const posthog = usePostHog()
   const appState = React.useRef(AppState.currentState);
 
+  const deviceVersion = DeviceInfo.getVersion() + "." + DeviceInfo.getBuildNumber()
+  const appVersionControl = useFeatureFlag('app-version-control')
+
   React.useEffect(() => {
     const subscription = AppState.addEventListener('change', nextAppState => {
       appState.current = nextAppState;
       if (appState.current == 'active') {
-        posthog.reloadFeatureFlags()
+        if (appVersionControl) {
+          let deviceFlagPayload = posthog.getFeatureFlagPayload('app-version-control')
+          if (deviceFlagPayload) {
+            const deviceFlag = JSON.parse(JSON.stringify(deviceFlagPayload)) as { android: string, ios: string }
+
+            const currentVersion = parseInt(deviceVersion.replace(/\./g, ""))
+            const iosTargetVersion = parseInt(deviceFlag.ios.replace(/\./g, ""))
+            const androidTargetVersion = parseInt(deviceFlag.ios.replace(/\./g, ""))
+            
+            if (Platform.OS == "ios" && currentVersion < iosTargetVersion) {
+              Alert.alert("Atenção", "Melitrics tem uma nova versão obrigatória, atualize seu aplicativo")
+              return
+            } else if (currentVersion < androidTargetVersion) {
+              Alert.alert("Atenção", "Melitrics tem uma nova versão obrigatória, atualize seu aplicativo")
+              Linking.openURL("http://play.google.com/store/apps/details?id=com.melitricsapp")
+              return
+            }
+          }
+          posthog.reloadFeatureFlags()
+        }
       }
     });
 

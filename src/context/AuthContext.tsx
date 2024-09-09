@@ -6,6 +6,7 @@ import settings from "../settings";
 import { useOrganizations } from "../hooks/useOrganizations";
 import { Organization } from "../services/types";
 import { usePostHog } from "posthog-react-native";
+import { useQueryClient } from "@tanstack/react-query";
 
 const auth0 = new Auth0({
   domain: settings.AUTH_DOMAIN,
@@ -37,8 +38,7 @@ const AuthContextProvider = (props: any) => {
   const [orderInfoVisibility, setOrderInfoVisibility] = useState<boolean>(true);
   const [userData, setUserData] = useState<any>(null);
   const { organizations, isLoading: isFetchingOrganizations } = useOrganizations({ userID: userData?.sub, enabled: !!userData })
-
-  //const [currentOrg, setCurrentOrg] = useState<string>('cb2a3984-1d36-4435-94b0-32c5cbc2b8fc');
+  const queryClient = useQueryClient();
 
   const getUserData = async (access_token?: any) => {
     const accessToken = access_token
@@ -50,9 +50,16 @@ const AuthContextProvider = (props: any) => {
     server.defaults.headers['Authorization'] = `bearer ${accessToken}`;
 
     const data = await auth0.auth.userInfo({ token: accessToken });
+
+    posthog.identify(data.sub,
+      {
+        email: data.email,
+        name: data.name
+      }
+    )
+
     return data;
   };
-
 
   const saveAdInfoVisibility = async () => {
     setAdInfoVisibility((value) => !value)
@@ -81,7 +88,6 @@ const AuthContextProvider = (props: any) => {
 
   const posthog = usePostHog()
 
-
   useEffect(() => {
     if (userData && organizations?.length) {
       posthog.identify(userData.sub,
@@ -99,13 +105,6 @@ const AuthContextProvider = (props: any) => {
         const data = await getUserData();
 
         setUserData(data);
-        posthog.identify(data.sub,
-          {
-            email: data.email,
-            name: data.name
-          }
-        )
-
         setLoading(false)
 
         const adVisibility = await getAdInfoVisibility()
@@ -178,6 +177,10 @@ const AuthContextProvider = (props: any) => {
 
           setLoggedIn(false);
           setUserData(null);
+          await queryClient.invalidateQueries({
+            queryKey: ['user', 'orders', 'tax', 'ads', 'indicators-shipping-type', 'indicators', 'indicators-month']
+          })
+
           if (callback) {
             callback()
           }

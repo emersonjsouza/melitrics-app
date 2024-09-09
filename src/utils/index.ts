@@ -7,3 +7,7 @@ export const shipping_type = {
 export const formatToBRL = (number: number | undefined) => {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(number || 0);
 }
+
+export const deviceVersionControl = () => {
+  
+}
