@@ -10,6 +10,8 @@ import Settings from './views/settings';
 import Ads from './views/ads';
 import AdDetail from './views/ads/detail';
 import Tax from './views/ads/tax';
+import { useFeatureFlag, usePostHog } from 'posthog-react-native'
+import { AppState } from 'react-native';
 
 const screenSettings = {
   headerStyle: {
@@ -72,7 +74,24 @@ function AdsStackScreen() {
 }
 
 const Tab = createBottomTabNavigator();
-export default function () {
+export default function ({ navigation }: any) {
+  const settingUseFlag = useFeatureFlag('settings-menu')
+  const posthog = usePostHog()
+  const appState = React.useRef(AppState.currentState);
+
+  React.useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      appState.current = nextAppState;
+      if (appState.current == 'active') {
+        posthog.reloadFeatureFlags()
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [])
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -103,7 +122,7 @@ export default function () {
       <Tab.Screen name="Gestão" component={DashboardStackScreen} />
       <Tab.Screen name="Vendas" component={SalesStackScreen} />
       <Tab.Screen name="Anúncios" component={AdsStackScreen} />
-      <Tab.Screen name="Configurações" component={ConfigStackScreen} />
+      {settingUseFlag && <Tab.Screen name="Configurações" component={ConfigStackScreen} />}
     </Tab.Navigator>
   );
 }

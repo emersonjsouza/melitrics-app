@@ -7,17 +7,24 @@ import {
 import NavigationButton from '../../components/navigation-button';
 import { useAuth } from '../../context/AuthContext';
 
-export default function (props: any): React.JSX.Element {
+export default function ({ navigation }: any): React.JSX.Element {
   const { logout } = useAuth()
 
   const signOut = () => {
     logout(() => {
-      props.navigation.navigate('App')
+      navigation.reset({
+        index: 0,
+        routes: [
+          {
+            name: "App",
+          },
+        ],
+      });
     })
   }
 
   useLayoutEffect(() => {
-    props.navigation.setOptions({
+    navigation.setOptions({
       title: `Configurações`,
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>

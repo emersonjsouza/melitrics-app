@@ -5,6 +5,7 @@ import server from "../services/server";
 import settings from "../settings";
 import { useOrganizations } from "../hooks/useOrganizations";
 import { Organization } from "../services/types";
+import { usePostHog } from "posthog-react-native";
 
 const auth0 = new Auth0({
   domain: settings.AUTH_DOMAIN,
@@ -78,22 +79,42 @@ const AuthContextProvider = (props: any) => {
     return accessToken
   }
 
+  const posthog = usePostHog()
+
+
+  useEffect(() => {
+    if (userData && organizations?.length) {
+      posthog.identify(userData.sub,
+        {
+          organization_id: organizations[0].organization_id,
+        }
+      )
+    }
+  }, [organizations, userData])
+
   // executed on first app load
   useEffect(() => {
     (async () => {
       try {
         const data = await getUserData();
-        setLoggedIn(true);
+
         setUserData(data);
+        posthog.identify(data.sub,
+          {
+            email: data.email,
+            name: data.name
+          }
+        )
+
         setLoading(false)
 
         const adVisibility = await getAdInfoVisibility()
         setAdInfoVisibility(adVisibility)
 
-
         const oderVisibility = await getOrderInfoVisibility()
         setOrderInfoVisibility(oderVisibility)
 
+        setLoggedIn(true);
       } catch (err) {
         setLoading(false)
         try {

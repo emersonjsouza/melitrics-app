@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.0.0",
     "@react-native-community/masked-view": "^0.1.11",
     "@react-native-picker/picker": "^2.8.0",
     "@react-navigation/bottom-tabs": "^6.6.1",
@@ -19,12 +20,15 @@
     "@tanstack/react-query": "^5.52.2",
     "axios": "^1.7.5",
     "date-fns": "^3.6.0",
+    "posthog-react-native": "^3.1.2",
     "react": "18.2.0",
     "react-content-loader": "^7.0.2",
     "react-native": "0.74.5",
+    "react-native-async-storage": "^0.0.1",
     "react-native-auth0": "^3.2.1",
     "react-native-chart-kit": "^6.12.0",
     "react-native-currency-input": "^1.1.1",
+    "react-native-device-info": "^11.1.0",
     "react-native-gesture-handler": "^2.18.1",
     "react-native-gifted-charts": "^1.4.33",
     "react-native-linear-gradient": "^2.8.3",

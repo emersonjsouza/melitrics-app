@@ -10,12 +10,18 @@ import {
   ActivityIndicator,
   Image,
   Dimensions,
+  AppState,
 } from 'react-native';
 import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
+import { useFeatureFlag, usePostHog } from 'posthog-react-native'
+import DeviceInfo from 'react-native-device-info';
 
 function App(props: any): React.JSX.Element {
   const { login, loggedIn, loading, organizations, isFetchingOrganizations } = useAuth()
+  const signupFlag = useFeatureFlag('signup-page')
+  const appVersionControl = useFeatureFlag('app-version-control')
+  const posthog = usePostHog()
 
   const onSignIn = async () => {
     try {
@@ -25,29 +31,51 @@ function App(props: any): React.JSX.Element {
     }
   }
 
+  const deviceVersion = DeviceInfo.getVersion() + "." + DeviceInfo.getBuildNumber()
+
   useEffect(() => {
-    if (loggedIn && organizations != undefined) {
-      if (organizations.length == 0 || organizations.findIndex(x => x.has_channel) == -1) {
-        props.navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: "connect",
-            },
-          ],
-        });
-      } else {
-        props.navigation.reset({
-          index: 0,
-          routes: [
-            {
-              name: "Home",
-            },
-          ],
-        });
+    if (appVersionControl) {
+      const matchedFlagPayload = posthog.getFeatureFlagPayload('app-version-control')
+      console.log(`matchedFlagPayload`, matchedFlagPayload)
+
+      if (loggedIn && organizations != undefined) {
+        if (organizations.length == 0 || organizations.findIndex(x => x.has_channel) == -1) {
+          props.navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: "connect",
+              },
+            ],
+          });
+        } else {
+          props.navigation.reset({
+            index: 0,
+            routes: [
+              {
+                name: "Home",
+              },
+            ],
+          });
+        }
       }
     }
-  }, [loggedIn, organizations, isFetchingOrganizations])
+  }, [loggedIn, organizations, isFetchingOrganizations, appVersionControl])
+
+  const appState = React.useRef(AppState.currentState);
+
+  React.useEffect(() => {
+    const subscription = AppState.addEventListener('change', nextAppState => {
+      appState.current = nextAppState;
+      if (appState.current == 'active') {
+        posthog.reloadFeatureFlags()
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [])
 
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
@@ -64,9 +92,14 @@ function App(props: any): React.JSX.Element {
         {!loading && !loggedIn && <><TouchableOpacity style={styles.signButton} onPress={onSignIn}>
           <Text style={styles.submitText}>acessar minha conta</Text>
         </TouchableOpacity>
-          <TouchableOpacity onPressIn={() => props.navigation.navigate('Register')} style={styles.signUpButton}>
+          {signupFlag && <TouchableOpacity onPressIn={() => props.navigation.navigate('Register')} style={styles.signUpButton}>
             <Text style={styles.signUpText}>cadastre-se grátis</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
+          {signupFlag != undefined && !signupFlag &&
+            <View style={{ marginTop: 40 }}>
+              <Text style={{ ...styles.signUpText, color: '#c2c2c2', flexWrap: 'wrap', width: Dimensions.get('screen').width * 0.8 }}>cadastro temporariamente desabilitado, em breve iremos liberar novos cadastros</Text>
+            </View>
+          }
         </>}
       </View>
     </SafeAreaView>

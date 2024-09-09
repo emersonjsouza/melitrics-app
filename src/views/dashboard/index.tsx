@@ -6,7 +6,8 @@ import {
   StyleSheet,
   Text,
   View,
-  TouchableOpacity
+  TouchableOpacity,
+  Alert
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ContentLoader, { Rect } from 'react-content-loader/native'
@@ -47,9 +48,11 @@ export default function ({ navigation, route }: any): React.JSX.Element {
     return unsubscribe;
   }, [navigation]);
 
-  const performFilter = () => {
-    navigation.navigate('Dashboard-Filter')
-  }
+  useEffect(() => {
+    if (route?.params?.firstTime) {
+      Alert.alert("Atenção", "Estamos sincronizando suas informações dos últimos 30 dias")
+    }
+  }, [])
 
   return (
     <View style={{ flex: 1, flexGrow: 1, backgroundColor: '#FFF' }}>

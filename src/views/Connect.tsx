@@ -66,6 +66,9 @@ function App({ navigation, route }: any): React.JSX.Element {
                 name: "Home",
               },
             ],
+            params: {
+              firstTime: true
+            }
           });
         }
       }
