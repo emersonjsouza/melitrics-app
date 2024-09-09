@@ -8,17 +8,26 @@ import {
 import { Order } from '../../services/types';
 import { format, parseISO } from 'date-fns';
 import { formatToBRL, shipping_type } from '../../utils';
+import { useFeatureFlag } from 'posthog-react-native';
 
 type CardProps = PropsWithChildren<{
   item: Order
   visibility?: boolean
 }>
 
-export default function ({ item, visibility }: CardProps): React.JSX.Element {
-
+export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Element {
+  const showDemoFlag = useFeatureFlag('show-demo')
   const payment_type = {
     'paid': 'Aprovado',
     'cancelled': 'Cancelado',
+  }
+
+  let item = AdInfo
+
+  if (showDemoFlag) {
+    item.title = "Dummy Title"
+    item.external_id = "MELICODE"
+    item.sku = "SKU1"
   }
 
   const statusColor = item.status == "paid" ? '#03933B' : '#999'
@@ -27,7 +36,7 @@ export default function ({ item, visibility }: CardProps): React.JSX.Element {
     <View
       style={{ borderStartColor: statusColor, ...styles.cardContainer }}>
       <View>
-        {visibility  && <Text style={styles.cardTitle}>{item.sku.toUpperCase()} - {item.title}</Text>}
+        {visibility && <Text style={styles.cardTitle}>{item.sku.toUpperCase()} - {item.title}</Text>}
         {!visibility && <Text style={styles.cardTitle}>{item.external_id}</Text>}
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
           <Text style={{ fontSize: 20, color: '#9C9C9C' }}>{formatToBRL(item.net_income)}</Text>

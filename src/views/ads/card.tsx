@@ -10,6 +10,7 @@ import { Ad } from '../../services/types';
 import { formatToBRL, shipping_type } from '../../utils';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useFeatureFlag } from 'posthog-react-native';
 
 type CardProps = PropsWithChildren<{
   item: Ad
@@ -17,7 +18,9 @@ type CardProps = PropsWithChildren<{
   navigate: any
 }>
 
-export default function ({ item, visibility, navigate }: CardProps): React.JSX.Element {
+export default function ({ item: AdInfo, visibility, navigate }: CardProps): React.JSX.Element {
+  const showDemoFlag = useFeatureFlag('show-demo')
+
   const ad_status = {
     'paused': 'Pausado',
     'active': 'Ativo',
@@ -27,6 +30,15 @@ export default function ({ item, visibility, navigate }: CardProps): React.JSX.E
   const ad_sub_status = {
     'out_of_stock': 'Sem estoque',
     'deleted': 'Excluido'
+  }
+
+  let item = AdInfo
+
+  if (showDemoFlag) {
+    item.title = "Dummy Title"
+    item.external_id = "MELICODE"
+    item.sku = "SKU1"
+    item.thumbnail_link = "https://images.tcdn.com.br/img/img_prod/1187980/bone_nike_913011_010_preto_529_1_58670e86a64c0f25ab90c6db312d8c61.jpg"
   }
 
   const statusColor = item.status == "active" ? '#03933B' : '#999'

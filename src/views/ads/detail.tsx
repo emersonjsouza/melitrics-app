@@ -15,19 +15,30 @@ import { Colors } from '../../assets/color';
 import NavigationButton from '../../components/navigation-button';
 import { useAuth } from '../../context/AuthContext';
 import { useAd } from '../../hooks/useAd';
+import { useFeatureFlag } from 'posthog-react-native';
 
 export default function ({ route, navigation }: any) {
   const { adInfoVisibility, saveAdInfoVisibility, currentOrg } = useAuth()
+  const showDemoFlag = useFeatureFlag('show-demo')
   const itemID = route?.params.itemID
 
-  const { item, isFetching, refetch } = useAd({
+  const { item: AdInfo, isFetching, refetch } = useAd({
     organizationID: currentOrg?.organization_id,
     id: itemID
   })
 
+  let item = AdInfo
+
+  if (showDemoFlag) {
+    item.title = "Dummy Title"
+    item.external_id = "MELICODE"
+    item.sku = "SKU1"
+    item.thumbnail_link = "https://images.tcdn.com.br/img/img_prod/1187980/bone_nike_913011_010_preto_529_1_58670e86a64c0f25ab90c6db312d8c61.jpg"
+  }
+
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      if(route.params?.tax) {
+      if (route.params?.tax) {
         refetch()
       }
     });
