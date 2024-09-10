@@ -74,6 +74,7 @@ export interface Order {
   unit_price: number
   revenue: number
   amount_unit: number
+  is_advertising: boolean
   cost: number
   tax: number
   sales_fee: number

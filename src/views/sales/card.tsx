@@ -4,11 +4,14 @@ import {
   StyleSheet,
   Text,
   Platform,
+  Image,
+
 } from 'react-native';
 import { Order } from '../../services/types';
 import { format, parseISO } from 'date-fns';
 import { formatToBRL, shipping_type } from '../../utils';
 import { useFeatureFlag } from 'posthog-react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type CardProps = PropsWithChildren<{
   item: Order
@@ -34,7 +37,7 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
 
   return (
     <View
-      style={{ borderStartColor: statusColor, ...styles.cardContainer }}>
+      style={{ borderStartColor: statusColor, ...styles.cardContainer, height: (item.cost == 0 ? (styles.cardContainer.height + 15) : styles.cardContainer.height) }}>
       <View>
         {visibility && <Text style={styles.cardTitle}>{item.sku.toUpperCase()} - {item.title}</Text>}
         {!visibility && <Text style={styles.cardTitle}>{item.external_id}</Text>}
@@ -59,19 +62,25 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
         <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}>
           <Text style={{ fontSize: 10, color: '#9C9C9C' }}>{format(parseISO(item.created_at), 'dd/MM/yyyy - HH:mm:ss')}</Text>
         </View>
+        {item.is_advertising && <View style={{ marginRight: 10 }}>
+          <Image style={{ width: 20, height: 20, padding: 10 }}
+            source={require('../../assets/images/logo-ads.png')} />
+        </View>}
       </View>
+      {item.cost == 0 && <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+        <MaterialCommunityIcons name={'alert'} color={'#fb8c00'} size={20} />
+        <Text style={{ fontSize: 10, color: '#9C9C9C', marginLeft: 5 }}>produto sem definição de custo e imposto</Text>
+      </View>}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   cardContainer: {
-    marginRight: 20,
-    borderRadius: 20,
-    justifyContent: 'space-between',
     borderColor: '#ccc',
     borderWidth: 1,
     borderStartWidth: 5,
+    paddingTop: 10,
     height: Platform.OS == 'android' ? 165 : 150, padding: 20,
     marginBottom: 10,
   },

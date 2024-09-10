@@ -165,8 +165,7 @@ const styles = StyleSheet.create({
     height: 60
   },
   ordersContainer: {
-    paddingTop: 10,
-    paddingHorizontal: 5
+    paddingTop: 10
   },
   filterButton: {
     flexDirection: 'row',
