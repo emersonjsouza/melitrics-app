@@ -34,10 +34,18 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
   }
 
   const statusColor = item.status == "paid" ? '#03933B' : '#999'
+  const sideStatusColor = item.status == "paid" ? (item.is_advertising ? '#ab86ff' : '#03933B') : '#999'
 
   return (
     <View
-      style={{ borderStartColor: statusColor, ...styles.cardContainer, height: (item.cost == 0 ? (styles.cardContainer.height + 15) : styles.cardContainer.height) }}>
+      style={{ borderStartColor: sideStatusColor, ...styles.cardContainer, height: (item.cost == 0 ? (styles.cardContainer.height + 15) : styles.cardContainer.height) }}>
+      <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
+        {item.is_advertising && <View style={{ flexDirection: 'row', borderColor: '#ddd', borderWidth: 0.5, marginLeft: 10, width: 120, marginBottom: 5, borderBottomStartRadius: 10, borderBottomEndRadius: 10, height: 25, justifyContent: 'center', alignItems: 'center' }}>
+          <Image style={{ width: 20, height: 20, padding: 10 }}
+            source={require('../../assets/images/logo-ads.png')} />
+          <Text style={{ color: '#ab86ff', fontSize: 9, marginLeft: 10, fontWeight: 600 }}>com publicidade</Text>
+        </View>}
+      </View>
       <View>
         {visibility && <Text style={styles.cardTitle}>{item.sku.toUpperCase()} - {item.title}</Text>}
         {!visibility && <Text style={styles.cardTitle}>{item.external_id}</Text>}
@@ -62,10 +70,6 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
         <View style={{ borderWidth: .5, borderColor: '#9C9C9C', marginRight: 10, padding: 5, borderRadius: 10 }}>
           <Text style={{ fontSize: 10, color: '#9C9C9C' }}>{format(parseISO(item.created_at), 'dd/MM/yyyy - HH:mm:ss')}</Text>
         </View>
-        {item.is_advertising && <View style={{ marginRight: 10 }}>
-          <Image style={{ width: 20, height: 20, padding: 10 }}
-            source={require('../../assets/images/logo-ads.png')} />
-        </View>}
       </View>
       {item.cost == 0 && <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
         <MaterialCommunityIcons name={'alert'} color={'#fb8c00'} size={20} />
@@ -80,7 +84,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderWidth: 1,
     borderStartWidth: 5,
-    paddingTop: 10,
+    paddingTop: 0,
     height: Platform.OS == 'android' ? 165 : 150, padding: 20,
     marginBottom: 10,
   },
