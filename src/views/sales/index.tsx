@@ -58,7 +58,7 @@ export default function ({ navigation }: any): React.JSX.Element {
 
   return (
     <View style={styles.mainContainer}>
-      <StatusBar translucent barStyle="light-content" backgroundColor={'#7994F5'} />
+      <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
       <View style={styles.headerContainer}>
         <View style={styles.filterButton}>
           <RNPickerSelect

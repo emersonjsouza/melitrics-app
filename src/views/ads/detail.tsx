@@ -16,6 +16,7 @@ import NavigationButton from '../../components/navigation-button';
 import { useAuth } from '../../context/AuthContext';
 import { useAd } from '../../hooks/useAd';
 import { useFeatureFlag } from 'posthog-react-native';
+import { StatusBar } from 'react-native';
 
 export default function ({ route, navigation }: any) {
   const { adInfoVisibility, saveAdInfoVisibility, currentOrg } = useAuth()
@@ -154,6 +155,7 @@ export default function ({ route, navigation }: any) {
   };
 
   return (<View style={styles.cardContainer}>
+    <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
     <ScrollView>
       {!isFetching && <><View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
         {item.catalog_enabled && <View style={{ backgroundColor: '#00c1d4', width: 100, marginBottom: 5, borderBottomStartRadius: 10, borderBottomEndRadius: 10, height: 25, justifyContent: 'center', alignItems: 'center' }}>

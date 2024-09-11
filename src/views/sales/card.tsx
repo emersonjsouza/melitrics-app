@@ -36,9 +36,19 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
   const statusColor = item.status == "paid" ? '#03933B' : '#999'
   const sideStatusColor = item.status == "paid" ? (item.is_advertising ? '#ab86ff' : '#03933B') : '#999'
 
+
+  let cardHeight = styles.cardContainer.height;
+  if (item.is_advertising) {
+    cardHeight += 25
+  }
+
+  if (item.cost == 0) {
+    cardHeight += 15
+  }
+
   return (
     <View
-      style={{ borderStartColor: sideStatusColor, ...styles.cardContainer, height: (item.cost == 0 ? (styles.cardContainer.height + 15) : styles.cardContainer.height) }}>
+      style={{ borderStartColor: sideStatusColor, ...styles.cardContainer, height: cardHeight }}>
       <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
         {item.is_advertising && <View style={{ flexDirection: 'row', borderColor: '#ddd', borderWidth: 0.5, marginLeft: 10, width: 120, marginBottom: 5, borderBottomStartRadius: 10, borderBottomEndRadius: 10, height: 25, justifyContent: 'center', alignItems: 'center' }}>
           <Image style={{ width: 20, height: 20, padding: 10 }}
@@ -46,7 +56,7 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
           <Text style={{ color: '#ab86ff', fontSize: 9, marginLeft: 10, fontWeight: 600 }}>com publicidade</Text>
         </View>}
       </View>
-      <View>
+      <View style={{ marginTop: 10 }}>
         {visibility && <Text style={styles.cardTitle}>{item.sku.toUpperCase()} - {item.title}</Text>}
         {!visibility && <Text style={styles.cardTitle}>{item.external_id}</Text>}
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
