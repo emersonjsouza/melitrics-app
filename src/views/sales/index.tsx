@@ -1,19 +1,18 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  Dimensions,
   FlatList,
   StatusBar,
   StyleSheet,
   View,
 } from 'react-native';
 import { format, subDays } from 'date-fns'
+import { Dropdown } from 'react-native-element-dropdown';
 import { useOrders } from '../../hooks/useOrders';
 import { useAuth } from '../../context/AuthContext';
 import Card from './card';
 import NavigationButton from '../../components/navigation-button';
-import RNPickerSelect from "react-native-picker-select";
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { useFocusEffect } from '@react-navigation/native';
 import { Colors } from '../../assets/color';
 
 export default function ({ navigation }: any): React.JSX.Element {
@@ -34,7 +33,7 @@ export default function ({ navigation }: any): React.JSX.Element {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-        refetch()
+      refetch()
     });
 
     return unsubscribe;
@@ -61,13 +60,27 @@ export default function ({ navigation }: any): React.JSX.Element {
       <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
       <View style={styles.headerContainer}>
         <View style={styles.filterButton}>
-          <RNPickerSelect
-            key={dateSelect}
+          <Dropdown
+            iconColor='#fff'
+            iconStyle={dropStyle.iconStyle}
+            placeholderStyle={dropStyle.placeholderStyle}
+            selectedTextStyle={dropStyle.selectedTextStyle}
+            style={dropStyle.containerStyle}
+            itemTextStyle={dropStyle.itemStyle}
+            data={[
+              {
+                label: 'Hoje', value: '0',
+              },
+              { label: 'Ontem', value: '1' },
+              { label: 'Últimos 7 dias', value: '6' },
+              { label: 'Últimos 15 dias', value: '14' },
+              { label: 'Últimos 30 dias', value: '29' },
+            ]}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
             value={dateSelect}
-            placeholder={{ label: 'Período', value: '' }}
-            doneText='Filtrar'
-            style={{ placeholder: { color: '#FFF' }, inputAndroid: { color: '#FFF' }, inputIOS: { color: '#FFF' } }}
-            onValueChange={(value) => {
+            onChange={({ value }: any) => {
               setDateSelect(value);
               if (value) {
                 let startDate = subDays(new Date(), parseInt(value))
@@ -81,48 +94,56 @@ export default function ({ navigation }: any): React.JSX.Element {
                 }
               }
             }}
-            items={[
-              { label: 'Hoje', value: '0' },
-              { label: 'Ontem', value: '1' },
-              { label: 'Últimos 7 dias', value: '6' },
-              { label: 'Últimos 15 dias', value: '14' },
-              { label: 'Últimos 30 dias', value: '29' },
-            ]}
           />
-          <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
-        </View>
-        <View style={styles.filterButton}>
-          <RNPickerSelect
-            style={{ placeholder: { color: '#FFF' }, inputAndroid: { color: '#FFF' }, inputIOS: { color: '#FFF' } }}
-            key={status}
-            value={status}
-            placeholder={{ label: 'Situação da venda', value: '' }}
-            doneText='Filtrar'
-            onValueChange={value => setStatus(value)}
-            items={[
-              { label: 'Aprovadas', value: 'paid' },
-              { label: 'Canceladas', value: 'cancelled' },
-            ]}
-          />
-          <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
         </View>
 
         <View style={styles.filterButton}>
-          <RNPickerSelect
-            style={{ placeholder: { color: '#FFF' }, inputAndroid: { color: '#FFF' }, inputIOS: { color: '#FFF' } }}
-            key={shippingType}
-            value={shippingType}
-            placeholder={{ label: 'Tipo de Frete', value: '' }}
-            doneText='Filtrar'
-            onValueChange={value => setShippingType(value)}
-            items={[
-              { label: 'Todas', value: '' },
+          <Dropdown
+            iconColor='#fff'
+            iconStyle={dropStyle.iconStyle}
+            placeholderStyle={dropStyle.placeholderStyle}
+            selectedTextStyle={dropStyle.selectedTextStyle}
+            style={dropStyle.containerStyle}
+            itemTextStyle={dropStyle.itemStyle}
+            placeholder='Situação'
+            data={[
+              { label: 'Situação', value: '' },
+              { label: 'Aprovadas', value: 'paid' },
+              { label: 'Canceladas', value: 'cancelled' },
+            ]}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            value={status}
+            onChange={({ value }: any) => {
+              setStatus(value);
+            }}
+          />
+        </View>
+
+        <View style={styles.filterButton}>
+          <Dropdown
+            iconColor='#fff'
+            iconStyle={dropStyle.iconStyle}
+            placeholderStyle={dropStyle.placeholderStyle}
+            selectedTextStyle={dropStyle.selectedTextStyle}
+            itemTextStyle={dropStyle.itemStyle}
+            placeholder='Frete'
+            style={dropStyle.containerStyle}
+            data={[
+              { label: 'Frete', value: '' },
               { label: 'FULL', value: 'fulfillment' },
               { label: 'Flex', value: 'self_service' },
               { label: 'Agencia/Correios', value: 'xd_drop_off' },
             ]}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            value={shippingType}
+            onChange={({ value }: any) => {
+              setShippingType(value);
+            }}
           />
-          <MaterialCommunityIcons name={'menu-down'} color={'#FFF'} size={20} />
         </View>
       </View>
       <FlatList style={styles.ordersContainer}
@@ -149,6 +170,14 @@ const FooterListComponent = ({ isFetching }: any) => {
   </View>
 }
 
+const dropStyle = StyleSheet.create({
+  selectedTextStyle: { textAlign: 'center', color: '#fff', fontSize: 11 },
+  placeholderStyle: { alignContent: 'flex-end', color: '#fff', fontSize: 11 },
+  iconStyle: { alignItems: 'flex-start', width: 20, height: 20 },
+  containerStyle: { width: Dimensions.get('screen').width / 3 - 20, height: 40, paddingRight: 10, justifyContent: 'center', alignItems: 'center' },
+  itemStyle: { fontSize: 11 }
+})
+
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
@@ -168,7 +197,7 @@ const styles = StyleSheet.create({
     paddingTop: 10
   },
   filterButton: {
-    flexDirection: 'row',
+    justifyContent: 'center',
     borderRadius: 5,
     padding: 10
   },

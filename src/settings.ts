@@ -1,6 +1,6 @@
 export default {
   //API: 'http://192.168.68.108:8080',
-  API: 'https://melitrics-core.onrender.com',
+  API: 'https://api.melitrics.com',
   AUTH_DOMAIN: "devsouza.us.auth0.com",
   AUTN_CLIENT_ID: "SLENnJUHTocJY4AuDixDu4TeymrLq5DE",
   MELI_AUTH_CLIENT_ID: "666608762505712",

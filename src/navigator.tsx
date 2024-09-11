@@ -23,7 +23,7 @@ const queryClient = new QueryClient({
 
 export default function () {
   const linking = {
-    prefixes: ['https://melitrics.com', 'com.melitricsapp://', 'melitricsapp://melitricsapp'],
+    prefixes: ['https://melitrics.com', 'com.melitrics://', 'melitricsapp://melitricsapp'],
     config: {
       screens: {
         connect: 'connect/:code',

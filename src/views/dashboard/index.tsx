@@ -12,13 +12,12 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import { useIndicators } from '../../hooks/useIndicators';
-
+import { Dropdown } from 'react-native-element-dropdown';
 import { useAuth } from '../../context/AuthContext';
 import { format, subDays } from 'date-fns'
 import Operations from './operations';
 import Report from './report';
 import Indicators from './indicators';
-import RNPickerSelect from "react-native-picker-select";
 import { formatToBRL } from '../../utils';
 
 export default function ({ navigation, route }: any): React.JSX.Element {
@@ -91,13 +90,24 @@ export default function ({ navigation, route }: any): React.JSX.Element {
                 <Rect x="0" y="40" rx="3" ry="10" width="380" height="500" />
               </ContentLoader>}
             </View>
-            <View style={{ flexDirection: 'row' }}>
-              <RNPickerSelect
-                key={dateSelect}
+            <View >
+              <Dropdown
+                selectedTextStyle={{ alignContent: 'flex-end', textAlign: 'right' }}
+                style={{ width: 200, height: 40, paddingRight: 10 }}
+                data={[
+                  {
+                    label: 'Hoje', value: '0',
+                  },
+                  { label: 'Ontem', value: '1' },
+                  { label: 'Últimos 7 dias', value: '6' },
+                  { label: 'Últimos 15 dias', value: '14' },
+                  { label: 'Últimos 30 dias', value: '29' },
+                ]}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
                 value={dateSelect}
-                placeholder={{ label: 'selecione um período', value: '' }}
-                doneText='Filtrar'
-                onValueChange={(value) => {
+                onChange={({ value }: any) => {
                   setDateSelect(value);
                   if (value) {
                     let startDate = subDays(new Date(), parseInt(value))
@@ -111,15 +121,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
                     }
                   }
                 }}
-                items={[
-                  { label: 'Hoje', value: '0' },
-                  { label: 'Ontem', value: '1' },
-                  { label: 'Últimos 7 dias', value: '6' },
-                  { label: 'Últimos 15 dias', value: '14' },
-                  { label: 'Últimos 30 dias', value: '29' },
-                ]}
               />
-              <MaterialCommunityIcons name={'menu-down'} color={'#222222'} size={20} />
             </View>
           </View>
         </View>
@@ -141,6 +143,55 @@ export default function ({ navigation, route }: any): React.JSX.Element {
     </View >
   )
 }
+
+
+const dropStyle = StyleSheet.create({
+  container: {
+    backgroundColor: '#000',
+    padding: 16,
+    width: 100,
+
+  },
+  dropdown: {
+    width: 100,
+    backgroundColor: '#000',
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label: {
+    position: 'absolute',
+    backgroundColor: '#000',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    backgroundColor: '#000',
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+    width: 100
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    width: 100,
+    backgroundColor: '#000',
+    height: 40,
+    fontSize: 16,
+  },
+});
 
 const styles = StyleSheet.create({
   mainContainer: {
