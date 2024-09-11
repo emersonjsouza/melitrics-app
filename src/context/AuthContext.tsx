@@ -68,7 +68,7 @@ const AuthContextProvider = (props: any) => {
 
   const getAdInfoVisibility = async () => {
     const value = await SInfo.getItem("ad_visibility", {});
-    return value == 'true'
+    return value == 'true' || value == ''
   }
 
   const saveOrderInfoVisibility = async () => {
@@ -78,7 +78,7 @@ const AuthContextProvider = (props: any) => {
 
   const getOrderInfoVisibility = async () => {
     const value = await SInfo.getItem("order_visibility", {});
-    return value == 'true'
+    return value == 'true' || value == ''
   }
 
   const getAccessToken = async () => {
