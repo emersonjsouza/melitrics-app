@@ -19,6 +19,8 @@ import Operations from './operations';
 import Report from './report';
 import Indicators from './indicators';
 import { formatToBRL } from '../../utils';
+import ProgressBar from '../../components/progressbar';
+import { Colors } from '../../assets/color';
 
 export default function ({ navigation, route }: any): React.JSX.Element {
   const { userData, currentOrg } = useAuth()
@@ -79,8 +81,8 @@ export default function ({ navigation, route }: any): React.JSX.Element {
         <View style={{ marginTop: 10, marginLeft: 20 }}>
           <View style={styles.profitContainer}>
             <View>
-              <Text style={{ fontFamily: 'Robo-Light' }}>Seu Faturamento</Text>
-              {!isFetching && <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2 }}>{formatToBRL(indicators?.revenue)}</Text>}
+              <Text style={{ fontFamily: 'Robo-Light', color: Colors.TextColor }}>Seu Faturamento</Text>
+              {!isFetching && <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2, color: Colors.TextColor }}>{formatToBRL(indicators?.revenue)}</Text>}
               {isFetching && <ContentLoader
                 height={20}
                 speed={1}
@@ -92,19 +94,27 @@ export default function ({ navigation, route }: any): React.JSX.Element {
             </View>
             <View >
               <Dropdown
-                selectedTextStyle={{ alignContent: 'flex-end', textAlign: 'right' }}
                 style={{ width: 200, height: 40, paddingRight: 10 }}
+                placeholderStyle={dropStyle.placeholderStyle}
+                selectedTextStyle={dropStyle.selectedTextStyle}
+                itemTextStyle={dropStyle.itemStyle}
                 data={[
-                  {
-                    label: 'Hoje', value: '0',
-                  },
+                  { label: 'Hoje', value: '0' },
                   { label: 'Ontem', value: '1' },
                   { label: 'Últimos 7 dias', value: '6' },
                   { label: 'Últimos 15 dias', value: '14' },
-                  { label: 'Últimos 30 dias', value: '29' },
+                  { label: 'Outro período', value: 'custom' },
                 ]}
                 maxHeight={300}
                 labelField="label"
+                renderItem={(item) => {
+                  return (<View style={{ height: 40, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={dropStyle.itemStyle}>{item.label}</Text>
+                    {item.value != '0' && item.value != '1' && <View style={{ marginRight: 10 }}>
+                      <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={15} />
+                    </View>}
+                  </View>)
+                }}
                 valueField="value"
                 value={dateSelect}
                 onChange={({ value }: any) => {
@@ -116,7 +126,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
                     if (value == '1') {
                       setEndDate(format(startDate, 'yyyy-MM-dd'))
                     }
-                    else {
+                    else if (value != 'custom') {
                       setEndDate(format(new Date(), 'yyyy-MM-dd'))
                     }
                   }
@@ -124,6 +134,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
               />
             </View>
           </View>
+          <ProgressBar />
         </View>
 
         <Indicators isFetching={isFetching} data={indicators} />
@@ -146,52 +157,11 @@ export default function ({ navigation, route }: any): React.JSX.Element {
 
 
 const dropStyle = StyleSheet.create({
-  container: {
-    backgroundColor: '#000',
-    padding: 16,
-    width: 100,
-
-  },
-  dropdown: {
-    width: 100,
-    backgroundColor: '#000',
-    height: 50,
-    borderColor: 'gray',
-    borderWidth: 0.5,
-    borderRadius: 8,
-    paddingHorizontal: 8,
-  },
-  icon: {
-    marginRight: 5,
-  },
-  label: {
-    position: 'absolute',
-    backgroundColor: '#000',
-    left: 22,
-    top: 8,
-    zIndex: 999,
-    paddingHorizontal: 8,
-    fontSize: 14,
-  },
-  placeholderStyle: {
-    backgroundColor: '#000',
-    fontSize: 16,
-  },
-  selectedTextStyle: {
-    fontSize: 16,
-    width: 100
-  },
-  iconStyle: {
-    width: 20,
-    height: 20,
-  },
-  inputSearchStyle: {
-    width: 100,
-    backgroundColor: '#000',
-    height: 40,
-    fontSize: 16,
-  },
-});
+  selectedTextStyle: { alignContent: 'flex-end', textAlign: 'right', color: Colors.TextColor, fontSize: 12 },
+  placeholderStyle: { alignContent: 'flex-end', color: Colors.TextColor, fontSize: 12 },
+  iconStyle: { alignItems: 'flex-start', width: 20, height: 20 },
+  itemStyle: { fontSize: 11 }
+})
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -233,11 +203,11 @@ const styles = StyleSheet.create({
     marginEnd: 20,
   },
   greetingSubText: {
-    color: '#718093',
+    color: Colors.TextColor,
     fontFamily: 'Roboto-Thin',
   },
   greetingText: {
-    color: '#2f3640',
+    color: Colors.TextColor,
     fontSize: 16,
     fontFamily: 'Roboto-Medium',
   },

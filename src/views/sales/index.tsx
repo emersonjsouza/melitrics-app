@@ -6,6 +6,7 @@ import {
   StatusBar,
   StyleSheet,
   View,
+  Text,
 } from 'react-native';
 import { format, subDays } from 'date-fns'
 import { Dropdown } from 'react-native-element-dropdown';
@@ -14,6 +15,7 @@ import { useAuth } from '../../context/AuthContext';
 import Card from './card';
 import NavigationButton from '../../components/navigation-button';
 import { Colors } from '../../assets/color';
+import LottieView from 'lottie-react-native';
 
 export default function ({ navigation }: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
@@ -65,46 +67,8 @@ export default function ({ navigation }: any): React.JSX.Element {
             iconStyle={dropStyle.iconStyle}
             placeholderStyle={dropStyle.placeholderStyle}
             selectedTextStyle={dropStyle.selectedTextStyle}
-            style={dropStyle.containerStyle}
             itemTextStyle={dropStyle.itemStyle}
-            data={[
-              {
-                label: 'Hoje', value: '0',
-              },
-              { label: 'Ontem', value: '1' },
-              { label: 'Últimos 7 dias', value: '6' },
-              { label: 'Últimos 15 dias', value: '14' },
-              { label: 'Últimos 30 dias', value: '29' },
-            ]}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            value={dateSelect}
-            onChange={({ value }: any) => {
-              setDateSelect(value);
-              if (value) {
-                let startDate = subDays(new Date(), parseInt(value))
-                setStartDate(format(startDate, 'yyyy-MM-dd'))
-
-                if (value == '1') {
-                  setEndDate(format(startDate, 'yyyy-MM-dd'))
-                }
-                else {
-                  setEndDate(format(new Date(), 'yyyy-MM-dd'))
-                }
-              }
-            }}
-          />
-        </View>
-
-        <View style={styles.filterButton}>
-          <Dropdown
-            iconColor='#fff'
-            iconStyle={dropStyle.iconStyle}
-            placeholderStyle={dropStyle.placeholderStyle}
-            selectedTextStyle={dropStyle.selectedTextStyle}
             style={dropStyle.containerStyle}
-            itemTextStyle={dropStyle.itemStyle}
             placeholder='Situação'
             data={[
               { label: 'Situação', value: '' },
@@ -146,6 +110,59 @@ export default function ({ navigation }: any): React.JSX.Element {
           />
         </View>
       </View>
+      <View style={styles.filterButton}>
+        <Dropdown
+          iconColor='#fff'
+          iconStyle={dropStyle.iconStyle}
+          placeholderStyle={dropStyle.placeholderStyle}
+          selectedTextStyle={dropStyle.selectedTextStyle}
+          style={dropStyle.containerStyle}
+          itemTextStyle={dropStyle.itemStyle}
+          data={[
+            {
+              label: 'Hoje', value: '0',
+            },
+            { label: 'Ontem', value: '1' },
+            { label: 'Últimos 7 dias', value: '6' },
+            { label: 'Últimos 15 dias', value: '14' },
+            { label: 'Últimos 30 dias', value: '29' },
+          ]}
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+          value={dateSelect}
+          onChange={({ value }: any) => {
+            setDateSelect(value);
+            if (value) {
+              let startDate = subDays(new Date(), parseInt(value))
+              setStartDate(format(startDate, 'yyyy-MM-dd'))
+
+              if (value == '1') {
+                setEndDate(format(startDate, 'yyyy-MM-dd'))
+              }
+              else {
+                setEndDate(format(new Date(), 'yyyy-MM-dd'))
+              }
+            }
+          }}
+        />
+      </View>
+
+      {!isFetching && total == 0 && < View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+        <View style={{ width: 150, height: 150 }}>
+          <LottieView
+            source={require("../../assets/images/loading-data.json")}
+            style={{ width: "100%", height: "100%" }}
+            autoPlay
+            loop
+          />
+        </View>
+        <Text style={{ flexWrap: 'nowrap', textAlign: 'center', color: Colors.TextColor }}>
+          Você não tem nenhuma venda registrada no momento
+        </Text>
+      </View>}
+
+
       <FlatList style={styles.ordersContainer}
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
         renderItem={({ item }) => (<Card visibility={orderInfoVisibility} item={item} />)}
@@ -157,7 +174,7 @@ export default function ({ navigation }: any): React.JSX.Element {
         onEndReachedThreshold={0.1}
         ListFooterComponent={<FooterListComponent isFetching={isFetching} />}
       />
-    </View>
+    </View >
   )
 }
 

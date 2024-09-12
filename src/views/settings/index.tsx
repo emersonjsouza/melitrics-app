@@ -1,11 +1,10 @@
 import React, { useLayoutEffect } from 'react';
 import {
+  Image,
   StatusBar,
   StyleSheet,
   Text,
   View,
-  Button,
-  TouchableOpacityBase
 } from 'react-native';
 import NavigationButton from '../../components/navigation-button';
 import { useAuth } from '../../context/AuthContext';
@@ -13,7 +12,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import DeviceInfo from 'react-native-device-info';
 import { Colors } from '../../assets/color';
-
 
 export default function ({ navigation }: any): React.JSX.Element {
   const { logout } = useAuth()
@@ -47,28 +45,37 @@ export default function ({ navigation }: any): React.JSX.Element {
     <View style={styles.mainContainer}>
       <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
 
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <View style={{ alignItems: 'center' }}>
-          <Text style={styles.logoText}>MELITRICS</Text>
-          <Text style={{ color: '#718093' }}>Gestão Inteligente de qualquer lugar</Text>
-        </View>
-        <Text style={{ marginTop: 20, color: '#718093' }}>versão: {deviceVersion}</Text>
+      <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+        <Image source={require('../../assets/images/logomarca.png')} style={{ width: 250, height: 250, resizeMode: 'contain' }} />
+        <Text style={{ marginTop: 20, color: Colors.TextColor }}>versão: {deviceVersion}</Text>
       </View>
 
       <TouchableOpacity>
-        <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: 15 }}>
-          <MaterialCommunityIcons name={'chess-queen'} color={'#718093'} size={25} />
-          <Text style={{ color: '#718093', marginLeft: 10 }}>Seja premium</Text>
+        <View style={{ flexDirection: 'row', marginBottom: 20, height: 40, borderColor: '#ddd', borderWidth: 0.5, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: 15 }}>
+          <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={25} />
+          <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Seja premium</Text>
         </View>
       </TouchableOpacity>
 
       <TouchableOpacity activeOpacity={1} disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
           <View style={{ flexDirection: 'row' }}>
-            <MaterialCommunityIcons name={'sync'} color={'#718093'} size={25} />
-            <Text style={{ color: '#718093', marginLeft: 10 }}>Sincronizar estoque</Text>
+            <MaterialCommunityIcons name={'flag-checkered'} color={Colors.TextColor} size={25} />
+            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Definir meta de faturamento</Text>
           </View>
-          <View style={{ backgroundColor: '#fb8c00', borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
+          <View style={{ paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
+            <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={15} />
+          </View>
+        </View>
+      </TouchableOpacity>
+
+      <TouchableOpacity activeOpacity={1} disabled={false}>
+        <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
+          <View style={{ flexDirection: 'row' }}>
+            <MaterialCommunityIcons name={'sync'} color={Colors.TextColor} size={25} />
+            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Sincronizar estoque</Text>
+          </View>
+          <View style={{ backgroundColor: Colors.PremiumColor, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
             <Text style={{ fontSize: 9, color: '#fff' }}>em breve</Text>
           </View>
         </View>
@@ -77,10 +84,10 @@ export default function ({ navigation }: any): React.JSX.Element {
       <TouchableOpacity activeOpacity={1} disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
           <View style={{ flexDirection: 'row' }}>
-            <MaterialCommunityIcons name={'sync'} color={'#718093'} size={25} />
-            <Text style={{ color: '#718093', marginLeft: 10 }}>Sincronizar vendas</Text>
+            <MaterialCommunityIcons name={'sync'} color={Colors.TextColor} size={25} />
+            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Sincronizar vendas</Text>
           </View>
-          <View style={{ backgroundColor: '#fb8c00', borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
+          <View style={{ backgroundColor: Colors.PremiumColor, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
             <Text style={{ fontSize: 9, color: '#fff' }}>em breve</Text>
           </View>
         </View>
@@ -89,11 +96,11 @@ export default function ({ navigation }: any): React.JSX.Element {
       <TouchableOpacity activeOpacity={1} disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
           <View style={{ flexDirection: 'row' }}>
-            <MaterialCommunityIcons name={'share-all'} color={'#718093'} size={25} />
-            <Text style={{ color: '#718093', marginLeft: 10 }}>Compartilhar minha conta</Text>
+            <MaterialCommunityIcons name={'share-all'} color={Colors.TextColor} size={25} />
+            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Compartilhar minha conta</Text>
           </View>
-          <View style={{ backgroundColor: '#fb8c00', borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
-            <Text style={{ fontSize: 9, color: '#fff' }}>em breve</Text>
+          <View style={{ paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
+            <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={15} />
           </View>
         </View>
       </TouchableOpacity>
@@ -111,7 +118,7 @@ const styles = StyleSheet.create({
   logoText: {
     marginTop: 80,
     fontSize: 30,
-    color: '#718093',
+    color: Colors.TextColor,
     fontWeight: 'bold',
   },
 });

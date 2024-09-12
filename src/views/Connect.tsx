@@ -104,7 +104,7 @@ function App({ navigation, route }: any): React.JSX.Element {
           />
         </View>
         <Text style={{ flexWrap: 'nowrap', textAlign: 'center', color: '#718093' }}>
-          Falta pouco! Estamos baixando o seus dados de produto e venda em breve você já deve visualizar todas suas vendas e produtos
+          Falta pouco! Estamos baixando o seus dados em breve você irá visualizar todas suas vendas e produtos.
         </Text>
         <TouchableOpacity onPress={() => {
           navigation.reset({
