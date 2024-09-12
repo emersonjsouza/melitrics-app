@@ -16,6 +16,7 @@ import Card from './card';
 import NavigationButton from '../../components/navigation-button';
 import { Colors } from '../../assets/color';
 import LottieView from 'lottie-react-native';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function ({ navigation }: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
@@ -67,6 +68,49 @@ export default function ({ navigation }: any): React.JSX.Element {
             iconStyle={dropStyle.iconStyle}
             placeholderStyle={dropStyle.placeholderStyle}
             selectedTextStyle={dropStyle.selectedTextStyle}
+            style={dropStyle.containerStyle}
+            itemTextStyle={dropStyle.itemStyle}
+            data={[
+              { label: 'Hoje', value: '0' },
+              { label: 'Ontem', value: '1' },
+              { label: 'Últimos 7 dias', value: '6' },
+              { label: 'Últimos 15 dias', value: '14' },
+              { label: 'Outro período', value: 'custom' },
+            ]}
+            renderItem={(item) => {
+              return (<View style={{ height: 40, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={dropStyle.itemStyle}>{item.label}</Text>
+                {item.value != '0' && item.value != '1' && <View style={{ marginRight: 10 }}>
+                  <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={15} />
+                </View>}
+              </View>)
+            }}
+            maxHeight={300}
+            labelField="label"
+            valueField="value"
+            value={dateSelect}
+            onChange={({ value }: any) => {
+              setDateSelect(value);
+              if (value) {
+                let startDate = subDays(new Date(), parseInt(value))
+                setStartDate(format(startDate, 'yyyy-MM-dd'))
+
+                if (value == '1') {
+                  setEndDate(format(startDate, 'yyyy-MM-dd'))
+                }
+                else if (value != 'custom') {
+                  setEndDate(format(new Date(), 'yyyy-MM-dd'))
+                }
+              }
+            }}
+          />
+        </View>
+        <View style={styles.filterButton}>
+          <Dropdown
+            iconColor='#fff'
+            iconStyle={dropStyle.iconStyle}
+            placeholderStyle={dropStyle.placeholderStyle}
+            selectedTextStyle={dropStyle.selectedTextStyle}
             itemTextStyle={dropStyle.itemStyle}
             style={dropStyle.containerStyle}
             placeholder='Situação'
@@ -110,43 +154,7 @@ export default function ({ navigation }: any): React.JSX.Element {
           />
         </View>
       </View>
-      <View style={styles.filterButton}>
-        <Dropdown
-          iconColor='#fff'
-          iconStyle={dropStyle.iconStyle}
-          placeholderStyle={dropStyle.placeholderStyle}
-          selectedTextStyle={dropStyle.selectedTextStyle}
-          style={dropStyle.containerStyle}
-          itemTextStyle={dropStyle.itemStyle}
-          data={[
-            {
-              label: 'Hoje', value: '0',
-            },
-            { label: 'Ontem', value: '1' },
-            { label: 'Últimos 7 dias', value: '6' },
-            { label: 'Últimos 15 dias', value: '14' },
-            { label: 'Últimos 30 dias', value: '29' },
-          ]}
-          maxHeight={300}
-          labelField="label"
-          valueField="value"
-          value={dateSelect}
-          onChange={({ value }: any) => {
-            setDateSelect(value);
-            if (value) {
-              let startDate = subDays(new Date(), parseInt(value))
-              setStartDate(format(startDate, 'yyyy-MM-dd'))
 
-              if (value == '1') {
-                setEndDate(format(startDate, 'yyyy-MM-dd'))
-              }
-              else {
-                setEndDate(format(new Date(), 'yyyy-MM-dd'))
-              }
-            }
-          }}
-        />
-      </View>
 
       {!isFetching && total == 0 && < View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
         <View style={{ width: 150, height: 150 }}>
