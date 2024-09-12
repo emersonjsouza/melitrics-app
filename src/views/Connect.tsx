@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -17,6 +17,7 @@ import settings from '../settings';
 import { useMeliToken } from '../hooks/useMeliToken';
 import { useChannel } from '../hooks/useChannel';
 import { usePostHog } from 'posthog-react-native';
+import LottieView from "lottie-react-native";
 
 function App({ navigation, route }: any): React.JSX.Element {
   const { logout, currentOrg } = useAuth()
@@ -53,7 +54,7 @@ function App({ navigation, route }: any): React.JSX.Element {
 
         if (resp.access_token) {
           posthog.reloadFeatureFlags()
-          
+
           await channelMutate({
             access_token: resp.access_token,
             refresh_token: resp.refresh_token,
@@ -62,6 +63,50 @@ function App({ navigation, route }: any): React.JSX.Element {
             marketplace_code: 'mlb',
           })
 
+          setEnableContinue(true)
+        }
+      }
+    })()
+  }, [route?.params?.code])
+
+  const [enableContinue, setEnableContinue] = useState(false)
+
+  return (
+    <KeyboardAvoidingView style={styles.safeAreaContainer}>
+      <StatusBar barStyle={'dark-content'} />
+      {!route?.params?.code && <>
+        <View style={{ alignItems: 'center' }}>
+          <Text style={styles.logoText}>MELITRICS</Text>
+        </View>
+        <View style={{ marginTop: Dimensions.get('screen').height * 0.2, flex: 1, justifyContent: 'space-between' }}>
+          <View>
+            <Text style={{ color: '#718093', marginVertical: 10, flexWrap: 'wrap', fontWeight: 600, width: Dimensions.get('window').width * .8, textAlign: 'left' }}>FALTA SÓ UM PASSO 😋</Text>
+            <Text style={{ color: '#718093', flexWrap: 'wrap', width: Dimensions.get('window').width * .8, textAlign: 'left' }}>Você ainda não possui nenhuma conta do Mercado Livre conectado</Text>
+
+            <TouchableOpacity style={styles.signButton} onPress={onConnect}>
+              {!isTookenPending && !isChannelPending && <Text style={styles.submitText}>Conectar ao Mercado Livre</Text>}
+              {isTookenPending || isChannelPending && <ActivityIndicator size="large" color={'#FFF'} />}
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity onPressIn={onSignOut} style={styles.signUpButton}>
+            <Text style={styles.signUpText}>desconectar minha conta</Text>
+          </TouchableOpacity>
+        </View>
+      </>}
+
+      {enableContinue && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+        <View style={{ width: 200, height: 200 }}>
+          <LottieView
+            source={require("../assets/images/loading-data.json")}
+            style={{ width: "100%", height: "100%" }}
+            autoPlay
+            loop
+          />
+        </View>
+        <Text style={{ flexWrap: 'nowrap', textAlign: 'center', color: '#718093' }}>
+          Falta pouco! Estamos baixando o seus dados de produto e venda em breve você já deve visualizar todas suas vendas e produtos
+        </Text>
+        <TouchableOpacity onPress={() => {
           navigation.reset({
             index: 0,
             routes: [
@@ -73,31 +118,12 @@ function App({ navigation, route }: any): React.JSX.Element {
               firstTime: true
             }
           });
-        }
-      }
-    })()
-  }, [route?.params?.code])
-
-  return (
-    <KeyboardAvoidingView style={styles.safeAreaContainer}>
-      <StatusBar barStyle={'dark-content'} />
-      <View style={{ alignItems: 'center' }}>
-        <Text style={styles.logoText}>MELITRICS</Text>
-      </View>
-      <View style={{ marginTop: Dimensions.get('screen').height * 0.2, flex: 1, justifyContent: 'space-between' }}>
-        <View>
-          <Text style={{ color: '#718093', marginVertical: 10, flexWrap: 'wrap', fontWeight: 600, width: Dimensions.get('window').width * .8, textAlign: 'left' }}>FALTA SÓ UM PASSO 😋</Text>
-          <Text style={{ color: '#718093', flexWrap: 'wrap', width: Dimensions.get('window').width * .8, textAlign: 'left' }}>Você ainda não possui nenhuma conta do Mercado Livre conectado</Text>
-
-          <TouchableOpacity style={styles.signButton} onPress={onConnect}>
-            {!isTookenPending && !isChannelPending && <Text style={styles.submitText}>Conectar ao Mercado Livre</Text>}
-            {isTookenPending || isChannelPending && <ActivityIndicator size="large" color={'#FFF'} />}
-          </TouchableOpacity>
-        </View>
-        <TouchableOpacity onPressIn={onSignOut} style={styles.signUpButton}>
-          <Text style={styles.signUpText}>desconectar minha conta</Text>
+        }}>
+          <View style={{ borderRadius: 10, backgroundColor: Colors.Main, width: 200, height: 40, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
+            <Text style={{ color: '#fff' }}>Continua</Text>
+          </View>
         </TouchableOpacity>
-      </View>
+      </View>}
     </KeyboardAvoidingView >
   );
 }

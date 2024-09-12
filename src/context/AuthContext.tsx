@@ -177,6 +177,9 @@ const AuthContextProvider = (props: any) => {
 
           setLoggedIn(false);
           setUserData(null);
+          setAdInfoVisibility(true)
+          setOrderInfoVisibility(true)
+          
           await queryClient.invalidateQueries({
             queryKey: ['user', 'orders', 'tax', 'ads', 'indicators-shipping-type', 'indicators', 'indicators-month']
           })

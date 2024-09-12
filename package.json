@@ -20,6 +20,7 @@
     "@tanstack/react-query": "^5.52.2",
     "axios": "^1.7.5",
     "date-fns": "^3.6.0",
+    "lottie-react-native": "^6.7.2",
     "posthog-react-native": "^3.1.2",
     "react": "18.2.0",
     "react-content-loader": "^7.0.2",

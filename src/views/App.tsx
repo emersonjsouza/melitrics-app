@@ -22,7 +22,7 @@ import DeviceInfo from 'react-native-device-info';
 function App(props: any): React.JSX.Element {
   const { login, loggedIn, loading, organizations, isFetchingOrganizations } = useAuth()
   const signupFlag = useFeatureFlag('new-signup')
-  
+
   const posthog = usePostHog()
 
   const onSignIn = async () => {
@@ -105,12 +105,8 @@ function App(props: any): React.JSX.Element {
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <StatusBar barStyle={'dark-content'} />
-      <View style={{ alignItems: 'center' }}>
-        <Text style={styles.logoText}>MELITRICS</Text>
-        <Text style={{ color: Colors.Main }}>Gestão Inteligente de qualquer lugar</Text>
-      </View>
-      <View style={{ justifyContent: 'center', height: Dimensions.get('screen').height * 0.5 }}>
-        <Image source={require('../assets/images/banner.png')} style={{ width: 200, resizeMode: 'contain' }} />
+      <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
+        <Image source={require('../assets/images/logomarca.png')} style={{ width: 250, height: 250, resizeMode: 'contain' }} />
       </View>
       <View>
         {loading || isFetchingOrganizations && <ActivityIndicator size="large" color={Colors.Main} />}
