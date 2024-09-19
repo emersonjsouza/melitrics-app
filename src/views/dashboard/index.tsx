@@ -7,7 +7,8 @@ import {
   Text,
   View,
   TouchableOpacity,
-  Alert
+  Alert,
+  Dimensions
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ContentLoader, { Rect } from 'react-content-loader/native'
@@ -21,6 +22,7 @@ import Indicators from './indicators';
 import { formatToBRL } from '../../utils';
 import ProgressBar from '../../components/progressbar';
 import { Colors } from '../../assets/color';
+import { useGoal } from '../../hooks/useGoal';
 
 export default function ({ navigation, route }: any): React.JSX.Element {
   const { userData, currentOrg } = useAuth()
@@ -30,6 +32,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
 
   const operationRef = useRef<{ refresh: () => Promise<void> }>()
   const reportRef = useRef<{ refresh: () => Promise<void> }>()
+  const barProgresRef = useRef<{ setOnProgress: (value: number) => Promise<void> }>()
 
   const {
     isFetching,
@@ -37,8 +40,54 @@ export default function ({ navigation, route }: any): React.JSX.Element {
     data: indicators
   } = useIndicators({ organizationID: currentOrg?.organization_id || '', start: startDate, end: endDate })
 
+
+  const [barProgress, setBarProgress] = useState<number>(0)
+  const [barProgressLabel, setBarProgressLabel] = useState<string>('')
+
+  const {
+    isFetching: isFetchingGoal,
+    refetch: refreshGoal,
+    data: goal
+  } = useGoal({ organizationID: currentOrg?.organization_id || '' })
+
+  useEffect(() => {
+    if (goal) {
+      let label = ''
+      let currentGoal = 0
+      if (dateSelect == "0" || dateSelect == "1") {
+        currentGoal = goal.day
+        label = 'Diária'
+      } else if (dateSelect == "6") {
+        currentGoal = goal.week
+        label = 'Semanal'
+      } else if (dateSelect == "14") {
+        currentGoal = goal.biweekly
+        label = 'Quinzenal'
+      }
+
+      const netIncome = indicators?.net_income as number
+      if (netIncome > 0 && currentGoal > 0) {
+        if ((currentGoal - netIncome) > -1) {
+          setBarProgressLabel(`Ainda falta ${formatToBRL(currentGoal - netIncome)}, sua meta de margem ${label} é ${formatToBRL(currentGoal)}`)
+        }
+        else {
+          setBarProgressLabel(`Parabéns você já completou sua meta ${label} de ${formatToBRL(currentGoal)}`)
+        }
+
+        const width = Dimensions.get('screen').width - 40
+        const widthProgress = (width / 100) * (netIncome / currentGoal * 100)
+        barProgresRef.current?.setOnProgress((width - widthProgress) > -1 ? widthProgress : width)
+      }
+    }
+  }, [goal, indicators?.net_income])
+
+
   const onRefresh = async () => {
-    await Promise.all([operationRef.current?.refresh(), reportRef.current?.refresh(), refreshIndicators()])
+    await Promise.all([
+      operationRef.current?.refresh(),
+      reportRef.current?.refresh(),
+      refreshIndicators()
+    ])
   }
 
   React.useEffect(() => {
@@ -107,14 +156,6 @@ export default function ({ navigation, route }: any): React.JSX.Element {
                 ]}
                 maxHeight={300}
                 labelField="label"
-                renderItem={(item) => {
-                  return (<View style={{ height: 40, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text style={dropStyle.itemStyle}>{item.label}</Text>
-                    {item.value != '0' && item.value != '1' && <View style={{ marginRight: 10 }}>
-                      <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={15} />
-                    </View>}
-                  </View>)
-                }}
                 valueField="value"
                 value={dateSelect}
                 onChange={({ value }: any) => {
@@ -134,7 +175,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
               />
             </View>
           </View>
-          <ProgressBar />
+          <ProgressBar ref={barProgresRef} label={barProgressLabel} />
         </View>
 
         <Indicators isFetching={isFetching} data={indicators} />

@@ -1,27 +1,39 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, PropsWithChildren, forwardRef, useImperativeHandle } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import { Colors } from '../assets/color';
 
-const ProgressBar = (props: any) => {
+
+type ProgressProps = PropsWithChildren<{
+  label?: string
+}>
+
+
+export default forwardRef((props: ProgressProps, ref) => {
   const [progress, setProgress] = useState<Animated.Value>(new Animated.Value(0));
 
   useEffect(() => {
     Animated.timing(progress, {
-      toValue: 75,
+      toValue: progress,
       duration: 2000,
       useNativeDriver: false,
     }).start();
-  }, []);
+  }, [progress]);
+
+  useImperativeHandle(ref, () => ({
+    setOnProgress: async (value: number) => {
+      setProgress(new Animated.Value(value))
+    },
+  }));
 
   return (
     <View style={styles.container}>
       <Animated.View style={[styles.bar, { width: progress }]} />
       <Text style={{ textAlign: 'center', marginTop: 5, fontSize: 10, color: Colors.TextColor }}>
-        Você já está próximo da sua meta de faturamento de R$ 5.000,00
+        {props.label}
       </Text>
     </View>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -33,9 +45,8 @@ const styles = StyleSheet.create({
   },
   bar: {
     height: 20,
-    backgroundColor: Colors.PremiumColor,
+    backgroundColor: '#27ae60',
     borderRadius: 10,
   },
 });
 
-export default ProgressBar;

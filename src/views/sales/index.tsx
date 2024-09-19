@@ -77,14 +77,6 @@ export default function ({ navigation }: any): React.JSX.Element {
               { label: 'Últimos 15 dias', value: '14' },
               { label: 'Outro período', value: 'custom' },
             ]}
-            renderItem={(item) => {
-              return (<View style={{ height: 40, padding: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Text style={dropStyle.itemStyle}>{item.label}</Text>
-                {item.value != '0' && item.value != '1' && <View style={{ marginRight: 10 }}>
-                  <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={15} />
-                </View>}
-              </View>)
-            }}
             maxHeight={300}
             labelField="label"
             valueField="value"

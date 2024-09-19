@@ -76,12 +76,12 @@ export default function ({ route, navigation }: any) {
   const pieData = [
     {
       value: item.net_income > 0 ? item.net_income : 0,
-      color: '#B0FF6D',
-      gradientCenterColor: '#B0FF6D',
+      color: Colors.Green,
+      gradientCenterColor: Colors.Green,
       focused: true,
     },
     { value: item.sales_fee, color: '#ffce00', gradientCenterColor: '#ffce00' },
-    { value: item.cost, color: '#8F80F3', gradientCenterColor: '#8F80F3' },
+    { value: item.cost, color: '#c0392b', gradientCenterColor: '#8F80F3' },
     { value: item.tax_rate, color: '#fb8c00', gradientCenterColor: '#fb8c00' },
     { value: item.shipping_cost, color: '#a471cc', gradientCenterColor: '#a471cc' },
   ];
@@ -111,7 +111,7 @@ export default function ({ route, navigation }: any) {
           }}>
           <View
             style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {renderDot('#8F80F3')}
+            {renderDot('#c0392b')}
             <Text style={{ color: 'white' }}>Custo {formatToBRL(item.cost)}</Text>
           </View>
           <View
@@ -146,7 +146,7 @@ export default function ({ route, navigation }: any) {
               width: 160,
               marginTop: 5,
             }}>
-            {renderDot('#B0FF6D')}
+            {renderDot(Colors.Green)}
             <Text style={{ color: 'white' }}>Margem {formatToBRL(item.net_income)}</Text>
           </View>
         </View>
@@ -209,7 +209,7 @@ export default function ({ route, navigation }: any) {
               margin: 10,
               padding: 16,
               borderRadius: 20,
-              backgroundColor: Colors.Main,
+              backgroundColor: Colors.TextColor,
             }}>
             <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
               Desempenho do Anúncio
@@ -222,7 +222,7 @@ export default function ({ route, navigation }: any) {
                 sectionAutoFocus
                 radius={100}
                 innerRadius={60}
-                innerCircleColor={Colors.Main}
+                innerCircleColor={Colors.TextColor}
                 centerLabelComponent={() => {
                   return (
                     <View style={{ justifyContent: 'center', alignItems: 'center' }}>
@@ -240,7 +240,7 @@ export default function ({ route, navigation }: any) {
           </View>
         </View>
         <TouchableOpacity onPress={() => navigation.navigate('Tax', { itemID: item.id, taxID: item.tax_id })}>
-          <View style={{ backgroundColor: Colors.Main, borderRadius: 10, margin: 10, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+          <View style={{ backgroundColor: Colors.TextColor, borderRadius: 10, margin: 10, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
             <MaterialCommunityIcons name={'plus'} color={'#FFF'} size={20} />
             {item.cost == 0 && <Text style={{ color: '#FFF' }}>ADICIONAR CUSTO E IMPOSTO</Text>}
             {item.cost > 0 && <Text style={{ color: '#FFF' }}>ATUALIZAR CUSTO E IMPOSTO</Text>}

@@ -18,6 +18,7 @@ import { APIError, TaxRegister } from '../../services/types';
 import { useAuth } from '../../context/AuthContext';
 import CurrencyInput from 'react-native-currency-input';
 import { useTax } from '../../hooks/useTax';
+import CheckBox from '../../components/checkbox';
 
 export default function ({ route, navigation }: any): React.JSX.Element {
   const { itemID, taxID } = route?.params
@@ -31,7 +32,8 @@ export default function ({ route, navigation }: any): React.JSX.Element {
     cost: 0,
     sku: '',
     item_id: itemID,
-    tax_rate: 0
+    tax_rate: 0,
+    charge_flex_sales: false,
   });
 
   const { mutateAsync, isPending } = useTaxMutation()
@@ -41,7 +43,8 @@ export default function ({ route, navigation }: any): React.JSX.Element {
       ...value,
       cost: data?.cost || null,
       tax_rate: data?.tax_rate || null,
-      sku: data?.sku || ''
+      sku: data?.sku || '',
+      charge_flex_sales: data?.charge_flex_sales || null
     }))
   }, [data])
 
@@ -81,7 +84,7 @@ export default function ({ route, navigation }: any): React.JSX.Element {
   return (
     <KeyboardAvoidingView style={styles.safeAreaContainer}>
       <View style={styles.formContainer}>
-        <Text>SKU:</Text>
+        <Text style={styles.label}>SKU:</Text>
         <TextInput
           placeholderTextColor={'#CCC'}
           returnKeyType={'next'}
@@ -90,7 +93,7 @@ export default function ({ route, navigation }: any): React.JSX.Element {
           style={styles.input}
         />
 
-        <Text>Custo do Produto:</Text>
+        <Text style={styles.label}>Custo do Produto:</Text>
         <CurrencyInput
           value={inputRequest.cost}
           onChangeValue={(cost) => setInputRequest({ ...inputRequest, cost: cost })}
@@ -102,19 +105,30 @@ export default function ({ route, navigation }: any): React.JSX.Element {
           minValue={0}
         />
 
-        <Text>Imposto:</Text>
+        <Text style={styles.label}>Imposto:</Text>
         <CurrencyInput
           value={inputRequest.tax_rate}
           onChangeValue={(tax_rate) => setInputRequest({ ...inputRequest, tax_rate })}
-          prefix="R$"
+          suffix="%"
           delimiter="."
           separator=","
           style={styles.input}
           precision={2}
           minValue={0}
         />
+
+        <CheckBox
+          label='Não Incide imposto em vendas Flex:'
+          labelStyle={styles.label}
+          iconColor={Colors.TextColor}
+          checkColor={Colors.TextColor}
+          value={inputRequest.charge_flex_sales}
+          onChange={() => {
+            setInputRequest((value: TaxRegister) => ({ ...value, charge_flex_sales: !value.charge_flex_sales }))
+          }}
+        />
       </View>
-      <View>
+      <View style={{ marginTop: 10 }}>
         <TouchableOpacity style={styles.register} onPress={onCreate} disabled={isPending}>
           {!isPending && <Text style={styles.submitText}>{taxID ? 'atualizar' : 'cadastrar'}</Text>}
           {isPending && <ActivityIndicator size="large" color={'#fff'} />}
@@ -125,6 +139,7 @@ export default function ({ route, navigation }: any): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
+  label: { color: Colors.TextColor, fontSize: 16 },
   safeAreaContainer: {
     flex: 1,
     alignItems: 'center',

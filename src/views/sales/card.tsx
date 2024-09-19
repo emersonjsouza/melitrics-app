@@ -38,7 +38,7 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
 
 
   let cardHeight = styles.cardContainer.height;
-  if (item.is_advertising) {
+  if (item.is_advertising || item.cost > 0) {
     cardHeight += 25
   }
 
@@ -55,16 +55,15 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
             source={require('../../assets/images/logo-ads.png')} />
           <Text style={{ color: '#ab86ff', fontSize: 9, marginLeft: 10, fontWeight: 600 }}>com publicidade</Text>
         </View>}
+        {item.cost > 0 && <View style={{ flexDirection: 'row', borderBlockColor: '#03933B', backgroundColor: '#03933B', borderWidth: 0.5, marginLeft: 10, width: 120, marginBottom: 5, borderBottomStartRadius: 10, borderBottomEndRadius: 10, height: 25, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: '#fff', fontSize: 9, marginLeft: 10, fontWeight: 600 }}>Margem {formatToBRL(item.net_income)}</Text>
+        </View>}
       </View>
       <View style={{ marginTop: 10 }}>
         {visibility && <Text style={styles.cardTitle}>{item.sku.toUpperCase()} - {item.title}</Text>}
         {!visibility && <Text style={styles.cardTitle}>{item.external_id}</Text>}
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>
-          <Text style={{ fontSize: 20, color: '#9C9C9C' }}>{formatToBRL(item.net_income)}</Text>
-          <Text style={{ fontSize: 12, color: '#03933B', marginLeft: 2, }}>{((item.net_income / item.revenue) * 100).toFixed(2)}%</Text>
-        </View>
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={{ fontSize: 10, fontFamily: 'Robo-Thin', color: '#9C9C9C' }}>margem de contribuição</Text>
+          <Text style={{ fontSize: 20, color: '#9C9C9C' }}>{formatToBRL(item.revenue)}</Text>
         </View>
       </View>
       <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'center' }}>

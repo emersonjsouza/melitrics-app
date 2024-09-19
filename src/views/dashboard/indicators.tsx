@@ -25,32 +25,25 @@ export default function ({ isFetching, data }: Props): React.JSX.Element {
         isLoading={isFetching}
         amount={data?.net_income as number}
         amountInPercent={revenuePercent}
-        backgroundColor='#B0FF6D'
+        backgroundColor='#27ae60'
       />
       <CardInsight
         isLoading={isFetching}
-        title='Custos + Impostos'
+        title='Custos'
         amount={data?.cost as number}
-        amountSub={data?.tax as number}
-        backgroundColor='#64FFD3'
+        backgroundColor='#e67e22'
       />
       <CardInsight
         isLoading={isFetching}
         title='Tarifas'
-        amount={data?.sales_fee as number}
+        amount={data?.sales_fee as number + (data?.shipping_cost as number)}
         backgroundColor='#ffce00'
       />
       <CardInsight
         isLoading={isFetching}
-        title='Frete Vendedor'
-        amount={data?.shipping_cost as number}
-        backgroundColor='#a471cc'
-      />
-      <CardInsight
-        isLoading={isFetching}
-        title='Ticket Médio'
-        amount={data?.ticket_ratio as number}
-        backgroundColor='#7994F5'
+        title='Impostos'
+        amount={data?.tax as number}
+        backgroundColor='#eb4d4b'
       />
     </ScrollView>
   </View>)

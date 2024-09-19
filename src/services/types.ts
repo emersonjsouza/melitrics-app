@@ -107,6 +107,7 @@ export interface TaxRegister {
   sku: string
   cost: number | null
   tax_rate: number | null
+  charge_flex_sales: boolean | null
   item_id?: string
 }
 
@@ -115,8 +116,16 @@ export interface Tax {
   sku: string
   cost: number | null
   tax_rate: number | null
+  charge_flex_sales: boolean | null
 }
 
+export interface Goal {
+  id: string
+  day: number
+  week: number
+  biweekly: number
+  month: number
+}
 
 export interface APIError extends Error {
   response?: {

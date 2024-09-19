@@ -3,6 +3,7 @@ import server from "./server"
 import {
   Ad,
   ChannelRegister,
+  Goal,
   Indicator,
   IndicatorMonth,
   IndicatorShippingType,
@@ -71,6 +72,12 @@ export const getUser = async (userID: string) => {
 export const getTax = async (organizationID: string, taxID: string) => {
   console.log('fetching get tax')
   const resp = await server.get<Tax>(`/v1/taxes/${organizationID}/${taxID}`)
+  return resp.data
+}
+
+export const getGoal = async (organizationID: string) => {
+  console.log('fetching get goal')
+  const resp = await server.get<Goal>(`/v1/goals/${organizationID}`)
   return resp.data
 }
 
