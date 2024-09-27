@@ -15,7 +15,7 @@ import ContentLoader, { Rect } from 'react-content-loader/native'
 import { useIndicators } from '../../hooks/useIndicators';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useAuth } from '../../context/AuthContext';
-import { endOfSecond, format, subDays } from 'date-fns'
+import { format, subDays } from 'date-fns'
 import Operations from './operations';
 import Report from './report';
 import Indicators from './indicators';
@@ -25,12 +25,23 @@ import { Colors } from '../../assets/color';
 import { useGoal } from '../../hooks/useGoal';
 import { Modal } from '../../components/modal';
 import Calendar from "react-native-calendar-range-picker";
+import { useOrders } from '../../hooks/useOrders';
 
 export default function ({ navigation, route }: any): React.JSX.Element {
   const { userData, currentOrg } = useAuth()
   const [dateSelect, setDateSelect] = useState('0')
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
+
+
+
+  const { } = useOrders({
+    organizationID: currentOrg?.organization_id || '',
+    start: startDate,
+    end: endDate,
+    status: '',
+    shippingType: ''
+  })
 
   const operationRef = useRef<{ refresh: () => Promise<void> }>()
   const reportRef = useRef<{ refresh: () => Promise<void> }>()
@@ -110,7 +121,11 @@ export default function ({ navigation, route }: any): React.JSX.Element {
   }, [])
 
   return (
-    <View style={{ flex: 1, flexGrow: 1, backgroundColor: '#FFF' }}>
+  <ScrollView
+      style={{ flex: 1, flexGrow: 1, backgroundColor: '#FFF' }}
+      contentContainerStyle={styles.mainContainer}
+      showsVerticalScrollIndicator={true}
+    >
       <Modal isVisible={isModalVisible}>
         <Modal.Container>
           <Modal.Body>
@@ -139,94 +154,90 @@ export default function ({ navigation, route }: any): React.JSX.Element {
       </Modal>
 
       <StatusBar translucent barStyle="dark-content" backgroundColor={'#FFF'} />
-      <ScrollView
-        contentContainerStyle={styles.mainContainer}
-        showsVerticalScrollIndicator={true}
-        contentInsetAdjustmentBehavior="automatic">
-        <View style={styles.headerContainer}>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={styles.profileContainer}>
-              <Text style={styles.profileText}>{currentOrg?.name.substring(0, 2).toUpperCase()}</Text>
-            </View>
-            <View style={styles.greetingContainer}>
-              <Text style={styles.greetingSubText}>Seja bem vindo,</Text>
-              {userData && <Text style={styles.greetingText}>{userData.name}</Text>}
-            </View>
+
+      <View style={styles.headerContainer}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={styles.profileContainer}>
+            <Text style={styles.profileText}>{currentOrg?.name.substring(0, 2).toUpperCase()}</Text>
           </View>
+          <View style={styles.greetingContainer}>
+            <Text style={styles.greetingSubText}>Seja bem vindo,</Text>
+            {userData && <Text style={styles.greetingText}>{userData.name}</Text>}
+          </View>
+        </View>
+        <View>
+          <TouchableOpacity onPress={onRefresh}>
+            <MaterialCommunityIcons name={'refresh'} color={'#8D8E8D'} size={20} />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={{ marginTop: 10, marginLeft: 20 }}>
+        <View style={styles.profitContainer}>
           <View>
-            <TouchableOpacity onPress={onRefresh}>
-              <MaterialCommunityIcons name={'refresh'} color={'#8D8E8D'} size={20} />
-            </TouchableOpacity>
+            <Text style={{ fontFamily: 'Robo-Light', color: Colors.TextColor }}>Seu Faturamento</Text>
+            {!isFetching && <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2, color: Colors.TextColor }}>{formatToBRL(indicators?.revenue)}</Text>}
+            {isFetching && <ContentLoader
+              height={20}
+              speed={1}
+              backgroundColor={'#999'}
+              foregroundColor={'#ccc'}
+              viewBox="0 0 380 60">
+              <Rect x="0" y="40" rx="3" ry="10" width="380" height="500" />
+            </ContentLoader>}
+          </View>
+          <View >
+            <Dropdown
+              style={{ width: 200, height: 40, paddingRight: 10 }}
+              placeholderStyle={dropStyle.placeholderStyle}
+              selectedTextStyle={dropStyle.selectedTextStyle}
+              itemTextStyle={dropStyle.itemStyle}
+              data={[
+                { label: 'Hoje', value: '0' },
+                { label: 'Ontem', value: '1' },
+                { label: 'Últimos 7 dias', value: '6' },
+                { label: 'Últimos 15 dias', value: '14' },
+                { label: 'Outro período', value: 'custom' },
+              ]}
+              maxHeight={300}
+              labelField="label"
+              valueField="value"
+              value={dateSelect}
+              onChange={({ value }: any) => {
+                setDateSelect(value);
+                if (value != "custom") {
+                  let startDate = subDays(new Date(), parseInt(value))
+                  setStartDate(format(startDate, 'yyyy-MM-dd'))
+
+                  if (value == '1') {
+                    setEndDate(format(startDate, 'yyyy-MM-dd'))
+                  } else {
+                    setEndDate(format(new Date(), 'yyyy-MM-dd'))
+                  }
+                }
+                else {
+                  setIsModalVisible(true)
+                }
+              }}
+            />
           </View>
         </View>
-        <View style={{ marginTop: 10, marginLeft: 20 }}>
-          <View style={styles.profitContainer}>
-            <View>
-              <Text style={{ fontFamily: 'Robo-Light', color: Colors.TextColor }}>Seu Faturamento</Text>
-              {!isFetching && <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2, color: Colors.TextColor }}>{formatToBRL(indicators?.revenue)}</Text>}
-              {isFetching && <ContentLoader
-                height={20}
-                speed={1}
-                backgroundColor={'#999'}
-                foregroundColor={'#ccc'}
-                viewBox="0 0 380 60">
-                <Rect x="0" y="40" rx="3" ry="10" width="380" height="500" />
-              </ContentLoader>}
-            </View>
-            <View >
-              <Dropdown
-                style={{ width: 200, height: 40, paddingRight: 10 }}
-                placeholderStyle={dropStyle.placeholderStyle}
-                selectedTextStyle={dropStyle.selectedTextStyle}
-                itemTextStyle={dropStyle.itemStyle}
-                data={[
-                  { label: 'Hoje', value: '0' },
-                  { label: 'Ontem', value: '1' },
-                  { label: 'Últimos 7 dias', value: '6' },
-                  { label: 'Últimos 15 dias', value: '14' },
-                  { label: 'Outro período', value: 'custom' },
-                ]}
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                value={dateSelect}
-                onChange={({ value }: any) => {
-                  setDateSelect(value);
-                  if (value != "custom") {
-                    let startDate = subDays(new Date(), parseInt(value))
-                    setStartDate(format(startDate, 'yyyy-MM-dd'))
+        <ProgressBar ref={barProgresRef} label={barProgressLabel} />
+      </View>
 
-                    if (value == '1') {
-                      setEndDate(format(startDate, 'yyyy-MM-dd'))
-                    } else {
-                      setEndDate(format(new Date(), 'yyyy-MM-dd'))
-                    }
-                  }
-                  else {
-                    setIsModalVisible(true)
-                  }
-                }}
-              />
-            </View>
-          </View>
-          <ProgressBar ref={barProgresRef} label={barProgressLabel} />
-        </View>
+      <Indicators isFetching={isFetching} data={indicators} />
 
-        <Indicators isFetching={isFetching} data={indicators} />
+      <Text style={{
+        fontFamily: 'Roboto-Medium',
+        marginTop: 20,
+        color: '#212946',
+        fontSize: 18,
+        marginLeft: 20,
+      }}>Minhas Operações</Text>
 
-        <Text style={{
-          fontFamily: 'Roboto-Medium',
-          marginTop: 20,
-          color: '#212946',
-          fontSize: 18,
-          marginLeft: 20,
-        }}>Minhas Operações</Text>
+      <Operations ref={operationRef} organizationID={currentOrg?.organization_id || ''} startDate={startDate} endDate={endDate} />
 
-        <Operations ref={operationRef} organizationID={currentOrg?.organization_id || ''} startDate={startDate} endDate={endDate} />
-
-        <Report ref={reportRef} organizationID={currentOrg?.organization_id || ''} />
-      </ScrollView >
-    </View >
+      <Report ref={reportRef} organizationID={currentOrg?.organization_id || ''} />
+    </ScrollView >
   )
 }
 

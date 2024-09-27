@@ -5,6 +5,7 @@ import {
   FlatList,
   StatusBar,
   StyleSheet,
+  Text,
   View
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
@@ -14,6 +15,7 @@ import { useAds } from '../../hooks/useAds';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from '../../assets/color';
 import { Dropdown } from 'react-native-element-dropdown';
+import LottieView from 'lottie-react-native';
 
 export default function ({ navigation }: any): React.JSX.Element {
   const { currentOrg, adInfoVisibility, saveAdInfoVisibility } = useAuth()
@@ -119,7 +121,22 @@ export default function ({ navigation }: any): React.JSX.Element {
           />
         </View>
       </View>
-      <FlatList style={styles.adsContainer}
+
+      {total == 0 && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+        <View style={{ width: 150, height: 150 }}>
+          <LottieView
+            source={require("../../assets/images/loading-data.json")}
+            style={{ width: "100%", height: "100%" }}
+            autoPlay
+            loop
+          />
+        </View>
+        <Text style={{ flexWrap: 'nowrap', textAlign: 'center', color: Colors.TextColor }}>
+          Você não tem nenhum produto registrada no momento
+        </Text>
+      </View>}
+
+      {total > 0 && <FlatList style={styles.adsContainer}
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
         renderItem={({ item }) => (<Card visibility={adInfoVisibility} navigate={navigation.navigate} item={item} />)}
         onEndReached={() => {
@@ -129,7 +146,7 @@ export default function ({ navigation }: any): React.JSX.Element {
         }}
         onEndReachedThreshold={0.5}
         ListFooterComponent={<FooterListComponent isFetching={isFetching} />}
-      />
+      />}
     </View>
   )
 }

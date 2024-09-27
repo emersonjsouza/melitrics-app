@@ -20,6 +20,7 @@ import LottieView from 'lottie-react-native';
 import { Modal } from '../../components/modal';
 import Calendar from "react-native-calendar-range-picker";
 import { CUSTOM_LOCALE } from '../../utils';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ({ navigation }: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
@@ -30,13 +31,19 @@ export default function ({ navigation }: any): React.JSX.Element {
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [isModalVisible, setIsModalVisible] = React.useState(false);
 
-  const { data, total, isFetching, fetchNextPage, hasNextPage, refetch } = useOrders({
+  const orderHook = useOrders({
     organizationID: currentOrg?.organization_id || '',
     start: startDate,
     end: endDate,
     status,
     shippingType
   })
+
+  useEffect(() => {
+    console.log('first time...', orderHook)
+  }, [])
+
+  let { data, total, isFetching, fetchNextPage, hasNextPage, refetch } = orderHook
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -49,11 +56,6 @@ export default function ({ navigation }: any): React.JSX.Element {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: `(${total}) Vendas`,
-      headerLeft: () => {
-        <View style={{ flexDirection: 'row' }}>
-          <NavigationButton onPress={saveOrderInfoVisibility} icon={'refresh'} />
-        </View>
-      },
       headerRight: () => (
         <View style={{ flexDirection: 'row' }}>
           <NavigationButton onPress={saveOrderInfoVisibility} icon={orderInfoVisibility ? 'eye-off-outline' : 'eye-outline'} />
@@ -63,7 +65,9 @@ export default function ({ navigation }: any): React.JSX.Element {
   }, [total, orderInfoVisibility])
 
   return (
-    <View style={styles.mainContainer}>
+    <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.mainContainer}>
+      <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
+
       <Modal isVisible={isModalVisible}>
         <Modal.Container>
           <Modal.Body>
@@ -91,7 +95,6 @@ export default function ({ navigation }: any): React.JSX.Element {
         </Modal.Container>
       </Modal>
 
-      <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
       <View style={styles.headerContainer}>
         <View style={styles.filterButton}>
           <Dropdown
@@ -179,8 +182,7 @@ export default function ({ navigation }: any): React.JSX.Element {
           />
         </View>
       </View>
-
-      {!isFetching && total == 0 && < View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+      {total == 0 && <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
         <View style={{ width: 150, height: 150 }}>
           <LottieView
             source={require("../../assets/images/loading-data.json")}
@@ -194,20 +196,18 @@ export default function ({ navigation }: any): React.JSX.Element {
         </Text>
       </View>}
 
-
-      <FlatList style={styles.ordersContainer}
+      {total > 0 && <FlatList
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
         renderItem={({ item }) => (<Card visibility={orderInfoVisibility} item={item} />)}
-        onEndReached={() => {
-          console.log('hasNextPage', hasNextPage)
+        onEndReached={(el) => {
           if (hasNextPage) {
             fetchNextPage()
           }
         }}
         onEndReachedThreshold={0.5}
-        ListFooterComponent={<FooterListComponent isFetching={isFetching} />}
-      />
-    </View >
+        ListFooterComponent={< FooterListComponent isFetching={isFetching} />}
+      />}
+    </SafeAreaView >
   )
 }
 
@@ -231,20 +231,15 @@ const dropStyle = StyleSheet.create({
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#fff',
-    flexDirection: 'column',
+    marginTop: StatusBar.currentHeight || 0,
+    backgroundColor: '#fff'
   },
   headerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     backgroundColor: Colors.Main,
-    paddingTop: 10,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
     height: 60
-  },
-  ordersContainer: {
-    paddingTop: 10
   },
   filterButton: {
     justifyContent: 'center',

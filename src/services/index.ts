@@ -37,7 +37,7 @@ export const getIndicatorsByMonth = async (organizationID: string) => {
 
 export const listAds = async (organizationID: string, offset: number, status: string, subStatus: string, logisticType: string) => {
   console.log('fetching ads')
-  const resp = await server.get<List<Ad>>(`/v1/items/${organizationID}?offset=${offset}&status=${status}&sub_status=${subStatus}&logistic_type=${logisticType}`)
+  const resp = await server.get<List<Ad>>(`/v1/items/${organizationID}?offset=${offset}&status=${status}&sub_status=${subStatus}&logistic_type=${logisticType}&limit=10`)
   return resp.data
 }
 
