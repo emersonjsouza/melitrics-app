@@ -42,7 +42,7 @@ export const listAds = async (organizationID: string, offset: number, status: st
 }
 
 export const listOrders = async (organizationID: string, status: string, shippingType: string, start: string, end: string, offset: number) => {
-  console.log('fetching orders')
+  console.log(`fetching orders offset: ${offset} limit: 20`)
   let request = `/v1/orders/${organizationID}?start_date=${start}&end_date=${end}&offset=${offset}&limit=20&status=${status}&shipping_type=${shippingType}`
   const resp = await server.get<List<Order>>(request)
   return resp.data

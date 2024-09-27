@@ -127,7 +127,7 @@ export default function ({ navigation }: any): React.JSX.Element {
             fetchNextPage()
           }
         }}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={<FooterListComponent isFetching={isFetching} />}
       />
     </View>

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   View,
   Text,
+  TouchableOpacity
 } from 'react-native';
 import { format, subDays } from 'date-fns'
 import { Dropdown } from 'react-native-element-dropdown';
@@ -16,7 +17,9 @@ import Card from './card';
 import NavigationButton from '../../components/navigation-button';
 import { Colors } from '../../assets/color';
 import LottieView from 'lottie-react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Modal } from '../../components/modal';
+import Calendar from "react-native-calendar-range-picker";
+import { CUSTOM_LOCALE } from '../../utils';
 
 export default function ({ navigation }: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
@@ -25,6 +28,7 @@ export default function ({ navigation }: any): React.JSX.Element {
   const { currentOrg, orderInfoVisibility, saveOrderInfoVisibility } = useAuth()
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
 
   const { data, total, isFetching, fetchNextPage, hasNextPage, refetch } = useOrders({
     organizationID: currentOrg?.organization_id || '',
@@ -60,6 +64,33 @@ export default function ({ navigation }: any): React.JSX.Element {
 
   return (
     <View style={styles.mainContainer}>
+      <Modal isVisible={isModalVisible}>
+        <Modal.Container>
+          <Modal.Body>
+            <View style={{ height: 360 }}>
+              <Calendar
+                locale={CUSTOM_LOCALE}
+                startDate={startDate}
+                endDate={endDate}
+                initialNumToRender={1}
+                onChange={({ startDate, endDate }) => {
+                  if (startDate && endDate) {
+                    setStartDate(startDate)
+                    setEndDate(endDate)
+                    setIsModalVisible(false)
+                  }
+                }}
+              />
+            </View>
+          </Modal.Body>
+          <Modal.Footer>
+            <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+              <Text>Fechar</Text>
+            </TouchableOpacity>
+          </Modal.Footer>
+        </Modal.Container>
+      </Modal>
+
       <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
       <View style={styles.headerContainer}>
         <View style={styles.filterButton}>
@@ -83,16 +114,18 @@ export default function ({ navigation }: any): React.JSX.Element {
             value={dateSelect}
             onChange={({ value }: any) => {
               setDateSelect(value);
-              if (value) {
+              if (value != "custom") {
                 let startDate = subDays(new Date(), parseInt(value))
                 setStartDate(format(startDate, 'yyyy-MM-dd'))
 
                 if (value == '1') {
                   setEndDate(format(startDate, 'yyyy-MM-dd'))
-                }
-                else if (value != 'custom') {
+                } else {
                   setEndDate(format(new Date(), 'yyyy-MM-dd'))
                 }
+              }
+              else {
+                setIsModalVisible(true)
               }
             }}
           />
@@ -147,7 +180,6 @@ export default function ({ navigation }: any): React.JSX.Element {
         </View>
       </View>
 
-
       {!isFetching && total == 0 && < View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
         <View style={{ width: 150, height: 150 }}>
           <LottieView
@@ -167,11 +199,12 @@ export default function ({ navigation }: any): React.JSX.Element {
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
         renderItem={({ item }) => (<Card visibility={orderInfoVisibility} item={item} />)}
         onEndReached={() => {
+          console.log('hasNextPage', hasNextPage)
           if (hasNextPage) {
             fetchNextPage()
           }
         }}
-        onEndReachedThreshold={0.1}
+        onEndReachedThreshold={0.5}
         ListFooterComponent={<FooterListComponent isFetching={isFetching} />}
       />
     </View >

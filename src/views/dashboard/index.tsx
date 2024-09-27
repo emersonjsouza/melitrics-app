@@ -15,14 +15,16 @@ import ContentLoader, { Rect } from 'react-content-loader/native'
 import { useIndicators } from '../../hooks/useIndicators';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useAuth } from '../../context/AuthContext';
-import { format, subDays } from 'date-fns'
+import { endOfSecond, format, subDays } from 'date-fns'
 import Operations from './operations';
 import Report from './report';
 import Indicators from './indicators';
-import { formatToBRL } from '../../utils';
+import { CUSTOM_LOCALE, formatToBRL } from '../../utils';
 import ProgressBar from '../../components/progressbar';
 import { Colors } from '../../assets/color';
 import { useGoal } from '../../hooks/useGoal';
+import { Modal } from '../../components/modal';
+import Calendar from "react-native-calendar-range-picker";
 
 export default function ({ navigation, route }: any): React.JSX.Element {
   const { userData, currentOrg } = useAuth()
@@ -40,9 +42,8 @@ export default function ({ navigation, route }: any): React.JSX.Element {
     data: indicators
   } = useIndicators({ organizationID: currentOrg?.organization_id || '', start: startDate, end: endDate })
 
-
-  const [barProgress, setBarProgress] = useState<number>(0)
   const [barProgressLabel, setBarProgressLabel] = useState<string>('')
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
 
   const {
     isFetching: isFetchingGoal,
@@ -63,6 +64,10 @@ export default function ({ navigation, route }: any): React.JSX.Element {
       } else if (dateSelect == "14") {
         currentGoal = goal.biweekly
         label = 'Quinzenal'
+      }
+      else {
+        currentGoal = goal.month
+        label = 'Mensal'
       }
 
       const netIncome = indicators?.net_income as number
@@ -106,6 +111,33 @@ export default function ({ navigation, route }: any): React.JSX.Element {
 
   return (
     <View style={{ flex: 1, flexGrow: 1, backgroundColor: '#FFF' }}>
+      <Modal isVisible={isModalVisible}>
+        <Modal.Container>
+          <Modal.Body>
+            <View style={{ height: 360 }}>
+              <Calendar
+                locale={CUSTOM_LOCALE}
+                startDate={startDate}
+                endDate={endDate}
+                initialNumToRender={1}
+                onChange={({ startDate, endDate }) => {
+                  if (startDate && endDate) {
+                    setStartDate(startDate)
+                    setEndDate(endDate)
+                    setIsModalVisible(false)
+                  }
+                }}
+              />
+            </View>
+          </Modal.Body>
+          <Modal.Footer>
+            <TouchableOpacity onPress={() => setIsModalVisible(false)}>
+              <Text>Fechar</Text>
+            </TouchableOpacity>
+          </Modal.Footer>
+        </Modal.Container>
+      </Modal>
+
       <StatusBar translucent barStyle="dark-content" backgroundColor={'#FFF'} />
       <ScrollView
         contentContainerStyle={styles.mainContainer}
@@ -160,16 +192,18 @@ export default function ({ navigation, route }: any): React.JSX.Element {
                 value={dateSelect}
                 onChange={({ value }: any) => {
                   setDateSelect(value);
-                  if (value) {
+                  if (value != "custom") {
                     let startDate = subDays(new Date(), parseInt(value))
                     setStartDate(format(startDate, 'yyyy-MM-dd'))
 
                     if (value == '1') {
                       setEndDate(format(startDate, 'yyyy-MM-dd'))
-                    }
-                    else if (value != 'custom') {
+                    } else {
                       setEndDate(format(new Date(), 'yyyy-MM-dd'))
                     }
+                  }
+                  else {
+                    setIsModalVisible(true)
                   }
                 }}
               />
