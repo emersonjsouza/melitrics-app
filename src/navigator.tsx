@@ -10,6 +10,7 @@ import { Platform, StatusBar } from 'react-native';
 import { Colors } from './assets/color';
 import { createStackNavigator } from '@react-navigation/stack';
 import { PostHogProvider } from 'posthog-react-native'
+import subscription from './views/settings/subscription';
 
 const Stack = createStackNavigator();
 const queryClient = new QueryClient({
@@ -42,6 +43,7 @@ export default function () {
               <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
               <Stack.Screen name="connect" component={Connect} options={{ headerShown: false }} />
               <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
+              <Stack.Screen name="Subscription" component={subscription} options={{ headerShown: false }} />
             </Stack.Navigator>
           </AuthContextProvider>
         </PostHogProvider>

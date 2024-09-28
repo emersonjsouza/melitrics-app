@@ -25,7 +25,6 @@ import { Colors } from '../../assets/color';
 import { useGoal } from '../../hooks/useGoal';
 import { Modal } from '../../components/modal';
 import Calendar from "react-native-calendar-range-picker";
-import { useOrders } from '../../hooks/useOrders';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ({ navigation, route }: any): React.JSX.Element {
@@ -33,33 +32,17 @@ export default function ({ navigation, route }: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
-
-  const { } = useOrders({
-    organizationID: currentOrg?.organization_id || '',
-    start: startDate,
-    end: endDate,
-    status: '',
-    shippingType: ''
-  })
-
   const operationRef = useRef<{ refresh: () => Promise<void> }>()
   const reportRef = useRef<{ refresh: () => Promise<void> }>()
   const barProgresRef = useRef<{ setOnProgress: (value: number) => Promise<void> }>()
-
   const {
     isFetching,
     refetch: refreshIndicators,
     data: indicators
   } = useIndicators({ organizationID: currentOrg?.organization_id || '', start: startDate, end: endDate })
-
   const [barProgressLabel, setBarProgressLabel] = useState<string>('')
   const [isModalVisible, setIsModalVisible] = React.useState(false);
-
-  const {
-    isFetching: isFetchingGoal,
-    refetch: refreshGoal,
-    data: goal
-  } = useGoal({ organizationID: currentOrg?.organization_id || '' })
+  const { data: goal } = useGoal({ organizationID: currentOrg?.organization_id || '' })
 
   useEffect(() => {
     if (goal) {
@@ -152,7 +135,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
           </Modal.Container>
         </Modal>
 
-        
+
 
         <View style={styles.headerContainer}>
           <View style={{ flexDirection: 'row' }}>

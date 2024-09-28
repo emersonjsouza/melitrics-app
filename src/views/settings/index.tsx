@@ -50,14 +50,14 @@ export default function ({ navigation }: any): React.JSX.Element {
         <Text style={{ marginTop: 20, color: Colors.TextColor }}>versão: {deviceVersion}</Text>
       </View>
 
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Subscription')} >
         <View style={{ flexDirection: 'row', marginBottom: 20, height: 40, borderColor: '#ddd', borderWidth: 0.5, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: 15 }}>
           <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={25} />
           <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Seja premium</Text>
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={()=> navigation.navigate('Goal')}  disabled={false}>
+      <TouchableOpacity onPress={() => navigation.navigate('Goal')} disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
           <View style={{ flexDirection: 'row' }}>
             <MaterialCommunityIcons name={'flag-checkered'} color={Colors.TextColor} size={25} />
