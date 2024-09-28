@@ -28,6 +28,7 @@ export default function () {
     config: {
       screens: {
         connect: 'connect/:code',
+        subscription: 'subscription',
       },
     },
   };
@@ -43,7 +44,7 @@ export default function () {
               <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
               <Stack.Screen name="connect" component={Connect} options={{ headerShown: false }} />
               <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
-              <Stack.Screen name="Subscription" component={subscription} options={{ headerShown: false }} />
+              <Stack.Screen name="subscription" component={subscription} options={{ headerShown: false }} />
             </Stack.Navigator>
           </AuthContextProvider>
         </PostHogProvider>

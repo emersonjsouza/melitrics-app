@@ -8,4 +8,7 @@ export default {
   MELI_CONNECT: 'https://auth.mercadolivre.com.br/authorization?response_type=code&client_id=666608762505712&redirect_uri=',
   MELI_CONNECT_IOS: 'https://melitrics-core.onrender.com/mercadolivre/ios/callback',
   MELI_CONNECT_ANDROID: 'https://melitrics-core.onrender.com/mercadolivre/android/callback',
+  //Mecardo Pago
+  MELI_PAGO_CONNECT_IOS: 'https://melitrics-core.onrender.com/mercadopago/ios/callback',
+  MELI_PAGO_CONNECT_ANDROID: 'https://melitrics-core.onrender.com/mercadopago/android/callback',
 }

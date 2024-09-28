@@ -8,14 +8,15 @@ import {
   View,
   TouchableOpacity,
   Alert,
-  Dimensions
+  Dimensions,
+  AppState
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import { useIndicators } from '../../hooks/useIndicators';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useAuth } from '../../context/AuthContext';
-import { format, subDays } from 'date-fns'
+import { differenceInDays, format, subDays, toDate } from 'date-fns'
 import Operations from './operations';
 import Report from './report';
 import Indicators from './indicators';
@@ -26,6 +27,7 @@ import { useGoal } from '../../hooks/useGoal';
 import { Modal } from '../../components/modal';
 import Calendar from "react-native-calendar-range-picker";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ({ navigation, route }: any): React.JSX.Element {
   const { userData, currentOrg } = useAuth()
@@ -43,6 +45,8 @@ export default function ({ navigation, route }: any): React.JSX.Element {
   const [barProgressLabel, setBarProgressLabel] = useState<string>('')
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const { data: goal } = useGoal({ organizationID: currentOrg?.organization_id || '' })
+  const appState = React.useRef(AppState.currentState);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (goal) {
@@ -80,6 +84,21 @@ export default function ({ navigation, route }: any): React.JSX.Element {
   }, [goal, indicators?.net_income])
 
 
+  React.useEffect(() => {
+    const subscription = AppState.addEventListener('change', async (nextAppState) => {
+      appState.current = nextAppState;
+      if (appState.current == 'active') {
+        await queryClient.invalidateQueries({
+          queryKey: ['user']
+        })
+      }
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [])
+
   const onRefresh = async () => {
     await Promise.all([
       operationRef.current?.refresh(),
@@ -101,6 +120,12 @@ export default function ({ navigation, route }: any): React.JSX.Element {
       Alert.alert("Atenção", "Estamos sincronizando suas informações dos últimos 30 dias")
     }
   }, [])
+
+  useEffect(() => {
+    if (currentOrg && differenceInDays(toDate(currentOrg.subscription_expires_at), new Date()) == 0) {
+      navigation.navigate('subscription');
+    }
+  }, [currentOrg])
 
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.mainContainer}>

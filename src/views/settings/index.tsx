@@ -50,7 +50,7 @@ export default function ({ navigation }: any): React.JSX.Element {
         <Text style={{ marginTop: 20, color: Colors.TextColor }}>versão: {deviceVersion}</Text>
       </View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('Subscription')} >
+      <TouchableOpacity onPress={() => navigation.navigate('subscription')} >
         <View style={{ flexDirection: 'row', marginBottom: 20, height: 40, borderColor: '#ddd', borderWidth: 0.5, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: 15 }}>
           <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={25} />
           <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Seja premium</Text>

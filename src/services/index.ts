@@ -11,6 +11,8 @@ import {
   List,
   MeliToken,
   Order,
+  SubscriptionRegister,
+  SubscriptionRegisterRespoinse,
   Tax,
   TaxRegister,
   User,
@@ -60,7 +62,12 @@ export const createChannel = async (payload: ChannelRegister) => {
 }
 
 export const createTax = async (payload: TaxRegister) => {
-  const resp = await server.post<any>(`/v1/tax`, payload)
+  const resp = await server.post<any>(`/v1/taxes`, payload)
+  return resp.data
+}
+
+export const createSubscription = async (payload: SubscriptionRegister) => {
+  const resp = await server.post<SubscriptionRegisterRespoinse>(`/v1/subscriptions`, payload)
   return resp.data
 }
 
@@ -68,7 +75,6 @@ export const createGoal = async (payload: GoalRegister) => {
   const resp = await server.post<any>(`/v1/goals`, payload)
   return resp.data
 }
-
 
 export const getUser = async (userID: string) => {
   console.log('fetching get user')

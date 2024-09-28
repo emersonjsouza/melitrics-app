@@ -60,7 +60,6 @@ export default function ({ route, navigation }: any): React.JSX.Element {
     }
 
     try {
-      console.log('inputRequest', inputRequest)
       await mutateAsync(inputRequest)
       Alert.alert('Sucesso!', taxID ? 'Custos atualizado com sucesso' : 'Custos cadastrado com sucesso')
       navigation.navigate({

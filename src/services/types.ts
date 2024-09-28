@@ -4,6 +4,7 @@ export interface Organization {
   type: string
   subscription_type: string
   subscription_expires_at: string
+  subscription_status: string
   has_channel: boolean
   name: string
 }
@@ -111,6 +112,18 @@ export interface TaxRegister {
   tax_rate: number | null
   charge_flex_sales: boolean | null
   item_id?: string
+}
+
+export interface SubscriptionRegister {
+  organization_id: string
+  user_id: string
+  callback_url: string
+  plan_type:  "expert" | "up"
+}
+
+export interface SubscriptionRegisterRespoinse {
+  payment_url: string
+  sub_id: string
 }
 
 export interface Tax {
