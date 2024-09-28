@@ -13,6 +13,7 @@ import Tax from './views/ads/tax';
 import { useFeatureFlag, usePostHog } from 'posthog-react-native'
 import { Alert, AppState, Linking, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
+import Goals from './views/settings/goals';
 
 const screenSettings = {
   headerStyle: {
@@ -56,6 +57,9 @@ function ConfigStackScreen() {
     <ConfigStack.Screen
       options={({ route }) => ({ ...screenSettings })}
       name="Config" component={Settings} />
+    <ConfigStack.Screen
+      options={({ route }) => ({ ...screenSettings })}
+      name="Goal" component={Goals} />
   </ConfigStack.Navigator>
 }
 

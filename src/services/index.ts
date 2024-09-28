@@ -4,6 +4,7 @@ import {
   Ad,
   ChannelRegister,
   Goal,
+  GoalRegister,
   Indicator,
   IndicatorMonth,
   IndicatorShippingType,
@@ -62,6 +63,12 @@ export const createTax = async (payload: TaxRegister) => {
   const resp = await server.post<any>(`/v1/tax`, payload)
   return resp.data
 }
+
+export const createGoal = async (payload: GoalRegister) => {
+  const resp = await server.post<any>(`/v1/goals`, payload)
+  return resp.data
+}
+
 
 export const getUser = async (userID: string) => {
   console.log('fetching get user')

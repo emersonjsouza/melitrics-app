@@ -57,14 +57,11 @@ export default function ({ navigation }: any): React.JSX.Element {
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity activeOpacity={1} disabled={false}>
+      <TouchableOpacity onPress={()=> navigation.navigate('Goal')}  disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
           <View style={{ flexDirection: 'row' }}>
             <MaterialCommunityIcons name={'flag-checkered'} color={Colors.TextColor} size={25} />
-            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Definir meta de faturamento</Text>
-          </View>
-          <View style={{ paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
-            <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={15} />
+            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Definir meta de margem</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -99,8 +96,8 @@ export default function ({ navigation }: any): React.JSX.Element {
             <MaterialCommunityIcons name={'share-all'} color={Colors.TextColor} size={25} />
             <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Compartilhar minha conta</Text>
           </View>
-          <View style={{ paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
-            <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={15} />
+          <View style={{ backgroundColor: Colors.PremiumColor, borderRadius: 10, paddingHorizontal: 10, paddingVertical: 5, marginRight: 10 }}>
+            <Text style={{ fontSize: 9, color: '#fff' }}>em breve</Text>
           </View>
         </View>
       </TouchableOpacity>

@@ -2,6 +2,8 @@
 export interface Organization {
   organization_id: string
   type: string
+  subscription_type: string
+  subscription_expires_at: string
   has_channel: boolean
   name: string
 }
@@ -119,8 +121,12 @@ export interface Tax {
   charge_flex_sales: boolean | null
 }
 
+export interface GoalRegister extends Goal {
+  organization_id: string
+}
+
 export interface Goal {
-  id: string
+  id?: string
   day: number
   week: number
   biweekly: number

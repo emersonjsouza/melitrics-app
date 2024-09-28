@@ -93,6 +93,9 @@ const AuthContextProvider = (props: any) => {
       posthog.identify(userData.sub,
         {
           organization_id: organizations[0].organization_id,
+          member_type: organizations[0].type,
+          subscription_type: organizations[0].subscription_type,
+          subscription_expires_at: organizations[0].subscription_expires_at,
         }
       )
     }
