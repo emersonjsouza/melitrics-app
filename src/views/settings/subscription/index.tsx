@@ -27,7 +27,10 @@ export default function ({ navigation }: any): React.JSX.Element {
             <Text style={{ color: '#FFF', fontSize: 20 }}>Gerenciar Assinatura</Text>
           </View>
         </View>
-        <View style={{ height: 350, marginTop: 20, backgroundColor: '#92e546', borderRadius: 20 }}>
+        <View style={{ marginTop: 20 }}>
+          <Text style={{ textAlign: 'center', fontSize: 14,  color: '#FFF', flexWrap: 'wrap' }}>Seu plano gratuito expira em 20 dias, aproveite os valores promocionais e faça sua assinatura agora mesmo</Text>
+        </View>
+        <View style={{ height: 350, marginTop: 25, backgroundColor: '#92e546', borderRadius: 20 }}>
           <View style={{ padding: 20 }}>
             <View style={{ backgroundColor: '#000', width: 40, height: 40, borderRadius: 100, justifyContent: 'center', alignItems: 'center' }}>
               <MaterialCommunityIcons name={'rocket-launch-outline'} color={'#FFF'} size={25} />
