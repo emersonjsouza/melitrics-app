@@ -39,10 +39,6 @@ export default function ({ navigation }: any): React.JSX.Element {
     shippingType
   })
 
-  useEffect(() => {
-    console.log('first time...', orderHook)
-  }, [])
-
   let { data, total, isFetching, fetchNextPage, hasNextPage, refetch } = orderHook
 
   React.useEffect(() => {

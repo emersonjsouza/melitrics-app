@@ -64,6 +64,8 @@ export interface Ad {
   sold_quantity: number
   available_quantity: number
   catalog_enabled: boolean
+  catalog_status: string
+  catalog_price_to_win: number
   flex_enabled: boolean
   status: 'active' | 'paused'
   sub_status: 'out_of_stock' | 'deleted'

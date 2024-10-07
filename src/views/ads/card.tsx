@@ -11,6 +11,7 @@ import { formatToBRL, shipping_type } from '../../utils';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useFeatureFlag } from 'posthog-react-native';
+import { Colors } from '../../assets/color';
 
 type CardProps = PropsWithChildren<{
   item: Ad
@@ -46,12 +47,17 @@ export default function ({ item: AdInfo, visibility, navigate }: CardProps): Rea
 
   const current_status = ad_status[item.status] == ad_status.active ? 'Ativo' : (ad_sub_status[item.sub_status] ?? ad_status[item.status])
 
+  let cardHeight = styles.cardContainer.height;
+  if (item.catalog_enabled && item.catalog_status != "not_listed") {
+    cardHeight += 25
+  }
+
   return (
     <TouchableOpacity onPress={() => {
       navigate("Ad", { itemID: item.id })
     }}>
       <View
-        style={{ borderStartColor: statusColor, ...styles.cardContainer }}>
+        style={{ borderStartColor: statusColor, ...styles.cardContainer, height: cardHeight }}>
         <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
           {item.catalog_enabled && <View style={{ backgroundColor: '#00c1d4', width: 100, marginBottom: 5, borderBottomStartRadius: 10, borderBottomEndRadius: 10, height: 20, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{ color: '#FFF', fontSize: 9, fontWeight: 600 }}>Catalogo</Text>
@@ -98,6 +104,18 @@ export default function ({ item: AdInfo, visibility, navigate }: CardProps): Rea
             <Text style={{ fontSize: 10, color: '#FFF' }}>{current_status}</Text>
           </View>
         </View>
+        {(item.catalog_enabled && item.catalog_status == "competing") && <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+          <MaterialCommunityIcons name={'alert'} color={'#c0392b'} size={20} />
+          <Text style={{ fontSize: 10, color: '#9C9C9C', marginLeft: 5 }}>você está perdendo no catalogo, ganhe por {formatToBRL(item.catalog_price_to_win)}</Text>
+        </View>}
+        {(item.catalog_enabled && item.catalog_status == "sharing_first_place") && <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+          <MaterialCommunityIcons name={'alert'} color={'#fb8c00'} size={20} />
+          <Text style={{ fontSize: 10, color: '#9C9C9C', marginLeft: 5 }}>você está compartilhado no catalogo, ganhe por {formatToBRL(item.catalog_price_to_win)}</Text>
+        </View>}
+        {(item.catalog_enabled && item.catalog_status == "winning") && <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
+          <MaterialCommunityIcons name={'check'} color={Colors.Green} size={20} />
+          <Text style={{ fontSize: 10, color: '#9C9C9C', marginLeft: 5 }}>você está ganhando no catalogo</Text>
+        </View>}
       </View>
     </TouchableOpacity>
   )
@@ -109,7 +127,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStartWidth: 5,
     paddingTop: 0,
-    height: Platform.OS == 'android' ? 165 : 150, padding: 20,
+    height: Platform.OS == 'android' ? 175 : 160, 
+    padding: 20,
     marginBottom: 10,
   },
   cardTitle: {
