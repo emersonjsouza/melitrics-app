@@ -18,9 +18,10 @@ import { useMeliToken } from '../hooks/useMeliToken';
 import { useChannel } from '../hooks/useChannel';
 import { usePostHog } from 'posthog-react-native';
 import LottieView from "lottie-react-native";
+import Purchases from 'react-native-purchases';
 
 function App({ navigation, route }: any): React.JSX.Element {
-  const { logout, currentOrg } = useAuth()
+  const { logout, currentOrg, userData } = useAuth()
   const { mutateAsync: getTokenMutate, isPending: isTookenPending } = useMeliToken()
   const { mutateAsync: channelMutate, isPending: isChannelPending } = useChannel()
   const posthog = usePostHog()
@@ -62,6 +63,10 @@ function App({ navigation, route }: any): React.JSX.Element {
             external_id: resp.user_id.toString(),
             marketplace_code: 'mlb',
           })
+
+          //set the purchaser owner ID
+          await Purchases.logIn(String(currentOrg?.organization_id))
+          await Purchases.setDisplayName(String(currentOrg?.name));
 
           setEnableContinue(true)
         }

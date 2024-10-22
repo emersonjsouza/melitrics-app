@@ -9,8 +9,10 @@ import {
   TouchableOpacity,
   Alert,
   Dimensions,
-  AppState
+  AppState,
+  Appearance
 } from 'react-native';
+
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import { useIndicators } from '../../hooks/useIndicators';
@@ -122,7 +124,8 @@ export default function ({ navigation, route }: any): React.JSX.Element {
   }, [])
 
   useEffect(() => {
-    if (currentOrg && differenceInDays(toDate(currentOrg.subscription_expires_at), new Date()) == 0) {
+    Appearance.setColorScheme('dark');
+    if (currentOrg && differenceInDays(toDate(currentOrg.subscription_expires_at), new Date()) <= 0) {
       navigation.navigate('subscription');
     }
   }, [currentOrg])

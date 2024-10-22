@@ -11,6 +11,11 @@ import { Colors } from './assets/color';
 import { createStackNavigator } from '@react-navigation/stack';
 import { PostHogProvider } from 'posthog-react-native'
 import subscription from './views/settings/subscription';
+import { useEffect } from 'react';
+import Purchases, { LOG_LEVEL } from 'react-native-purchases';
+
+// @ts-ignore
+import { REVENUE_CAT_APPLE_KEY } from "@env"
 
 const Stack = createStackNavigator();
 const queryClient = new QueryClient({
@@ -33,6 +38,20 @@ export default function () {
     },
   };
 
+  useEffect(() => {
+    Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
+
+    if (Platform.OS === 'ios') {
+      Purchases.configure({
+        apiKey: REVENUE_CAT_APPLE_KEY
+      });
+    } else if (Platform.OS === 'android') {
+      Purchases.configure({
+        apiKey: ""
+      });
+    }
+  }, [])
+
   return (
     <QueryClientProvider client={queryClient}>
       <NavigationContainer linking={linking}>
@@ -45,11 +64,10 @@ export default function () {
               <Stack.Screen name="connect" component={Connect} options={{ headerShown: false }} />
               <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
               <Stack.Screen name="subscription" component={subscription} options={{ headerShown: false }} />
-            </Stack.Navigator>
+                          </Stack.Navigator>
           </AuthContextProvider>
         </PostHogProvider>
       </NavigationContainer>
     </QueryClientProvider >
   );
 }
-

@@ -37,6 +37,7 @@
 		771C57E12C6B92A6000E054E /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 771C57CD2C6B92A6000E054E /* Octicons.ttf */; };
 		771C57E22C6B92A6000E054E /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 771C57CE2C6B92A6000E054E /* SimpleLineIcons.ttf */; };
 		771C57E32C6B92A6000E054E /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 771C57CF2C6B92A6000E054E /* Zocial.ttf */; };
+		7790A15A2CB498A3000533D8 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7790A1592CB498A3000533D8 /* StoreKit.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		88FF11483975403F82485D34 /* Roboto-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 16262A7040954A6383B09BAE /* Roboto-Light.ttf */; };
 		9B3A1A4688952146EE676409 /* libPods-MelitricsApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E1BE2F511A24CE9FBA1213B /* libPods-MelitricsApp.a */; };
@@ -97,6 +98,7 @@
 		771C57CD2C6B92A6000E054E /* Octicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Octicons.ttf; sourceTree = "<group>"; };
 		771C57CE2C6B92A6000E054E /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = SimpleLineIcons.ttf; sourceTree = "<group>"; };
 		771C57CF2C6B92A6000E054E /* Zocial.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Zocial.ttf; sourceTree = "<group>"; };
+		7790A1592CB498A3000533D8 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = MelitricsApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9121D01A4B90484A9403FC4E /* Roboto-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Bold.ttf"; path = "../src/assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		BE56F2E8B9C8439DA17357B6 /* Roboto-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-BlackItalic.ttf"; path = "../src/assets/fonts/Roboto-BlackItalic.ttf"; sourceTree = "<group>"; };
@@ -127,6 +129,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B3A1A4688952146EE676409 /* libPods-MelitricsApp.a in Frameworks */,
+				7790A15A2CB498A3000533D8 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +172,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7790A1592CB498A3000533D8 /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				0E1BE2F511A24CE9FBA1213B /* libPods-MelitricsApp.a */,
 				4F7DC92ADF416F6865D67F69 /* libPods-MelitricsApp-MelitricsAppTests.a */,

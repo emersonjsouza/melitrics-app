@@ -118,9 +118,9 @@ export interface TaxRegister {
 
 export interface SubscriptionRegister {
   organization_id: string
-  user_id: string
-  callback_url: string
-  plan_type:  "expert" | "up"
+  plan_type: string
+  transaction_id: string
+  expires_in: number
 }
 
 export interface SubscriptionRegisterRespoinse {

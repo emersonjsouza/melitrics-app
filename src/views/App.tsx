@@ -18,7 +18,6 @@ import { Colors } from '../assets/color';
 import { useAuth } from '../context/AuthContext';
 import { useFeatureFlag, usePostHog } from 'posthog-react-native'
 import DeviceInfo from 'react-native-device-info';
-import { differenceInDays, isDate, toDate } from 'date-fns';
 
 function App(props: any): React.JSX.Element {
   const { login, loggedIn, loading, organizations, isFetchingOrganizations } = useAuth()
