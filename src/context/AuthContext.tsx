@@ -5,8 +5,10 @@ import server from "../services/server";
 import settings from "../settings";
 import { useOrganizations } from "../hooks/useOrganizations";
 import { Organization } from "../services/types";
-import { usePostHog } from "posthog-react-native";
+import { usePostHog, useFeatureFlag } from "posthog-react-native";
 import { useQueryClient } from "@tanstack/react-query";
+import { Alert, AppState, Linking, Platform } from "react-native";
+import DeviceInfo from "react-native-device-info";
 
 const auth0 = new Auth0({
   domain: settings.AUTH_DOMAIN,
@@ -19,6 +21,7 @@ type IAuthContext = {
   saveAdInfoVisibility: () => Promise<void>
   saveOrderInfoVisibility: () => Promise<void>
   logout: (callback?: () => void) => void
+
   loggedIn: boolean;
   loading: boolean;
   adInfoVisibility: boolean;
@@ -27,7 +30,12 @@ type IAuthContext = {
   organizations: Organization[] | undefined
   userData: any;
   currentOrg: Organization | undefined
+  deviceVersion: DeviceVersion | undefined
+  onDeprecatedNotification: (url: string) => void
+  onVerifyAppVersion: () => void
 }
+
+type DeviceVersion = { platform: "ios" | "android", isDeprecated: boolean, storeUrl: string }
 
 const AuthContext = createContext<IAuthContext | undefined>(undefined);
 
@@ -39,6 +47,10 @@ const AuthContextProvider = (props: any) => {
   const [userData, setUserData] = useState<any>(null);
   const { organizations, isLoading: isFetchingOrganizations } = useOrganizations({ userID: userData?.sub, enabled: !!userData })
   const queryClient = useQueryClient();
+  const posthog = usePostHog()
+
+  const deviceVersion = DeviceInfo.getVersion() + "." + DeviceInfo.getBuildNumber()
+  const [deviceVersionDeprecated, setDeviceVersionDeprecated] = useState<DeviceVersion | undefined>()
 
   const getUserData = async (access_token?: any) => {
     const accessToken = access_token
@@ -86,19 +98,75 @@ const AuthContextProvider = (props: any) => {
     return accessToken
   }
 
-  const posthog = usePostHog()
+  const deviceFlag = posthog.getFeatureFlagPayload('app-version-control')
+
+  const onVerifyAppVersion = () => {
+    const deviceFlagPayload = posthog.getFeatureFlagPayload('app-version-control')
+    if (deviceFlagPayload) {
+      const deviceFlag = JSON.parse(JSON.stringify(deviceFlagPayload)) as { android: string, ios: string }
+      const currentVersion = parseInt(deviceVersion.replace(/\./g, ""))
+      const iosTargetVersion = parseInt(deviceFlag.ios.replace(/\./g, ""))
+      const androidTargetVersion = parseInt(deviceFlag.ios.replace(/\./g, ""))
+
+      if (Platform.OS == "ios") {
+        if (deviceVersionDeprecated?.isDeprecated != currentVersion < iosTargetVersion) {
+          setDeviceVersionDeprecated({
+            isDeprecated: currentVersion < iosTargetVersion,
+            platform: Platform.OS,
+            storeUrl: ""
+          })
+        }
+      }
+      else {
+        if (deviceVersionDeprecated?.isDeprecated != currentVersion < androidTargetVersion) {
+          setDeviceVersionDeprecated({
+            isDeprecated: currentVersion < androidTargetVersion,
+            platform: "android",
+            storeUrl: "http://play.google.com/store/apps/details?id=com.melitricsapp"
+          })
+        }
+      }
+    }
+  }
+
+  const onDeprecatedNotification = (url: string) => {
+    Alert.alert("Atenção", "Melitrics tem uma nova versão obrigatória, atualize seu aplicativo", [
+      {
+        text: "sair",
+        style: 'cancel',
+        onPress: () => {
+
+        },
+      },
+      {
+        text: "continuar",
+        style: "default",
+        onPress: () => {
+          if (url) {
+            Linking.openURL(url)
+          }
+        },
+      }], { cancelable: false })
+  }
+
 
   useEffect(() => {
-      if (userData && organizations?.length) {
-        posthog.identify(userData.sub,
-          {
-            organization_id: organizations[0].organization_id,
-            member_type: organizations[0].type,
-            subscription_type: organizations[0].subscription_type,
-            subscription_expires_at: organizations[0].subscription_expires_at,
-          }
-        )
-      }
+    if (deviceFlag) {
+      onVerifyAppVersion()
+    }
+  }, [deviceFlag])
+
+  useEffect(() => {
+    if (userData && organizations?.length) {
+      posthog.identify(userData.sub,
+        {
+          organization_id: organizations[0].organization_id,
+          member_type: organizations[0].type,
+          subscription_type: organizations[0].subscription_type,
+          subscription_expires_at: organizations[0].subscription_expires_at,
+        }
+      )
+    }
   }, [organizations, userData])
 
   // executed on first app load
@@ -213,6 +281,9 @@ const AuthContextProvider = (props: any) => {
     saveOrderInfoVisibility,
     isFetchingOrganizations,
     organizations: organizations,
+    deviceVersion: deviceVersionDeprecated,
+    onDeprecatedNotification: onDeprecatedNotification,
+    onVerifyAppVersion: onVerifyAppVersion,
   };
 
   return (

@@ -14,6 +14,8 @@ import { useFeatureFlag, usePostHog } from 'posthog-react-native'
 import { Alert, AppState, Linking, Platform } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 import Goals from './views/settings/goals';
+import { useAuth } from './context/AuthContext';
+import { useFocusEffect } from '@react-navigation/native';
 
 const screenSettings = {
   headerStyle: {
@@ -81,43 +83,32 @@ function AdsStackScreen() {
 const Tab = createBottomTabNavigator();
 export default function ({ navigation }: any) {
   const settingUseFlag = useFeatureFlag('settings-menu')
+  const { deviceVersion, onDeprecatedNotification, onVerifyAppVersion } = useAuth()
   const posthog = usePostHog()
   const appState = React.useRef(AppState.currentState);
 
-  const deviceVersion = DeviceInfo.getVersion() + "." + DeviceInfo.getBuildNumber()
-  const appVersionControl = useFeatureFlag('app-version-control')
-
-  React.useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
+  useFocusEffect(() => {
+    const subscription = AppState.addEventListener('change', async (nextAppState) => {
       appState.current = nextAppState;
       if (appState.current == 'active') {
-        if (appVersionControl) {
-          let deviceFlagPayload = posthog.getFeatureFlagPayload('app-version-control')
-          if (deviceFlagPayload) {
-            const deviceFlag = JSON.parse(JSON.stringify(deviceFlagPayload)) as { android: string, ios: string }
-
-            const currentVersion = parseInt(deviceVersion.replace(/\./g, ""))
-            const iosTargetVersion = parseInt(deviceFlag.ios.replace(/\./g, ""))
-            const androidTargetVersion = parseInt(deviceFlag.ios.replace(/\./g, ""))
-            
-            if (Platform.OS == "ios" && currentVersion < iosTargetVersion) {
-              Alert.alert("Atenção", "Melitrics tem uma nova versão obrigatória, atualize seu aplicativo")
-              return
-            } else if (currentVersion < androidTargetVersion) {
-              Alert.alert("Atenção", "Melitrics tem uma nova versão obrigatória, atualize seu aplicativo")
-              Linking.openURL("http://play.google.com/store/apps/details?id=com.melitricsapp")
-              return
-            }
-          }
-          posthog.reloadFeatureFlags()
-        }
+        await posthog.reloadFeatureFlagsAsync()
+        onVerifyAppVersion()
       }
     });
 
     return () => {
       subscription.remove();
     };
-  }, [])
+  })
+
+  React.useEffect(() => {
+    console.log('xxx=>>', deviceVersion)
+    if (deviceVersion && deviceVersion.isDeprecated) {
+      onDeprecatedNotification(deviceVersion.storeUrl)
+      return
+    }
+
+  }, [deviceVersion?.isDeprecated])
 
   return (
     <Tab.Navigator

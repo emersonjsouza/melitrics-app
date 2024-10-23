@@ -51,7 +51,8 @@ export default function ({ navigation, route }: any): React.JSX.Element {
   const appState = React.useRef(AppState.currentState);
   const queryClient = useQueryClient();
   const posthog = usePostHog()
-  
+  const newSubscriptionEnabled = posthog.getFeatureFlag('new-premium-subscription')
+
   useEffect(() => {
     if (goal) {
       let label = ''
@@ -92,6 +93,8 @@ export default function ({ navigation, route }: any): React.JSX.Element {
     const subscription = AppState.addEventListener('change', async (nextAppState) => {
       appState.current = nextAppState;
       if (appState.current == 'active') {
+        posthog.reloadFeatureFlags()
+
         await queryClient.invalidateQueries({
           queryKey: ['user']
         })
@@ -114,6 +117,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       onRefresh()
+      posthog.reloadFeatureFlags()
     });
 
     return unsubscribe;
@@ -125,17 +129,15 @@ export default function ({ navigation, route }: any): React.JSX.Element {
     }
   }, [])
 
-  
-
   useEffect(() => {
-    let newSubscriptionEnabled = posthog.getFeatureFlagPayload('new-premium-subscription')
+    let newSubscriptionEnabled = posthog.getFeatureFlag('new-premium-subscription')
     if (newSubscriptionEnabled) {
       Appearance.setColorScheme('dark');
       if (currentOrg && differenceInMinutes(toDate(currentOrg.subscription_expires_at), new Date()) <= 0) {
         navigation.navigate('subscription');
       }
     }
-  }, [currentOrg])
+  }, [currentOrg, newSubscriptionEnabled])
 
   return (
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.mainContainer}>

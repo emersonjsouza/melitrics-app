@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import {
   Image,
   StatusBar,
@@ -17,10 +17,10 @@ import { usePostHog } from 'posthog-react-native';
 export default function ({ navigation }: any): React.JSX.Element {
   const { logout } = useAuth()
   const posthog = usePostHog()
-  const newSubscriptionEnabled = posthog.getFeatureFlagPayload('new-premium-subscription')
-  const syncStockEnabled = posthog.getFeatureFlagPayload('settings-sync-stock')
-  const syncSalesEnabled = posthog.getFeatureFlagPayload('settings-sync-sales')
-  const shareAccountEnabled = posthog.getFeatureFlagPayload('settings-share-account')
+  const newSubscriptionEnabled = posthog.getFeatureFlag('new-premium-subscription')
+  const syncStockEnabled = posthog.getFeatureFlag('settings-sync-stock')
+  const syncSalesEnabled = posthog.getFeatureFlag('settings-sync-sales')
+  const shareAccountEnabled = posthog.getFeatureFlag('settings-share-account')
 
   const deviceVersion = DeviceInfo.getVersion() + "." + DeviceInfo.getBuildNumber()
   const signOut = () => {

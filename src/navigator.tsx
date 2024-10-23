@@ -33,7 +33,6 @@ export default function () {
     config: {
       screens: {
         connect: 'connect/:code',
-        // subscription: 'subscription',
       },
     },
   };
