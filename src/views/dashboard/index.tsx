@@ -18,7 +18,7 @@ import ContentLoader, { Rect } from 'react-content-loader/native'
 import { useIndicators } from '../../hooks/useIndicators';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useAuth } from '../../context/AuthContext';
-import { differenceInDays, format, subDays, toDate } from 'date-fns'
+import { differenceInMinutes, format, subDays, toDate } from 'date-fns'
 import Operations from './operations';
 import Report from './report';
 import Indicators from './indicators';
@@ -30,6 +30,7 @@ import { Modal } from '../../components/modal';
 import Calendar from "react-native-calendar-range-picker";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQueryClient } from "@tanstack/react-query";
+import { usePostHog } from 'posthog-react-native';
 
 export default function ({ navigation, route }: any): React.JSX.Element {
   const { userData, currentOrg } = useAuth()
@@ -49,7 +50,8 @@ export default function ({ navigation, route }: any): React.JSX.Element {
   const { data: goal } = useGoal({ organizationID: currentOrg?.organization_id || '' })
   const appState = React.useRef(AppState.currentState);
   const queryClient = useQueryClient();
-
+  const posthog = usePostHog()
+  
   useEffect(() => {
     if (goal) {
       let label = ''
@@ -123,10 +125,15 @@ export default function ({ navigation, route }: any): React.JSX.Element {
     }
   }, [])
 
+  
+
   useEffect(() => {
-    Appearance.setColorScheme('dark');
-    if (currentOrg && differenceInDays(toDate(currentOrg.subscription_expires_at), new Date()) <= 0) {
-      navigation.navigate('subscription');
+    let newSubscriptionEnabled = posthog.getFeatureFlagPayload('new-premium-subscription')
+    if (newSubscriptionEnabled) {
+      Appearance.setColorScheme('dark');
+      if (currentOrg && differenceInMinutes(toDate(currentOrg.subscription_expires_at), new Date()) <= 0) {
+        navigation.navigate('subscription');
+      }
     }
   }, [currentOrg])
 

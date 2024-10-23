@@ -45,6 +45,7 @@ function App({ navigation, route }: any): React.JSX.Element {
 
   useEffect(() => {
     (async () => {
+      console.log("code==>>", route)
       let code: string = route?.params?.code;
       if (code) {
         if (Platform.OS == "android" && code.startsWith('1')) {

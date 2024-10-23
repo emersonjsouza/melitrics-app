@@ -33,7 +33,7 @@ export default function () {
     config: {
       screens: {
         connect: 'connect/:code',
-        subscription: 'subscription',
+        // subscription: 'subscription',
       },
     },
   };
@@ -64,7 +64,7 @@ export default function () {
               <Stack.Screen name="connect" component={Connect} options={{ headerShown: false }} />
               <Stack.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
               <Stack.Screen name="subscription" component={subscription} options={{ headerShown: false }} />
-                          </Stack.Navigator>
+            </Stack.Navigator>
           </AuthContextProvider>
         </PostHogProvider>
       </NavigationContainer>

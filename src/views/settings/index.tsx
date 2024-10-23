@@ -12,9 +12,15 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import DeviceInfo from 'react-native-device-info';
 import { Colors } from '../../assets/color';
+import { usePostHog } from 'posthog-react-native';
 
 export default function ({ navigation }: any): React.JSX.Element {
   const { logout } = useAuth()
+  const posthog = usePostHog()
+  const newSubscriptionEnabled = posthog.getFeatureFlagPayload('new-premium-subscription')
+  const syncStockEnabled = posthog.getFeatureFlagPayload('settings-sync-stock')
+  const syncSalesEnabled = posthog.getFeatureFlagPayload('settings-sync-sales')
+  const shareAccountEnabled = posthog.getFeatureFlagPayload('settings-share-account')
 
   const deviceVersion = DeviceInfo.getVersion() + "." + DeviceInfo.getBuildNumber()
   const signOut = () => {
@@ -50,12 +56,13 @@ export default function ({ navigation }: any): React.JSX.Element {
         <Text style={{ marginTop: 20, color: Colors.TextColor }}>versão: {deviceVersion}</Text>
       </View>
 
-      <TouchableOpacity onPress={() => navigation.navigate('subscription')} >
+
+      {newSubscriptionEnabled && <TouchableOpacity onPress={() => navigation.navigate('subscription')} >
         <View style={{ flexDirection: 'row', marginBottom: 20, height: 40, borderColor: '#ddd', borderWidth: 0.5, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: 15 }}>
           <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={25} />
           <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Seja premium</Text>
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity>}
 
       <TouchableOpacity onPress={() => navigation.navigate('Goal')} disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
@@ -66,7 +73,7 @@ export default function ({ navigation }: any): React.JSX.Element {
         </View>
       </TouchableOpacity>
 
-      <TouchableOpacity activeOpacity={1} disabled={false}>
+      {syncStockEnabled && <TouchableOpacity activeOpacity={1} disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
           <View style={{ flexDirection: 'row' }}>
             <MaterialCommunityIcons name={'sync'} color={Colors.TextColor} size={25} />
@@ -76,9 +83,9 @@ export default function ({ navigation }: any): React.JSX.Element {
             <Text style={{ fontSize: 9, color: '#fff' }}>em breve</Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity>}
 
-      <TouchableOpacity activeOpacity={1} disabled={false}>
+      {syncSalesEnabled && <TouchableOpacity activeOpacity={1} disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
           <View style={{ flexDirection: 'row' }}>
             <MaterialCommunityIcons name={'sync'} color={Colors.TextColor} size={25} />
@@ -88,9 +95,9 @@ export default function ({ navigation }: any): React.JSX.Element {
             <Text style={{ fontSize: 9, color: '#fff' }}>em breve</Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity>}
 
-      <TouchableOpacity activeOpacity={1} disabled={false}>
+      {shareAccountEnabled && <TouchableOpacity activeOpacity={1} disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
           <View style={{ flexDirection: 'row' }}>
             <MaterialCommunityIcons name={'share-all'} color={Colors.TextColor} size={25} />
@@ -100,7 +107,7 @@ export default function ({ navigation }: any): React.JSX.Element {
             <Text style={{ fontSize: 9, color: '#fff' }}>em breve</Text>
           </View>
         </View>
-      </TouchableOpacity>
+      </TouchableOpacity>}
     </View >
   )
 }

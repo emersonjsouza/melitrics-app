@@ -14,11 +14,11 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useAuth } from '../../../context/AuthContext';
-import { differenceInDays, toDate } from 'date-fns';
+import { differenceInMinutes, toDate } from 'date-fns';
 import { useSubscriptionMutation } from '../../../hooks/useSubscriptionMutation';
 import { useQueryClient } from "@tanstack/react-query";
 import RevenueCatUI, { PAYWALL_RESULT } from "react-native-purchases-ui";
-import { CustomerInfo, PurchasesStoreTransaction } from 'react-native-purchases';
+import { CustomerInfo, PurchasesPackage, PurchasesStoreTransaction } from 'react-native-purchases';
 
 export default function ({ navigation }: any): React.JSX.Element {
   const { logout, currentOrg } = useAuth()
@@ -29,14 +29,14 @@ export default function ({ navigation }: any): React.JSX.Element {
 
   useEffect(() => {
     if (currentOrg) {
-      const diff = differenceInDays(toDate(currentOrg.subscription_expires_at), new Date())
-      setExpiresAt(diff)
-      setShowBackButton(diff > 0)
+      const diffInMinutes = differenceInMinutes(toDate(currentOrg.subscription_expires_at), new Date())
+      const diffInDays = differenceInMinutes(toDate(currentOrg.subscription_expires_at), new Date())
+      setExpiresAt(diffInDays)
+      setShowBackButton(diffInMinutes > 0)
     }
 
   }, [currentOrg])
 
-  console.log('currentOrg?.subscription_status', currentOrg?.subscription_status)
   const onBack = () => {
     if (showBackButton) {
       if (currentOrg?.subscription_status == "authorized") {
@@ -89,12 +89,10 @@ export default function ({ navigation }: any): React.JSX.Element {
     }
   }
 
-  console.log('experisAt', experisAt)
-  console.log('currentOrg', currentOrg?.subscription_status)
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
-      <StatusBar translucent barStyle="light-content" backgroundColor={'#FFF'} />
-      <ScrollView style={{ flex: 1 }}>
+      <StatusBar translucent barStyle="light-content" />
+      <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View style={{ flexDirection: 'row' }}>
           <View style={{ flexDirection: 'row', marginTop: 15 }}>
             <TouchableOpacity onPress={onBack}>
@@ -103,12 +101,12 @@ export default function ({ navigation }: any): React.JSX.Element {
               </View>
             </TouchableOpacity>
           </View>
-          <View style={{ marginHorizontal: 10, marginTop: 20, width: Dimensions.get('screen').width - 100, alignContent: 'center' }}>
+          {/* <View style={{ marginHorizontal: 10, marginTop: 20, width: Dimensions.get('screen').width - 100, alignContent: 'center' }}>
             {experisAt < 0 && currentOrg?.subscription_status != "pending" && !showBackButton && <Text style={{ textAlign: 'center', fontSize: 14, color: '#FFF', flexWrap: 'wrap' }}>Seu plano {String(currentOrg?.subscription_type).length > 0 ? currentOrg?.subscription_type.toUpperCase() : "GRATUITO"} experiou, aproveite os valores promocionais e faça sua assinatura agora mesmo</Text>}
             {experisAt >= 0 && currentOrg?.subscription_status != "authorized" && showBackButton && <Text style={{ textAlign: 'center', fontSize: 14, color: '#FFF', flexWrap: 'wrap' }}>Seu plano gratuito expira em {experisAt} dias, aproveite os valores promocionais e faça sua assinatura agora mesmo</Text>}
             {experisAt >= 0 && currentOrg?.subscription_status == "authorized" && showBackButton && <Text style={{ textAlign: 'center', fontSize: 14, color: '#FFF', flexWrap: 'wrap' }}>Seu plano {currentOrg.subscription_type.toUpperCase()} expira em {experisAt} dias</Text>}
             {currentOrg?.subscription_status == "pending" && <Text style={{ textAlign: 'center', fontSize: 14, color: '#FFF', flexWrap: 'wrap' }}>Ainda não identificamos seu pagamento, se caso não efetou pagamento só clicar em assinar novamente, se caso já efetou por favor aguarde mais alguns minutos</Text>}
-          </View>
+          </View> */}
         </View>
 
         <RevenueCatUI.Paywall
@@ -116,7 +114,7 @@ export default function ({ navigation }: any): React.JSX.Element {
           onPurchaseCompleted={({ customerInfo, storeTransaction }) => onSubscriptionCallback(PAYWALL_RESULT.PURCHASED, customerInfo, storeTransaction)}
           onRestoreCompleted={({ customerInfo }) => onSubscriptionCallback(PAYWALL_RESULT.RESTORED, customerInfo)}
           onRestoreError={() => onSubscriptionCallback(PAYWALL_RESULT.ERROR)}
-          style={{ flex: 1, height: 600, marginTop: 20 }}
+          style={{ flex: 1, height: 650, marginTop: 25 }}
         />
       </ScrollView>
     </SafeAreaView>
