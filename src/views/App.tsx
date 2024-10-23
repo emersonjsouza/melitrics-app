@@ -59,7 +59,6 @@ function App(props: any): React.JSX.Element {
   }, [loggedIn, organizations, isFetchingOrganizations, deviceVersion])
 
   useEffect(() => {
-    console.log('xxx=>>', deviceVersion)
     if (deviceVersion && deviceVersion.isDeprecated) {
       onDeprecatedNotification(deviceVersion.storeUrl)
       return
