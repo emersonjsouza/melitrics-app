@@ -77,7 +77,7 @@ export default function ({ item: AdInfo, visibility, navigate }: CardProps): Rea
               {!visibility && <Text style={styles.cardTitle}>Titulo Indisponível</Text>}
               <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
                 <Text style={{ fontSize: 20, color: '#9C9C9C' }}>{formatToBRL(item.price)}</Text>
-                <Text style={{ fontSize: 12, color: mcColor, marginLeft: 2, }}>(MC {formatToBRL(item.net_income)} - {((item.net_income / item.price) * 100).toFixed(2)}%)</Text>
+                {item.cost > 0 && <Text style={{ fontSize: 12, color: mcColor, marginLeft: 2, }}>(MC {formatToBRL(item.net_income)} - {((item.net_income / item.price) * 100).toFixed(2)}%)</Text>}
               </View>
             </View>
           </View>
@@ -127,7 +127,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStartWidth: 5,
     paddingTop: 0,
-    height: Platform.OS == 'android' ? 175 : 160, 
+    height: Platform.OS == 'android' ? 175 : 160,
     padding: 20,
     marginBottom: 10,
   },

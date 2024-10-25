@@ -110,7 +110,7 @@ function App({ navigation, route }: any): React.JSX.Element {
           />
         </View>
         <Text style={{ flexWrap: 'nowrap', textAlign: 'center', color: '#718093' }}>
-          Falta pouco! Estamos baixando o seus dados em breve você irá visualizar todas suas vendas e produtos.
+          Estamos sincronizando seus dados, e em breve todas as suas informações estarão disponíveis :)
         </Text>
         <TouchableOpacity onPress={() => {
           navigation.reset({
@@ -126,7 +126,7 @@ function App({ navigation, route }: any): React.JSX.Element {
           });
         }}>
           <View style={{ borderRadius: 10, backgroundColor: Colors.Main, width: 200, height: 40, justifyContent: 'center', alignItems: 'center', marginTop: 20 }}>
-            <Text style={{ color: '#fff' }}>Continua</Text>
+            <Text style={{ color: '#fff' }}>Continuar para Dashboard</Text>
           </View>
         </TouchableOpacity>
       </View>}

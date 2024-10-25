@@ -50,9 +50,11 @@ function App(props: any): React.JSX.Element {
       Alert.alert('Sucesso!', 'Sua conta foi criada com sucesso')
       props.navigation.navigate('App')
     } catch (err: unknown) {
+      console.log('generic.error=>>', err)
+      
       if (err as APIError) {
         const errorMessage = (err as APIError).response?.data?.error
-        console.log('errorMessage==>>', errorMessage)
+        console.log('api.error=>>', errorMessage)
 
         if (errorMessage?.indexOf("already exists") && errorMessage?.startsWith("user")) {
           Alert.alert('Alerta!', 'E-mail já cadastrado, informe outro e-mail')
