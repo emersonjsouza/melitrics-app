@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect } from 'react';
 import {
   Image,
+  Linking,
   StatusBar,
   StyleSheet,
   Text,
@@ -21,6 +22,7 @@ export default function ({ navigation }: any): React.JSX.Element {
   const syncStockEnabled = posthog.getFeatureFlag('settings-sync-stock')
   const syncSalesEnabled = posthog.getFeatureFlag('settings-sync-sales')
   const shareAccountEnabled = posthog.getFeatureFlag('settings-share-account')
+  const supportContactEnabled = posthog.getFeatureFlag('support-contact')
 
   const deviceVersion = DeviceInfo.getVersion() + "." + DeviceInfo.getBuildNumber()
   const signOut = () => {
@@ -47,6 +49,11 @@ export default function ({ navigation }: any): React.JSX.Element {
     })
   }, [])
 
+  const onSupport = () => {
+    const supportContactPayload = posthog.getFeatureFlagPayload('support-contact') as any
+    Linking.openURL(`whatsapp://send?phone=${supportContactPayload.whatsapp}`)
+  }
+
   return (
     <View style={styles.mainContainer}>
       <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
@@ -72,6 +79,15 @@ export default function ({ navigation }: any): React.JSX.Element {
           </View>
         </View>
       </TouchableOpacity>
+
+      {supportContactEnabled && <TouchableOpacity onPress={() => onSupport()}>
+        <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
+          <View style={{ flexDirection: 'row' }}>
+            <MaterialCommunityIcons name={'face-agent'} color={Colors.TextColor} size={25} />
+            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Suporte Técnico</Text>
+          </View>
+        </View>
+      </TouchableOpacity>}
 
       {syncStockEnabled && <TouchableOpacity activeOpacity={1} disabled={false}>
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
