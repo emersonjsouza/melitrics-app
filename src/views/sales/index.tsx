@@ -61,7 +61,7 @@ export default function ({ navigation }: any): React.JSX.Element {
   }, [total, orderInfoVisibility])
 
   return (
-    <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.mainContainer}>
+    <View style={styles.mainContainer}>
       <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
 
       <Modal isVisible={isModalVisible}>
@@ -203,7 +203,7 @@ export default function ({ navigation }: any): React.JSX.Element {
         onEndReachedThreshold={0.5}
         ListFooterComponent={< FooterListComponent isFetching={isFetching} />}
       />}
-    </SafeAreaView >
+    </View >
   )
 }
 
@@ -227,7 +227,6 @@ const dropStyle = StyleSheet.create({
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
     backgroundColor: '#fff'
   },
   headerContainer: {

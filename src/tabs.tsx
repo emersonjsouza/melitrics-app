@@ -11,8 +11,7 @@ import Ads from './views/ads';
 import AdDetail from './views/ads/detail';
 import Tax from './views/ads/tax';
 import { useFeatureFlag, usePostHog } from 'posthog-react-native'
-import { Alert, AppState, Linking, Platform } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+import { AppState } from 'react-native';
 import Goals from './views/settings/goals';
 import { useAuth } from './context/AuthContext';
 import { useFocusEffect } from '@react-navigation/native';
@@ -53,18 +52,6 @@ function SalesStackScreen() {
   </SalesStack.Navigator>
 }
 
-const ConfigStack = createNativeStackNavigator()
-function ConfigStackScreen() {
-  return <ConfigStack.Navigator>
-    <ConfigStack.Screen
-      options={({ route }) => ({ ...screenSettings })}
-      name="Config" component={Settings} />
-    <ConfigStack.Screen
-      options={({ route }) => ({ ...screenSettings })}
-      name="Goal" component={Goals} />
-  </ConfigStack.Navigator>
-}
-
 const AdsStack = createNativeStackNavigator()
 function AdsStackScreen() {
   return <AdsStack.Navigator>
@@ -78,6 +65,18 @@ function AdsStackScreen() {
       options={({ route }) => ({ ...screenSettings })}
       name="Tax" component={Tax} />
   </AdsStack.Navigator>
+}
+
+const ConfigStack = createNativeStackNavigator()
+function ConfigStackScreen() {
+  return <ConfigStack.Navigator>
+    <ConfigStack.Screen
+      options={({ route }) => ({ ...screenSettings })}
+      name="Config" component={Settings} />
+    <ConfigStack.Screen
+      options={({ route }) => ({ ...screenSettings })}
+      name="Goal" component={Goals} />
+  </ConfigStack.Navigator>
 }
 
 const Tab = createBottomTabNavigator();

@@ -9,6 +9,7 @@ import { usePostHog, useFeatureFlag } from "posthog-react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { Alert, AppState, Linking, Platform } from "react-native";
 import DeviceInfo from "react-native-device-info";
+import { OneSignal } from "react-native-onesignal";
 
 const auth0 = new Auth0({
   domain: settings.AUTH_DOMAIN,
@@ -166,6 +167,14 @@ const AuthContextProvider = (props: any) => {
           subscription_expires_at: organizations[0].subscription_expires_at,
         }
       )
+
+      OneSignal.login(userData.sub)
+      OneSignal.User.addEmail(userData.email)
+      OneSignal.User.addTags({
+        organization_id: String(organizations[0].organization_id),
+        organization_name: String(organizations[0].name),
+        subscription_type: String(organizations[0].subscription_type)
+      })
     }
   }, [organizations, userData])
 

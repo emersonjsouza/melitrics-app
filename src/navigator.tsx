@@ -13,9 +13,10 @@ import { PostHogProvider } from 'posthog-react-native'
 import subscription from './views/settings/subscription';
 import { useEffect } from 'react';
 import Purchases, { LOG_LEVEL } from 'react-native-purchases';
+import { LogLevel, OneSignal } from 'react-native-onesignal';
 
 // @ts-ignore
-import { REVENUE_CAT_APPLE_KEY } from "@env"
+import { REVENUE_CAT_APPLE_KEY, ONESIGNAL_APP_KEY, POSTHOG_APP_KEY } from "@env"
 
 const Stack = createStackNavigator();
 const queryClient = new QueryClient({
@@ -40,21 +41,23 @@ export default function () {
   useEffect(() => {
     Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
 
-    if (Platform.OS === 'ios') {
-      Purchases.configure({
-        apiKey: REVENUE_CAT_APPLE_KEY
-      });
-    } else if (Platform.OS === 'android') {
-      Purchases.configure({
-        apiKey: ""
-      });
-    }
+    Purchases.configure({
+      apiKey: REVENUE_CAT_APPLE_KEY
+    });
+    // Remove this method to stop OneSignal Debugging
+    OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+
+    OneSignal.initialize(ONESIGNAL_APP_KEY);
+    OneSignal.Notifications.requestPermission(true);
+    OneSignal.Notifications.addEventListener('click', (event) => {
+      console.log('OneSignal: notification clicked:', event);
+    });
   }, [])
 
   return (
     <QueryClientProvider client={queryClient}>
       <NavigationContainer linking={linking}>
-        <PostHogProvider apiKey="phc_R4CQAoEm9S8jtON1YhzO9VmhYqkRHBrrW3cvjkI5tJ0" autocapture>
+        <PostHogProvider apiKey={POSTHOG_APP_KEY} autocapture>
           <AuthContextProvider>
             <StatusBar translucent barStyle="light-content" backgroundColor={Platform.OS == 'ios' ? 'transparent' : Colors.Main} />
             <Stack.Navigator initialRouteName='App'>
