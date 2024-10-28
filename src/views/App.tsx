@@ -86,7 +86,7 @@ function App(props: any): React.JSX.Element {
     <SafeAreaView style={styles.safeAreaContainer}>
       <StatusBar barStyle={'dark-content'} />
       <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-        <Image source={require('../assets/images/logomarca.png')} style={{ width: 250, height: 250, resizeMode: 'contain' }} />
+        <Image source={require('../assets/images/logomarca-azul.png')} style={{ width: 300, height: 300, resizeMode: 'contain' }} />
       </View>
       <View>
         {loading || isFetchingOrganizations && <ActivityIndicator size="large" color={Colors.Main} />}
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   safeAreaContainer: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.Main,
     paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) * 1.5 : 0,
   },
   logoText: {
@@ -125,8 +125,8 @@ const styles = StyleSheet.create({
     height: 50,
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: Colors.Main,
-    borderColor: Colors.Main,
+    backgroundColor: '#FFF',
+    borderColor: '#FFF',
     borderRadius: 10,
     borderWidth: 1,
   },
@@ -140,11 +140,11 @@ const styles = StyleSheet.create({
 
   },
   signUpText: {
-    color: Colors.Main,
+    color: '#FFF',
     textAlign: 'center',
   },
   submitText: {
-    color: '#FFF',
+    color: Colors.Main,
     textAlign: 'center',
   }
 });

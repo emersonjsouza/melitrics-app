@@ -59,7 +59,7 @@ export default function ({ navigation }: any): React.JSX.Element {
       <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
 
       <View style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}>
-        <Image source={require('../../assets/images/logomarca.png')} style={{ width: 250, height: 250, resizeMode: 'contain' }} />
+        <Image source={require('../../assets/images/logomarca.png')} style={{ width: 350, height: 250, resizeMode: 'contain' }} />
         <Text style={{ marginTop: 20, color: Colors.TextColor }}>versão: {deviceVersion}</Text>
       </View>
 

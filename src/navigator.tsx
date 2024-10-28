@@ -14,6 +14,7 @@ import subscription from './views/settings/subscription';
 import { useEffect } from 'react';
 import Purchases, { LOG_LEVEL } from 'react-native-purchases';
 import { LogLevel, OneSignal } from 'react-native-onesignal';
+//import { useQueryClient } from "@tanstack/react-query";
 
 // @ts-ignore
 import { REVENUE_CAT_APPLE_KEY, ONESIGNAL_APP_KEY, POSTHOG_APP_KEY } from "@env"
@@ -38,19 +39,24 @@ export default function () {
     },
   };
 
+  //const queryClient = useQueryClient();
+
   useEffect(() => {
-    Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
+    //Purchases.setLogLevel(LOG_LEVEL.VERBOSE);
 
     Purchases.configure({
       apiKey: REVENUE_CAT_APPLE_KEY
     });
+    
     // Remove this method to stop OneSignal Debugging
-    OneSignal.Debug.setLogLevel(LogLevel.Verbose);
+    //OneSignal.Debug.setLogLevel(LogLevel.Verbose);
 
     OneSignal.initialize(ONESIGNAL_APP_KEY);
     OneSignal.Notifications.requestPermission(true);
-    OneSignal.Notifications.addEventListener('click', (event) => {
-      console.log('OneSignal: notification clicked:', event);
+    OneSignal.Notifications.addEventListener('click', async (event) => {
+      // await queryClient.invalidateQueries({
+      //   queryKey: ['indicators', 'indicators-shipping-type', 'goal', 'indicators-month']
+      // })
     });
   }, [])
 

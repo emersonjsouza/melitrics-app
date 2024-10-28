@@ -18,6 +18,7 @@
 		691B555AD27F4B9EBFB28B5F /* Roboto-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CA4CA4B84E9D469B9D395DFE /* Roboto-LightItalic.ttf */; };
 		740BCC65F54C4CDBBAE03719 /* Roboto-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F38C6DBB6E9343D58D4CA51D /* Roboto-BoldItalic.ttf */; };
 		75A931BE0B914920B36225DA /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0E79EBC0EAC64600B7E60A26 /* Roboto-Regular.ttf */; };
+		770EC6802CCFAAB100B7C846 /* logomarca-azul.png in Resources */ = {isa = PBXBuildFile; fileRef = 770EC67F2CCFAAB100B7C846 /* logomarca-azul.png */; };
 		771C57D12C6B92A6000E054E /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 771C57BD2C6B92A6000E054E /* AntDesign.ttf */; };
 		771C57D22C6B92A6000E054E /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 771C57BE2C6B92A6000E054E /* Entypo.ttf */; };
 		771C57D32C6B92A6000E054E /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 771C57BF2C6B92A6000E054E /* EvilIcons.ttf */; };
@@ -89,6 +90,7 @@
 		40BD5BE1C860746A2458BD21 /* Pods-OneSignalNotificationServiceExtension.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; path = "Target Support Files/Pods-OneSignalNotificationServiceExtension/Pods-OneSignalNotificationServiceExtension.debug.xcconfig"; sourceTree = "<group>"; };
 		4F7DC92ADF416F6865D67F69 /* libPods-MelitricsApp-MelitricsAppTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MelitricsApp-MelitricsAppTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		576DBABD3DCA437793F4D4DC /* Roboto-Italic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Italic.ttf"; path = "../src/assets/fonts/Roboto-Italic.ttf"; sourceTree = "<group>"; };
+		770EC67F2CCFAAB100B7C846 /* logomarca-azul.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "logomarca-azul.png"; sourceTree = "<group>"; };
 		771C57BD2C6B92A6000E054E /* AntDesign.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = AntDesign.ttf; sourceTree = "<group>"; };
 		771C57BE2C6B92A6000E054E /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Entypo.ttf; sourceTree = "<group>"; };
 		771C57BF2C6B92A6000E054E /* EvilIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = EvilIcons.ttf; sourceTree = "<group>"; };
@@ -180,6 +182,7 @@
 				77417D962CCD147F00AE07FE /* MelitricsApp.entitlements */,
 				771C57D02C6B92A6000E054E /* Fonts */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
+				770EC67F2CCFAAB100B7C846 /* logomarca-azul.png */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
@@ -456,6 +459,7 @@
 				147514E6B6DA486F84C13197 /* Roboto-Thin.ttf in Resources */,
 				DA6F507131A14E6CB0739C0B /* Roboto-ThinItalic.ttf in Resources */,
 				A8D504418FCF40A6B6DA6857 /* LICENSE.txt in Resources */,
+				770EC6802CCFAAB100B7C846 /* logomarca-azul.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
