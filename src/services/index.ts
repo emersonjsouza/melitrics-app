@@ -82,6 +82,12 @@ export const getUser = async (userID: string) => {
   return resp.data
 }
 
+export const deleteUser = async (userID: string) => {
+  console.log('delete user')
+  const resp = await server.patch<User>(`/v1/users/${userID}`)
+  return resp.data
+}
+
 export const getTax = async (organizationID: string, taxID: string) => {
   console.log('fetching get tax')
   const resp = await server.get<Tax>(`/v1/taxes/${organizationID}/${taxID}`)

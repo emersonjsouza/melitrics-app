@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   Image,
   Linking,
@@ -14,15 +14,20 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import DeviceInfo from 'react-native-device-info';
 import { Colors } from '../../assets/color';
 import { usePostHog } from 'posthog-react-native';
+import { useDeleteUserMutation } from '../../hooks/useDeleteUserMutation';
+import { Alert } from 'react-native';
 
 export default function ({ navigation }: any): React.JSX.Element {
-  const { logout } = useAuth()
+  const { logout, userData } = useAuth()
   const posthog = usePostHog()
   const newSubscriptionEnabled = posthog.getFeatureFlag('new-premium-subscription')
   const syncStockEnabled = posthog.getFeatureFlag('settings-sync-stock')
   const syncSalesEnabled = posthog.getFeatureFlag('settings-sync-sales')
   const shareAccountEnabled = posthog.getFeatureFlag('settings-share-account')
   const supportContactEnabled = posthog.getFeatureFlag('support-contact')
+  const deactivationAccountEnabled = posthog.getFeatureFlag('deactivation-account')
+
+  const { mutateAsync } = useDeleteUserMutation()
 
   const deviceVersion = DeviceInfo.getVersion() + "." + DeviceInfo.getBuildNumber()
   const signOut = () => {
@@ -52,6 +57,18 @@ export default function ({ navigation }: any): React.JSX.Element {
   const onSupport = () => {
     const supportContactPayload = posthog.getFeatureFlagPayload('support-contact') as any
     Linking.openURL(`whatsapp://send?phone=${supportContactPayload.whatsapp}`)
+  }
+
+  const deleteUser = async () => {
+    Alert.alert("Atenção", "Você tem certeza que deseja realmente excluir sua conta?", [{
+      "text": "cancelar",
+    }, {
+      text: "Continuar",
+      onPress: async () => {
+        await mutateAsync(userData.sub)
+        signOut()
+      }
+    }])
   }
 
   return (
@@ -124,6 +141,25 @@ export default function ({ navigation }: any): React.JSX.Element {
           </View>
         </View>
       </TouchableOpacity>}
+
+      {deactivationAccountEnabled && <TouchableOpacity activeOpacity={1} onPress={deleteUser}>
+        <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
+          <View style={{ flexDirection: 'row' }}>
+            <MaterialCommunityIcons name={'store-remove'} color={Colors.TextColor} size={25} />
+            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>excluir minha conta</Text>
+          </View>
+        </View>
+      </TouchableOpacity>}
+
+      <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20 }}>
+        <TouchableOpacity onPress={() => Linking.openURL('https://melitrics.com/privacity')}>
+          <Text style={{ color: Colors.TextColor, fontSize: 10 }}>Política de Privacidade</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
+          <Text style={{ color: Colors.TextColor, fontSize: 10 }}>Termos de Uso (EULA)</Text>
+        </TouchableOpacity>
+      </View>
     </View >
   )
 }

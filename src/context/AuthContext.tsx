@@ -234,18 +234,14 @@ const AuthContextProvider = (props: any) => {
   }, [loggedIn]);
 
   const login = async () => {
-    try {
-      const credentials = await auth0.webAuth.authorize({
-        scope: "openid offline_access profile email",
-        audience: 'melitrics-api',
-      });
+    const credentials = await auth0.webAuth.authorize({
+      scope: "openid offline_access profile email",
+      audience: 'melitrics-api',
+    });
 
-      await SInfo.setItem("accessToken", credentials.accessToken, {});
-      await SInfo.setItem("refreshToken", credentials.refreshToken || "", {})
-      setLoggedIn(true);
-    } catch (err) {
-      console.log("error logging in..", err);
-    }
+    await SInfo.setItem("accessToken", credentials.accessToken, {});
+    await SInfo.setItem("refreshToken", credentials.refreshToken || "", {})
+    setLoggedIn(true);
   };
 
   const logout = (callback?: () => void) => {
@@ -275,7 +271,7 @@ const AuthContextProvider = (props: any) => {
       console.log("error logging out..", err);
     }
   };
-
+  
   const value: IAuthContext = {
     loading,
     loggedIn,

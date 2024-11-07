@@ -28,7 +28,11 @@ function App(props: any): React.JSX.Element {
     try {
       await login();
     } catch (e) {
-      console.log(e);
+      if (String(e).indexOf("blocked")) {
+        Alert.alert("Atenção",
+          `Conta desativada, caso deseja reativar entre em contato com nosso suporte: 
+          suporte@devsouza.com`)
+      }
     }
   }
 
