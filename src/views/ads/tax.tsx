@@ -46,7 +46,6 @@ export default forwardRef(({ itemID, taxID, defaultSku, callback }: Props, ref) 
 
       const data = response.data?.items[0] || null
       if (data) {
-        console.log('fetch')
         setInputRequest((value) => ({
           ...value,
           cost: data?.cost || null,
@@ -176,7 +175,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#fff',
-    paddingTop: Platform.OS === "android" ? (StatusBar.currentHeight ?? 0) * 1.5 : 0,
   },
   formContainer: {
     marginTop: 30,
