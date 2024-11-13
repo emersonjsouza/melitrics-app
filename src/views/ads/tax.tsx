@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { forwardRef, PropsWithChildren, useEffect, useImperativeHandle, useLayoutEffect, useState } from 'react';
 import {
   StatusBar,
   StyleSheet,
@@ -14,39 +14,61 @@ import {
 } from 'react-native';
 import { Colors } from '../../assets/color';
 import { useTaxMutation } from '../../hooks/useTaxMutation';
-import { APIError, TaxRegister } from '../../services/types';
+import { APIError, Tax, TaxRegister } from '../../services/types';
 import { useAuth } from '../../context/AuthContext';
 import CurrencyInput from 'react-native-currency-input';
 import { useTax } from '../../hooks/useTax';
 import CheckBox from '../../components/checkbox';
+import { Modal } from '../../components/modal';
+import { useTaxes } from '../../hooks/useTaxes';
 
-export default function ({ route, navigation }: any): React.JSX.Element {
-  const { itemID, taxID } = route?.params
+type Props = PropsWithChildren<{
+  itemID?: string
+  taxID?: string
+  defaultSku?: string
+  externalItemID?: string,
+  callback?: () => void
+}>
+
+export default forwardRef(({ itemID, taxID, defaultSku, callback }: Props, ref) => {
+
   const { currentOrg } = useAuth()
-  const { data, isFetching } = useTax({ organizationID: currentOrg?.organization_id, id: taxID })
+  const [isModalVisible, setIsModalVisible] = React.useState(false);
+  const { refetch } = useTaxes({
+    organizationID: currentOrg?.organization_id || '',
+    sku: defaultSku || '',
+  })
 
-  console.log('data', data)
+  useImperativeHandle(ref, () => ({
+    show: async () => {
+      setIsModalVisible(true)
+      const response = await refetch()
 
-  const [inputRequest, setInputRequest] = useState<TaxRegister>({
+      const data = response.data?.items[0] || null
+      if (data) {
+        console.log('fetch')
+        setInputRequest((value) => ({
+          ...value,
+          cost: data?.cost || null,
+          tax_rate: data?.tax_rate || null,
+          sku: data?.sku || String(defaultSku),
+          charge_flex_sales: data?.charge_flex_sales || null
+        }))
+      }
+    },
+  }));
+
+  const defaultTax = {
     organization_id: currentOrg?.organization_id || '',
     cost: 0,
-    sku: '',
+    sku: String(defaultSku),
     item_id: itemID,
     tax_rate: 0,
     charge_flex_sales: false,
-  });
+  }
+  const [inputRequest, setInputRequest] = useState<TaxRegister>(defaultTax);
 
   const { mutateAsync, isPending } = useTaxMutation()
-
-  useEffect(() => {
-    setInputRequest((value) => ({
-      ...value,
-      cost: data?.cost || null,
-      tax_rate: data?.tax_rate || null,
-      sku: data?.sku || '',
-      charge_flex_sales: data?.charge_flex_sales || null
-    }))
-  }, [data])
 
   const onCreate = async () => {
     if (!inputRequest?.cost && !inputRequest?.tax_rate) {
@@ -61,12 +83,12 @@ export default function ({ route, navigation }: any): React.JSX.Element {
 
     try {
       await mutateAsync(inputRequest)
+      if (callback) {
+        callback()
+      }
+
       Alert.alert('Sucesso!', taxID ? 'Custos atualizado com sucesso' : 'Custos cadastrado com sucesso')
-      navigation.navigate({
-        name: 'Ad',
-        params: { tax: inputRequest },
-        merge: true,
-      });
+      setIsModalVisible(false)
     } catch (err: unknown) {
       if (err as APIError) {
         Alert.alert('Alerta!', 'Ocorreu um erro ao cadastrar os custos, tente novamente')
@@ -74,68 +96,79 @@ export default function ({ route, navigation }: any): React.JSX.Element {
     }
   }
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: `Cadastrar Custos e Imposto`,
-    })
-  }, [])
-
   return (
-    <KeyboardAvoidingView style={styles.safeAreaContainer}>
-      <View style={styles.formContainer}>
-        <Text style={styles.label}>SKU:</Text>
-        <TextInput
-          placeholderTextColor={'#CCC'}
-          returnKeyType={'next'}
-          value={inputRequest.sku}
-          onChangeText={(sku) => setInputRequest({ ...inputRequest, sku })}
-          style={styles.input}
-        />
+    <Modal isVisible={isModalVisible}>
+      <Modal.Container>
+        <Modal.Header title='Custos & Impostos' />
+        <Modal.Body>
+          <View style={{ height: 360 }}>
+            <KeyboardAvoidingView style={styles.safeAreaContainer}>
+              <View style={styles.formContainer}>
+                <Text style={styles.label}>SKU:</Text>
+                <TextInput
+                  placeholderTextColor={'#CCC'}
+                  returnKeyType={'next'}
+                  value={inputRequest.sku}
+                  onChangeText={(sku) => setInputRequest({ ...inputRequest, sku })}
+                  style={styles.input}
+                />
 
-        <Text style={styles.label}>Custo do Produto:</Text>
-        <CurrencyInput
-          value={inputRequest.cost}
-          onChangeValue={(cost) => setInputRequest({ ...inputRequest, cost: cost })}
-          prefix="R$"
-          delimiter="."
-          separator=","
-          style={styles.input}
-          precision={2}
-          minValue={0}
-        />
+                <Text style={styles.label}>Custo do Produto:</Text>
+                <CurrencyInput
+                  value={inputRequest.cost}
+                  onChangeValue={(cost) => setInputRequest({ ...inputRequest, cost: cost })}
+                  prefix="R$"
+                  delimiter="."
+                  separator=","
+                  style={styles.input}
+                  precision={2}
+                  minValue={0}
+                />
 
-        <Text style={styles.label}>Imposto:</Text>
-        <CurrencyInput
-          value={inputRequest.tax_rate}
-          onChangeValue={(tax_rate) => setInputRequest({ ...inputRequest, tax_rate })}
-          suffix="%"
-          delimiter="."
-          separator=","
-          style={styles.input}
-          precision={2}
-          minValue={0}
-        />
+                <Text style={styles.label}>Imposto:</Text>
+                <CurrencyInput
+                  value={inputRequest.tax_rate}
+                  onChangeValue={(tax_rate) => setInputRequest({ ...inputRequest, tax_rate })}
+                  suffix="%"
+                  delimiter="."
+                  separator=","
+                  style={styles.input}
+                  precision={2}
+                  minValue={0}
+                />
 
-        <CheckBox
-          label='Não Incide imposto em vendas Flex:'
-          labelStyle={styles.label}
-          iconColor={Colors.TextColor}
-          checkColor={Colors.TextColor}
-          value={inputRequest.charge_flex_sales}
-          onChange={() => {
-            setInputRequest((value: TaxRegister) => ({ ...value, charge_flex_sales: !value.charge_flex_sales }))
-          }}
-        />
-      </View>
-      <View style={{ marginTop: 10 }}>
-        <TouchableOpacity style={styles.register} onPress={onCreate} disabled={isPending}>
-          {!isPending && <Text style={styles.submitText}>{taxID ? 'atualizar' : 'cadastrar'}</Text>}
-          {isPending && <ActivityIndicator size="large" color={'#fff'} />}
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView >
+                <CheckBox
+                  label='Não Incide imposto em vendas Flex:'
+                  labelStyle={styles.label}
+                  iconColor={Colors.TextColor}
+                  checkColor={Colors.TextColor}
+                  value={inputRequest.charge_flex_sales}
+                  onChange={() => {
+                    setInputRequest((value: TaxRegister) => ({ ...value, charge_flex_sales: !value.charge_flex_sales }))
+                  }}
+                />
+              </View>
+              <View style={{ marginTop: 10 }}>
+                <TouchableOpacity style={styles.register} onPress={onCreate} disabled={isPending}>
+                  {!isPending && <Text style={styles.submitText}>{taxID ? 'atualizar' : 'cadastrar'}</Text>}
+                  {isPending && <ActivityIndicator size="large" color={'#fff'} />}
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView >
+          </View>
+        </Modal.Body>
+        <Modal.Footer>
+          <TouchableOpacity onPress={() => {
+            setInputRequest(defaultTax)
+            setIsModalVisible(false)
+          }}>
+            <Text>Fechar</Text>
+          </TouchableOpacity>
+        </Modal.Footer>
+      </Modal.Container>
+    </Modal >
   );
-}
+})
 
 const styles = StyleSheet.create({
   label: { color: Colors.TextColor, fontSize: 16 },

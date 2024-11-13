@@ -75,6 +75,7 @@ export interface Ad {
 
 export interface Order {
   external_id: string
+  external_item_id: string
   title: string
   unit_price: number
   revenue: number

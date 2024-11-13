@@ -1,6 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text, Button } from "react-native";
 import RNModal from "react-native-modal";
+import { Colors } from "../assets/color";
 
 type ModalProps = {
   isVisible: boolean;
@@ -54,7 +55,8 @@ const styles = StyleSheet.create({
   text: {
     paddingTop: 10,
     textAlign: "center",
-    fontSize: 24,
+    fontSize: 18,
+    color: Colors.TextColor,
   },
   body: {
     justifyContent: "center",

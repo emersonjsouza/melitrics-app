@@ -2,6 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import {
   Image,
   Linking,
+  Platform,
   StatusBar,
   StyleSheet,
   Text,
@@ -81,7 +82,7 @@ export default function ({ navigation }: any): React.JSX.Element {
       </View>
 
 
-      {newSubscriptionEnabled && <TouchableOpacity onPress={() => navigation.navigate('subscription')} >
+      {(newSubscriptionEnabled && Platform.OS == "ios") && <TouchableOpacity onPress={() => navigation.navigate('subscription')} >
         <View style={{ flexDirection: 'row', marginBottom: 20, height: 40, borderColor: '#ddd', borderWidth: 0.5, justifyContent: 'flex-start', alignItems: 'center', paddingLeft: 15 }}>
           <MaterialCommunityIcons name={'chess-queen'} color={Colors.PremiumColor} size={25} />
           <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Seja premium</Text>
@@ -151,14 +152,14 @@ export default function ({ navigation }: any): React.JSX.Element {
         </View>
       </TouchableOpacity>}
 
-      <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20 }}>
+      <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: Platform.OS == 'ios' ? 'space-between' : 'center', alignItems: 'center', paddingHorizontal: 20 }}>
         <TouchableOpacity onPress={() => Linking.openURL('https://melitrics.com/privacity')}>
           <Text style={{ color: Colors.TextColor, fontSize: 10 }}>Política de Privacidade</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
+        {Platform.OS == 'ios' && <TouchableOpacity onPress={() => Linking.openURL('https://www.apple.com/legal/internet-services/itunes/dev/stdeula/')}>
           <Text style={{ color: Colors.TextColor, fontSize: 10 }}>Termos de Uso (EULA)</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>}
       </View>
     </View >
   )

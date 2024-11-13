@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,11 +17,14 @@ import { useAuth } from '../../context/AuthContext';
 import { useAd } from '../../hooks/useAd';
 import { useFeatureFlag } from 'posthog-react-native';
 import { StatusBar } from 'react-native';
+import Tax from './tax';
+import LottieView from 'lottie-react-native';
 
 export default function ({ route, navigation }: any) {
   const { adInfoVisibility, saveAdInfoVisibility, currentOrg } = useAuth()
   const showDemoFlag = useFeatureFlag('show-demo')
   const itemID = route?.params.itemID
+  const taxModalRef = useRef<{ show: () => Promise<void> }>()
 
   const { item: AdInfo, isFetching, refetch } = useAd({
     organizationID: currentOrg?.organization_id,
@@ -154,9 +157,9 @@ export default function ({ route, navigation }: any) {
     );
   };
 
-  return (<View style={styles.cardContainer}>
+  return (<View style={{ ...styles.cardContainer }}>
     <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
-    <ScrollView>
+    <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
       {!isFetching && <><View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
         {item.catalog_enabled && <View style={{ backgroundColor: '#00c1d4', width: 100, marginBottom: 5, borderBottomStartRadius: 10, borderBottomEndRadius: 10, height: 25, justifyContent: 'center', alignItems: 'center' }}>
           <Text style={{ color: '#FFF', fontSize: 10, fontWeight: 600 }}>Catalogo</Text>
@@ -166,12 +169,8 @@ export default function ({ route, navigation }: any) {
           <Text style={{ color: '#43ba73', fontSize: 10, fontWeight: 600 }}>Full</Text>
         </View>}
       </View>
-
+        <Tax ref={taxModalRef} defaultSku={item.sku} itemID={item.id} taxID={item.tax_id} />
         <View style={{ marginTop: 20 }}>
-          {/* <View style={{ justifyContent: 'center', alignItems: 'center', padding: 10 }}>
-          {adInfoVisibility && <Image style={{ height: 160, width: 160, borderRadius: 10, resizeMode: 'contain' }}
-            source={{ uri: item.thumbnail_link.replace('http://', 'https://').replace('-I.', '-O.') }} />}
-        </View> */}
           <View style={{ flexDirection: 'row' }}>
             <View style={{ marginLeft: 10, flex: 1 }}>
               <Text style={styles.cardTitle}>{adInfoVisibility ? item.title : 'Informação indisponível'}</Text>
@@ -200,10 +199,7 @@ export default function ({ route, navigation }: any) {
             <Text style={{ fontSize: 10, color: '#FFF' }}>{current_status}</Text>
           </View>
         </View>
-        <View
-          style={{
-            flex: 1,
-          }}>
+        <View>
           <View
             style={{
               margin: 10,
@@ -239,23 +235,38 @@ export default function ({ route, navigation }: any) {
             {renderLegendComponent()}
           </View>
         </View>
-        <TouchableOpacity onPress={() => navigation.navigate('Tax', { itemID: item.id, taxID: item.tax_id })}>
+        <TouchableOpacity onPress={() => taxModalRef.current?.show()}>
           <View style={{ backgroundColor: Colors.TextColor, borderRadius: 10, margin: 10, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
             <MaterialCommunityIcons name={'plus'} color={'#FFF'} size={20} />
             {item.cost == 0 && <Text style={{ color: '#FFF' }}>ADICIONAR CUSTO E IMPOSTO</Text>}
             {item.cost > 0 && <Text style={{ color: '#FFF' }}>ATUALIZAR CUSTO E IMPOSTO</Text>}
           </View>
         </TouchableOpacity></>}
-    </ScrollView>
-  </View>)
+      {isFetching &&
+        <>
+          <View style={{ flexGrow: 100, flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>
+            <View style={{ width: 150, height: 150 }}>
+              <LottieView
+                source={require("../../assets/images/loading-data.json")}
+                style={{ width: "100%", height: "100%" }}
+                autoPlay
+                loop
+              />
+            </View>
+            <Text style={{ flexWrap: 'nowrap', textAlign: 'center', color: Colors.TextColor }}>
+              carregando suas informações...
+            </Text>
+          </View>
+        </>}
+
+    </ScrollView >
+  </View >)
 }
 
 const styles = StyleSheet.create({
   cardContainer: {
     paddingTop: 0,
-    height: Platform.OS == 'android' ? 165 : 150,
     padding: 5,
-    marginBottom: 10,
     backgroundColor: '#FFF',
     flex: 1
   },

@@ -18,7 +18,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import LottieView from 'lottie-react-native';
 
 export default function ({ navigation }: any): React.JSX.Element {
-  const { currentOrg, adInfoVisibility, saveAdInfoVisibility } = useAuth()
+  const { currentOrg } = useAuth()
   const [status, setStatus] = useState('')
   const [subStatus, setSubStatus] = useState('')
   const [logisticType, setLogisticType] = useState('')
@@ -41,13 +41,8 @@ export default function ({ navigation }: any): React.JSX.Element {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: `(${total}) Anúncios`,
-      headerRight: () => (
-        <View style={{ flexDirection: 'row' }}>
-          <NavigationButton onPress={saveAdInfoVisibility} icon={adInfoVisibility ? 'eye-off-outline' : 'eye-outline'} />
-        </View>
-      )
     })
-  }, [total, adInfoVisibility])
+  }, [total])
 
   return (
     <View style={styles.mainContainer}>
@@ -138,7 +133,7 @@ export default function ({ navigation }: any): React.JSX.Element {
 
       {total > 0 && <FlatList style={styles.adsContainer}
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
-        renderItem={({ item }) => (<Card visibility={adInfoVisibility} navigate={navigation.navigate} item={item} />)}
+        renderItem={({ item }) => (<Card visibility={true} navigate={navigation.navigate} item={item} />)}
         onEndReached={() => {
           if (hasNextPage) {
             fetchNextPage()

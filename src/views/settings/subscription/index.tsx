@@ -66,6 +66,8 @@ export default function ({ navigation }: any): React.JSX.Element {
 
 
   const onSubscriptionCallback = async (paymentResult: PAYWALL_RESULT, customerInfo?: CustomerInfo, storeTransaction?: PurchasesStoreTransaction) => {
+    console.log('Result...', paymentResult)
+    
     switch (paymentResult) {
       case PAYWALL_RESULT.RESTORED:
       case PAYWALL_RESULT.PURCHASED: {

@@ -38,6 +38,14 @@ export const getIndicatorsByMonth = async (organizationID: string) => {
   return resp.data
 }
 
+
+export const listTax = async (organizationID: string, sku: string, offset: number) => {
+  console.log(`fetching taxes sku: ${sku}`)
+
+  const resp = await server.get<List<Tax>>(`/v1/taxes/${organizationID}?sku=${sku}&offset=${offset}&limit=10`)
+  return resp.data
+}
+
 export const listAds = async (organizationID: string, offset: number, status: string, subStatus: string, logisticType: string) => {
   console.log('fetching ads')
   const resp = await server.get<List<Ad>>(`/v1/items/${organizationID}?offset=${offset}&status=${status}&sub_status=${subStatus}&logistic_type=${logisticType}&limit=10`)
@@ -89,10 +97,11 @@ export const deleteUser = async (userID: string) => {
 }
 
 export const getTax = async (organizationID: string, taxID: string) => {
-  console.log('fetching get tax')
+  console.log('fetching get tax', taxID)
   const resp = await server.get<Tax>(`/v1/taxes/${organizationID}/${taxID}`)
   return resp.data
 }
+
 
 export const getGoal = async (organizationID: string) => {
   console.log('fetching get goal')

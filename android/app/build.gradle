@@ -80,7 +80,7 @@ android {
         manifestPlaceholders = [auth0Domain: "devsouza.us.auth0.com", auth0Scheme: "com.melitricsapp.auth0"]
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
+        versionCode 3
         versionName "1.0"
     }
     signingConfigs {

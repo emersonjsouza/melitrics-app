@@ -10,12 +10,14 @@ import {
   Alert,
   Dimensions,
   AppState,
-  Appearance
+  Appearance,
+  RefreshControl
 } from 'react-native';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import ContentLoader, { Rect } from 'react-content-loader/native'
 import { useIndicators } from '../../hooks/useIndicators';
+import { useGoal } from '../../hooks/useGoal';
 import { Dropdown } from 'react-native-element-dropdown';
 import { useAuth } from '../../context/AuthContext';
 import { differenceInMinutes, format, subDays, toDate } from 'date-fns'
@@ -25,7 +27,6 @@ import Indicators from './indicators';
 import { CUSTOM_LOCALE, formatToBRL } from '../../utils';
 import ProgressBar from '../../components/progressbar';
 import { Colors } from '../../assets/color';
-import { useGoal } from '../../hooks/useGoal';
 import { Modal } from '../../components/modal';
 import Calendar from "react-native-calendar-range-picker";
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -42,6 +43,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
   const barProgresRef = useRef<{ setOnProgress: (value: number) => Promise<void> }>()
   const {
     isFetching,
+    isRefetching,
     refetch: refreshIndicators,
     data: indicators
   } = useIndicators({ organizationID: currentOrg?.organization_id || '', start: startDate, end: endDate })
@@ -93,6 +95,16 @@ export default function ({ navigation, route }: any): React.JSX.Element {
     const subscription = AppState.addEventListener('change', async (nextAppState) => {
       appState.current = nextAppState;
       if (appState.current == 'active') {
+
+        if (dateSelect == '0' && startDate != format(new Date(), 'yyyy-MM-dd')) {
+          await queryClient.invalidateQueries({
+            queryKey: ['indicators-shipping-type', 'indicators', 'indicators-month', 'goal']
+          })
+        }
+        else {
+          onRefresh()
+        }
+
         posthog.reloadFeatureFlags()
 
         await queryClient.invalidateQueries({
@@ -116,7 +128,6 @@ export default function ({ navigation, route }: any): React.JSX.Element {
 
   React.useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      onRefresh()
       posthog.reloadFeatureFlags()
     });
 
@@ -131,7 +142,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
 
   useEffect(() => {
     let newSubscriptionEnabled = posthog.getFeatureFlag('new-premium-subscription')
-    if (newSubscriptionEnabled) {
+    if (newSubscriptionEnabled && Platform.OS == "ios") {
       Appearance.setColorScheme('dark');
       if (currentOrg && differenceInMinutes(toDate(currentOrg.subscription_expires_at), new Date()) <= 0) {
         navigation.navigate('subscription');
@@ -143,6 +154,10 @@ export default function ({ navigation, route }: any): React.JSX.Element {
     <SafeAreaView edges={['bottom', 'left', 'right']} style={styles.mainContainer}>
       <StatusBar translucent barStyle="dark-content" backgroundColor={'#FFF'} />
       <ScrollView
+        contentContainerStyle={{ flexGrow: 1 }}
+        refreshControl={
+          <RefreshControl refreshing={isRefetching} onRefresh={onRefresh} />
+        }
         showsVerticalScrollIndicator={true}
       >
         <Modal isVisible={isModalVisible}>
@@ -171,8 +186,6 @@ export default function ({ navigation, route }: any): React.JSX.Element {
             </Modal.Footer>
           </Modal.Container>
         </Modal>
-
-
 
         <View style={styles.headerContainer}>
           <View style={{ flexDirection: 'row' }}>

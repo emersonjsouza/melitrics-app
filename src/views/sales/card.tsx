@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -12,18 +12,25 @@ import { format, parseISO } from 'date-fns';
 import { formatToBRL, shipping_type } from '../../utils';
 import { useFeatureFlag } from 'posthog-react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Colors } from '../../assets/color';
+import Tax from '../ads/tax';
+
 
 type CardProps = PropsWithChildren<{
   item: Order
   visibility?: boolean
+  onRefresh?: () => void
 }>
 
-export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Element {
+export default function ({ item: AdInfo, visibility, onRefresh }: CardProps): React.JSX.Element {
   const showDemoFlag = useFeatureFlag('show-demo')
   const payment_type = {
     'paid': 'Aprovado',
     'cancelled': 'Cancelado',
   }
+
+  const taxModalRef = useRef<{ show: () => Promise<void> }>()
 
   let item = AdInfo
 
@@ -43,12 +50,13 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
   }
 
   if (item.cost == 0) {
-    cardHeight += 15
+    cardHeight += 30
   }
 
   return (
     <View
       style={{ borderStartColor: sideStatusColor, ...styles.cardContainer, height: cardHeight }}>
+      <Tax ref={taxModalRef} defaultSku={item.sku} callback={onRefresh} />
       <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
         {item.is_advertising && <View style={{ flexDirection: 'row', borderColor: '#ddd', borderWidth: 0.5, marginLeft: 10, width: 120, marginBottom: 5, borderBottomStartRadius: 10, borderBottomEndRadius: 10, height: 25, justifyContent: 'center', alignItems: 'center' }}>
           <Image style={{ width: 20, height: 20, padding: 10 }}
@@ -80,11 +88,19 @@ export default function ({ item: AdInfo, visibility }: CardProps): React.JSX.Ele
           <Text style={{ fontSize: 10, color: '#9C9C9C' }}>{format(parseISO(item.created_at), 'dd/MM/yyyy - HH:mm:ss')}</Text>
         </View>
       </View>
-      {item.cost == 0 && <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', marginTop: 15 }}>
-        <MaterialCommunityIcons name={'alert'} color={'#fb8c00'} size={20} />
-        <Text style={{ fontSize: 10, color: '#9C9C9C', marginLeft: 5 }}>produto sem definição de custo e imposto</Text>
+      {item.cost == 0 && <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 4 }}>
+        <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }}>
+          <MaterialCommunityIcons name={'alert'} color={'#fb8c00'} size={20} />
+          <Text style={{ fontSize: 10, color: '#9C9C9C', marginLeft: 5 }}>produto sem definição de custo e imposto</Text>
+        </View>
+        <TouchableOpacity onPress={() => taxModalRef.current?.show()}>
+          <View style={{ backgroundColor: Colors.TextColor, borderRadius: 10, margin: 5, padding: 5, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+            <MaterialCommunityIcons name={'plus'} color={'#FFF'} size={20} />
+            <Text style={{ color: '#FFF', fontSize: 8 }}>ADICIONAR CUSTO & IMPOSTO</Text>
+          </View>
+        </TouchableOpacity>
       </View>}
-    </View>
+    </View >
   )
 }
 

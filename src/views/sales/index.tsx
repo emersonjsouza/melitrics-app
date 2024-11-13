@@ -26,7 +26,7 @@ export default function ({ navigation }: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
   const [status, setStatus] = useState('')
   const [shippingType, setShippingType] = useState('')
-  const { currentOrg, orderInfoVisibility, saveOrderInfoVisibility } = useAuth()
+  const { currentOrg } = useAuth()
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [isModalVisible, setIsModalVisible] = React.useState(false);
@@ -52,13 +52,8 @@ export default function ({ navigation }: any): React.JSX.Element {
   useLayoutEffect(() => {
     navigation.setOptions({
       title: `(${total}) Vendas`,
-      headerRight: () => (
-        <View style={{ flexDirection: 'row' }}>
-          <NavigationButton onPress={saveOrderInfoVisibility} icon={orderInfoVisibility ? 'eye-off-outline' : 'eye-outline'} />
-        </View>
-      )
     })
-  }, [total, orderInfoVisibility])
+  }, [total])
 
   return (
     <View style={styles.mainContainer}>
@@ -194,7 +189,7 @@ export default function ({ navigation }: any): React.JSX.Element {
 
       {total > 0 && <FlatList
         data={data?.flatMap(x => x.items)} keyExtractor={(_, idx) => idx.toString()}
-        renderItem={({ item }) => (<Card visibility={orderInfoVisibility} item={item} />)}
+        renderItem={({ item }) => (<Card onRefresh={refetch} visibility={true} item={item} />)}
         onEndReached={(el) => {
           if (hasNextPage) {
             fetchNextPage()
