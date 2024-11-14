@@ -104,7 +104,8 @@ export default function ({ navigation }: any): React.JSX.Element {
               { label: 'Logistica', value: '' },
               { label: 'Full', value: 'fulfillment' },
               { label: 'Flex', value: 'self_service' },
-              { label: 'Agencia/Correios', value: 'xd_drop_off' },
+              { label: 'Agencia', value: 'xd_drop_off' },
+              { label: 'Correio', value: 'drop_off' },
             ]}
             maxHeight={300}
             labelField="label"

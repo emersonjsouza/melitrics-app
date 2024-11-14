@@ -1,6 +1,7 @@
 export const shipping_type = {
   'fulfillment': 'FULL',
   'xd_drop_off': 'Agencia',
+  'drop_off': 'Correio',
   'self_service': 'Flex'
 }
 
@@ -30,5 +31,5 @@ export const formatToBRL = (number: number | undefined) => {
 }
 
 export const deviceVersionControl = () => {
-  
+
 }

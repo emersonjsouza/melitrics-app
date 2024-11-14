@@ -21,7 +21,7 @@ import Tax from './tax';
 import LottieView from 'lottie-react-native';
 
 export default function ({ route, navigation }: any) {
-  const { adInfoVisibility, saveAdInfoVisibility, currentOrg } = useAuth()
+  const { currentOrg } = useAuth()
   const showDemoFlag = useFeatureFlag('show-demo')
   const itemID = route?.params.itemID
   const taxModalRef = useRef<{ show: () => Promise<void> }>()
@@ -67,14 +67,9 @@ export default function ({ route, navigation }: any) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: `Informações do Produto`,
-      headerRight: () => (
-        <View style={{ flexDirection: 'row' }}>
-          <NavigationButton onPress={saveAdInfoVisibility} icon={adInfoVisibility ? 'eye-off-outline' : 'eye-outline'} />
-        </View>
-      )
+      title: `Cod. ${item.external_id ?? '--'}`,
     })
-  }, [adInfoVisibility])
+  }, [item])
 
   const pieData = [
     {
@@ -157,6 +152,9 @@ export default function ({ route, navigation }: any) {
     );
   };
 
+  const adInfoVisibility = true;
+  const TITLE_MARGIN_TOP = shipping_type[item.logistic_type] == shipping_type.fulfillment || item.catalog_enabled
+
   return (<View style={{ ...styles.cardContainer }}>
     <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -170,20 +168,16 @@ export default function ({ route, navigation }: any) {
         </View>}
       </View>
         <Tax ref={taxModalRef} defaultSku={item.sku} itemID={item.id} taxID={item.tax_id} />
-        <View style={{ marginTop: 20 }}>
-          <View style={{ flexDirection: 'row' }}>
-            <View style={{ marginLeft: 10, flex: 1 }}>
-              <Text style={styles.cardTitle}>{adInfoVisibility ? item.title : 'Informação indisponível'}</Text>
-              <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
-                <Text style={{ fontSize: 20, color: '#718093', textAlign: 'center' }}>{formatToBRL(item.price)}</Text>
-              </View>
-              <View style={{ marginTop: 10 }}>
-                <Text style={styles.cardSubText}>SKU: {adInfoVisibility ? item.sku.toUpperCase() : ''}{!item.sku && ' - '}</Text>
-                <Text style={styles.cardSubText}><MaterialCommunityIcons name={'barcode-scan'} color={'#c2c2c2'} size={12} /> {adInfoVisibility ? item.external_id : '-'}</Text>
-              </View>
+        <View style={{ flexDirection: 'row', marginTop: TITLE_MARGIN_TOP ? 0 : 15 }}>
+          <View style={{ marginLeft: 10, flex: 1 }}>
+            <Text style={styles.cardSubText}>SKU: {adInfoVisibility ? item.sku.toUpperCase() : ''}{!item.sku && ' - '}</Text>
+            <Text style={styles.cardTitle}>{adInfoVisibility ? item.title : 'Informação indisponível'}</Text>
+            <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
+              <Text style={{ fontSize: 20, color: '#718093', textAlign: 'center' }}>{formatToBRL(item.price)}</Text>
             </View>
           </View>
         </View>
+
         <View style={{ flexDirection: 'row', marginTop: 10, justifyContent: 'flex-start' }}>
           <View style={{ borderWidth: .5, borderColor: '#718093', marginRight: 10, padding: 5, borderRadius: 10 }}>
             <Text style={{ fontSize: 10, color: '#718093' }}>{item.available_quantity} disponível</Text>
@@ -199,16 +193,26 @@ export default function ({ route, navigation }: any) {
             <Text style={{ fontSize: 10, color: '#FFF' }}>{current_status}</Text>
           </View>
         </View>
+        <View style={{ alignItems: 'flex-end' }}>
+          <TouchableOpacity onPress={() => taxModalRef.current?.show()}>
+            <View style={{ width: 150, backgroundColor: Colors.TextColor, borderRadius: 10, margin: 10, padding: 9, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+              <MaterialCommunityIcons name={'plus'} color={'#FFF'} size={15} />
+              {item.cost == 0 && <Text style={{ fontSize: 9, color: '#FFF' }}>ADICIONAR CUSTO</Text>}
+              {item.cost > 0 && <Text style={{ fontSize: 9, color: '#FFF' }}>ATUALIZAR CUSTO</Text>}
+            </View>
+          </TouchableOpacity>
+        </View>
+
         <View>
           <View
             style={{
-              margin: 10,
+              marginHorizontal: 10,
               padding: 16,
               borderRadius: 20,
               backgroundColor: Colors.TextColor,
             }}>
-            <Text style={{ color: 'white', fontSize: 16, fontWeight: 'bold' }}>
-              Desempenho do Anúncio
+            <Text style={{ color: 'white', textAlign: 'center', fontSize: 12, fontWeight: 'bold' }}>
+              DESEMPENHO DO ANÚNCIO
             </Text>
             <View style={{ padding: 20, alignItems: 'center' }}>
               <PieChart
@@ -216,8 +220,8 @@ export default function ({ route, navigation }: any) {
                 donut
                 showGradient
                 sectionAutoFocus
-                radius={100}
-                innerRadius={60}
+                radius={80}
+                innerRadius={50}
                 innerCircleColor={Colors.TextColor}
                 centerLabelComponent={() => {
                   return (
@@ -235,13 +239,7 @@ export default function ({ route, navigation }: any) {
             {renderLegendComponent()}
           </View>
         </View>
-        <TouchableOpacity onPress={() => taxModalRef.current?.show()}>
-          <View style={{ backgroundColor: Colors.TextColor, borderRadius: 10, margin: 10, padding: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-            <MaterialCommunityIcons name={'plus'} color={'#FFF'} size={20} />
-            {item.cost == 0 && <Text style={{ color: '#FFF' }}>ADICIONAR CUSTO E IMPOSTO</Text>}
-            {item.cost > 0 && <Text style={{ color: '#FFF' }}>ATUALIZAR CUSTO E IMPOSTO</Text>}
-          </View>
-        </TouchableOpacity></>}
+      </>}
       {isFetching &&
         <>
           <View style={{ flexGrow: 100, flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 }}>

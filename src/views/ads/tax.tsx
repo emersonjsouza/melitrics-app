@@ -17,7 +17,6 @@ import { useTaxMutation } from '../../hooks/useTaxMutation';
 import { APIError, Tax, TaxRegister } from '../../services/types';
 import { useAuth } from '../../context/AuthContext';
 import CurrencyInput from 'react-native-currency-input';
-import { useTax } from '../../hooks/useTax';
 import CheckBox from '../../components/checkbox';
 import { Modal } from '../../components/modal';
 import { useTaxes } from '../../hooks/useTaxes';
@@ -149,7 +148,7 @@ export default forwardRef(({ itemID, taxID, defaultSku, callback }: Props, ref) 
               </View>
               <View style={{ marginTop: 10 }}>
                 <TouchableOpacity style={styles.register} onPress={onCreate} disabled={isPending}>
-                  {!isPending && <Text style={styles.submitText}>{taxID ? 'atualizar' : 'cadastrar'}</Text>}
+                  {!isPending && <Text style={styles.submitText}>SALVAR INFORMAÇÕES</Text>}
                   {isPending && <ActivityIndicator size="large" color={'#fff'} />}
                 </TouchableOpacity>
               </View>

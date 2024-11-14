@@ -28,7 +28,7 @@ export interface Indicator {
 }
 
 export interface IndicatorShippingType {
-  shipping_type: "fulfillment" | "xd_drop_off" | "self_service"
+  shipping_type: "fulfillment" | "xd_drop_off" | "self_service" | "drop_off" 
   revenue: number
   amount_unit_sold: number
   amount_sold: number
@@ -58,7 +58,7 @@ export interface Ad {
   shipping_cost: number
   tax_rate: number
   health: number
-  logistic_type: "fulfillment" | "xd_drop_off" | "self_service"
+  logistic_type: "fulfillment" | "xd_drop_off" | "self_service" | "drop_off" 
   permalink: string
   thumbnail_link: string
   sold_quantity: number
@@ -88,7 +88,7 @@ export interface Order {
   net_income: number
   sku: string
   status: "paid" | "cancelled"
-  shipping_type: "fulfillment" | "xd_drop_off" | "self_service"
+  shipping_type: "fulfillment" | "xd_drop_off" | "self_service" | "drop_off" 
   created_at: string
 }
 

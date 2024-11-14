@@ -7,11 +7,11 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from 'react-native';
-import NavigationButton from '../../components/navigation-button';
 import { useAuth } from '../../context/AuthContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
 import DeviceInfo from 'react-native-device-info';
 import { Colors } from '../../assets/color';
 import { usePostHog } from 'posthog-react-native';
@@ -48,9 +48,11 @@ export default function ({ navigation }: any): React.JSX.Element {
     navigation.setOptions({
       title: `Configurações`,
       headerRight: () => (
-        <View style={{ flexDirection: 'row' }}>
-          <NavigationButton onPress={signOut} icon='logout' />
-        </View>
+        <TouchableOpacity onPress={signOut}>
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }}>
+            <Text style={{ color: 'white', fontSize: 16, textAlign: 'right' }}>Sair</Text>
+          </View>
+        </TouchableOpacity>
       )
     })
   }, [])
@@ -147,7 +149,7 @@ export default function ({ navigation }: any): React.JSX.Element {
         <View style={{ flexDirection: 'row', height: 40, borderTopColor: '#ddd', borderTopWidth: 0.5, justifyContent: 'space-between', alignItems: 'center', paddingLeft: 15 }}>
           <View style={{ flexDirection: 'row' }}>
             <MaterialCommunityIcons name={'store-remove'} color={Colors.TextColor} size={25} />
-            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>excluir minha conta</Text>
+            <Text style={{ color: Colors.TextColor, marginLeft: 10 }}>Excluir minha conta</Text>
           </View>
         </View>
       </TouchableOpacity>}

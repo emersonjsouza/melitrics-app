@@ -10,16 +10,16 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 export default function (props: { icon: string, onPress?: () => void }) {
   return (<TouchableOpacity onPress={props.onPress}>
     <View style={styles.navigationButton}>
-      <MaterialCommunityIcons name={props.icon} color={'#FFF'} size={25} />
+      <MaterialCommunityIcons name={props.icon} color={'#FFF'} size={20} />
     </View>
   </TouchableOpacity>)
 }
 
 const styles = StyleSheet.create({
   navigationButton: {
-    alignItems: "center",
+    alignItems: "flex-end",
     justifyContent: "center",
-    height: 50,
-    width: 50
+    height: 30,
+    width: 30
   }
 });
