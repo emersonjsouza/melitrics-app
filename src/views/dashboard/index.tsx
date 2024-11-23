@@ -76,16 +76,16 @@ export default function ({ navigation, route }: any): React.JSX.Element {
 
       const netIncome = indicators?.net_income as number
       if (netIncome > 0 && currentGoal > 0) {
-        if ((currentGoal - netIncome) > -1) {
+        if ((currentGoal - netIncome) > 0) {
           setBarProgressLabel(`Ainda falta ${formatToBRL(currentGoal - netIncome)}, sua meta de margem ${label} é ${formatToBRL(currentGoal)}`)
         }
         else {
           setBarProgressLabel(`Parabéns você já completou sua meta ${label} de ${formatToBRL(currentGoal)}`)
         }
 
-        const width = Dimensions.get('screen').width - 40
+        const width = Dimensions.get('screen').width - 20
         const widthProgress = (width / 100) * (netIncome / currentGoal * 100)
-        barProgresRef.current?.setOnProgress((width - widthProgress) > -1 ? widthProgress : width)
+        barProgresRef.current?.setOnProgress((width - widthProgress) > 0 ? widthProgress : (width))
       }
     }
   }, [goal, indicators?.net_income])
@@ -203,9 +203,9 @@ export default function ({ navigation, route }: any): React.JSX.Element {
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{ marginTop: 10, marginLeft: 20 }}>
+        <View style={{ marginTop: 10, marginLeft: 0 }}>
           <View style={styles.profitContainer}>
-            <View>
+            <View style={{ paddingLeft: Platform.OS == 'android' ? 15 : 0 }}>
               <Text style={{ fontFamily: 'Robo-Light', color: Colors.TextColor }}>Seu Faturamento</Text>
               {!isFetching && <Text style={{ fontFamily: 'Roboto-Bold', fontSize: 25, marginTop: 2, color: Colors.TextColor }}>{formatToBRL(indicators?.revenue)}</Text>}
               {isFetching && <ContentLoader
@@ -228,6 +228,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
                   { label: 'Ontem', value: '1' },
                   { label: 'Últimos 7 dias', value: '6' },
                   { label: 'Últimos 15 dias', value: '14' },
+                  { label: 'Últimos 30 dias', value: '29' },
                   { label: 'Outro período', value: 'custom' },
                 ]}
                 maxHeight={300}
@@ -258,13 +259,7 @@ export default function ({ navigation, route }: any): React.JSX.Element {
 
         <Indicators isFetching={isFetching} data={indicators} />
 
-        <Text style={{
-          fontFamily: 'Roboto-Medium',
-          marginTop: 20,
-          color: '#212946',
-          fontSize: 18,
-          marginLeft: 20,
-        }}>Minhas Operações</Text>
+
 
         <Operations ref={operationRef} organizationID={currentOrg?.organization_id || ''} startDate={startDate} endDate={endDate} />
 
@@ -279,7 +274,7 @@ const dropStyle = StyleSheet.create({
   selectedTextStyle: { alignContent: 'flex-end', textAlign: 'right', color: Colors.TextColor, fontSize: 12 },
   placeholderStyle: { alignContent: 'flex-end', color: Colors.TextColor, fontSize: 12 },
   iconStyle: { alignItems: 'flex-start', width: 20, height: 20 },
-  itemStyle: { fontSize: 11 }
+  itemStyle: { fontSize: 12, color: Colors.TextColor, }
 })
 
 const styles = StyleSheet.create({

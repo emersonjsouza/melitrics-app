@@ -1,4 +1,5 @@
 export default {
+  //API: 'http://192.168.1.8:8080',
   //API: 'http://192.168.68.103:8080',
   API: 'https://api.melitrics.com',
   AUTH_DOMAIN: "devsouza.us.auth0.com",

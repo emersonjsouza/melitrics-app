@@ -1,18 +1,19 @@
 import React, { useLayoutEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  Animated,
+  Appearance,
   Dimensions,
   FlatList,
+  Platform,
   StatusBar,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import Card from './card';
-import NavigationButton from '../../components/navigation-button';
 import { useAds } from '../../hooks/useAds';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Colors } from '../../assets/color';
 import { Dropdown } from 'react-native-element-dropdown';
 import LottieView from 'lottie-react-native';
@@ -23,11 +24,18 @@ export default function ({ navigation }: any): React.JSX.Element {
   const [subStatus, setSubStatus] = useState('')
   const [logisticType, setLogisticType] = useState('')
 
+  const [search, setSearch] = useState('')
+  const isIosVersionGreaterThan13 = Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 13;
+  const headerMarginWithoutFocus = Platform.OS === 'ios' ? (isIosVersionGreaterThan13 ? 130 : 100) : 0
+  const headerMarginWithFocus = Platform.OS === 'ios' ? 10 : 0
+  const [marginTop, setMarginTop] = useState<Animated.Value>(new Animated.Value(headerMarginWithoutFocus));
+
   const { data, total, isFetching, fetchNextPage, hasNextPage, refetch } = useAds({
     organizationID: currentOrg?.organization_id || '',
     status,
     subStatus,
-    logisticType
+    logisticType,
+    search
   })
 
   React.useEffect(() => {
@@ -39,13 +47,39 @@ export default function ({ navigation }: any): React.JSX.Element {
   }, [navigation]);
 
   useLayoutEffect(() => {
+    Appearance.setColorScheme('dark');
+
     navigation.setOptions({
-      title: `(${total}) Anúncios`,
-    })
+      headerTintColor: '#fff',
+      headerTitle: `(${total}) Anúncios`,
+      headerSearchBarOptions: {
+        placeholder: "Pesquisar anúncios",
+        textColor: '#fff',
+        onFocus: () => {
+          setMarginTop(new Animated.Value(headerMarginWithFocus))
+        },
+        onBlur: () => {
+          if (search.length == 0) {
+            setMarginTop(new Animated.Value(headerMarginWithoutFocus))
+          }
+        },
+        onCancel: () => {
+          setSearch('')
+          refetch()
+        },
+        onChangeText: (event: any) => {
+          if (event.nativeEvent.text.length == 0 || event.nativeEvent.text.length >= 3) {
+            setSearch(event.nativeEvent.text)
+            refetch()
+          }
+        }
+      },
+    });
+
   }, [total])
 
   return (
-    <View style={styles.mainContainer}>
+    <Animated.View style={{ ...styles.mainContainer, marginTop: marginTop }}>
       <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
       <View style={styles.headerContainer}>
         <View style={styles.filterButton}>
@@ -143,7 +177,7 @@ export default function ({ navigation }: any): React.JSX.Element {
         onEndReachedThreshold={0.5}
         ListFooterComponent={<FooterListComponent isFetching={isFetching} />}
       />}
-    </View>
+    </Animated.View>
   )
 }
 
@@ -161,7 +195,7 @@ const dropStyle = StyleSheet.create({
   placeholderStyle: { alignContent: 'flex-end', color: '#fff', fontSize: 11 },
   iconStyle: { alignItems: 'flex-start', width: 20, height: 20 },
   containerStyle: { width: Dimensions.get('screen').width / 3 - 20, height: 40, paddingRight: 10, justifyContent: 'center', alignItems: 'center' },
-  itemStyle: { fontSize: 11 }
+  itemStyle: { fontSize: 12, color: Colors.TextColor, }
 })
 
 const styles = StyleSheet.create({
@@ -174,10 +208,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     backgroundColor: Colors.Main,
-    paddingTop: 10,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    height: 60
+    marginTop: -40,
+    paddingTop: 40,
+    height: 100
   },
   adsContainer: {
     paddingTop: 10

@@ -7,20 +7,21 @@ import {
   StyleSheet,
   View,
   Text,
-  TouchableOpacity
+  TouchableOpacity,
+  Animated
 } from 'react-native';
 import { format, subDays } from 'date-fns'
 import { Dropdown } from 'react-native-element-dropdown';
 import { useOrders } from '../../hooks/useOrders';
 import { useAuth } from '../../context/AuthContext';
 import Card from './card';
-import NavigationButton from '../../components/navigation-button';
 import { Colors } from '../../assets/color';
 import LottieView from 'lottie-react-native';
 import { Modal } from '../../components/modal';
 import Calendar from "react-native-calendar-range-picker";
 import { CUSTOM_LOCALE } from '../../utils';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Platform } from 'react-native';
+import { Appearance } from 'react-native';
 
 export default function ({ navigation }: any): React.JSX.Element {
   const [dateSelect, setDateSelect] = useState('0')
@@ -30,14 +31,28 @@ export default function ({ navigation }: any): React.JSX.Element {
   const [startDate, setStartDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [endDate, setEndDate] = useState<string>(format(new Date(), 'yyyy-MM-dd'))
   const [isModalVisible, setIsModalVisible] = React.useState(false);
+  
+  const [search, setSearch] = useState('')
+  const isIosVersionGreaterThan13 = Platform.OS === 'ios' && parseInt(Platform.Version, 10) >= 13;
+  const headerMarginWithoutFocus = Platform.OS === 'ios' ? (isIosVersionGreaterThan13 ? 130 : 100) : 0
+  const headerMarginWithFocus = Platform.OS === 'ios' ? 10 : 0
+  const [marginTop, setMarginTop] = useState<Animated.Value>(new Animated.Value(headerMarginWithoutFocus));
 
   const orderHook = useOrders({
     organizationID: currentOrg?.organization_id || '',
     start: startDate,
     end: endDate,
     status,
-    shippingType
+    shippingType,
+    search
   })
+
+  useEffect(() => {
+    Animated.timing(marginTop, {
+      toValue: marginTop,
+      useNativeDriver: false,
+    }).start();
+  }, [marginTop]);
 
   let { data, total, isFetching, fetchNextPage, hasNextPage, refetch } = orderHook
 
@@ -50,13 +65,39 @@ export default function ({ navigation }: any): React.JSX.Element {
   }, [navigation]);
 
   useLayoutEffect(() => {
+    Appearance.setColorScheme('dark');
+
     navigation.setOptions({
-      title: `(${total}) Vendas`,
-    })
+      headerTintColor: '#fff',
+      headerTitle: `(${total}) Vendas`,
+      headerSearchBarOptions: {
+        placeholder: "Pesquisar venda",
+        textColor: '#fff',
+        onFocus: () => {
+          setMarginTop(new Animated.Value(headerMarginWithFocus))
+        },
+        onBlur: () => {
+          if (search.length == 0) {
+            setMarginTop(new Animated.Value(headerMarginWithoutFocus))
+          }
+        },
+        onCancel: () => {
+          setSearch('')
+          refetch()
+        },
+        onChangeText: (event: any) => {
+          if (event.nativeEvent.text.length == 0 || event.nativeEvent.text.length >= 3) {
+            setSearch(event.nativeEvent.text)
+            refetch()
+          }
+        }
+      },
+    });
+
   }, [total])
 
   return (
-    <View style={styles.mainContainer}>
+    <Animated.View style={{ ...styles.mainContainer, marginTop: marginTop }}>
       <StatusBar translucent barStyle="light-content" backgroundColor={Colors.Main} />
 
       <Modal isVisible={isModalVisible}>
@@ -100,6 +141,7 @@ export default function ({ navigation }: any): React.JSX.Element {
               { label: 'Ontem', value: '1' },
               { label: 'Últimos 7 dias', value: '6' },
               { label: 'Últimos 15 dias', value: '14' },
+              { label: 'Últimos 30 dias', value: '29' },
               { label: 'Outro período', value: 'custom' },
             ]}
             maxHeight={300}
@@ -199,7 +241,7 @@ export default function ({ navigation }: any): React.JSX.Element {
         onEndReachedThreshold={0.5}
         ListFooterComponent={< FooterListComponent isFetching={isFetching} />}
       />}
-    </View >
+    </Animated.View >
   )
 }
 
@@ -217,20 +259,23 @@ const dropStyle = StyleSheet.create({
   placeholderStyle: { alignContent: 'flex-end', color: '#fff', fontSize: 11 },
   iconStyle: { alignItems: 'flex-start', width: 20, height: 20 },
   containerStyle: { width: Dimensions.get('screen').width / 3 - 20, height: 40, paddingRight: 10, justifyContent: 'center', alignItems: 'center' },
-  itemStyle: { fontSize: 11 }
+  itemStyle: { fontSize: 12, color: Colors.TextColor, }
 })
 
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: '#fff'
+    //backgroundColor: Colors.Main,
   },
   headerContainer: {
     flexDirection: 'row',
     backgroundColor: Colors.Main,
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10,
-    height: 60
+    marginTop: -40,
+    paddingTop: 40,
+    height: 100
   },
   filterButton: {
     justifyContent: 'center',

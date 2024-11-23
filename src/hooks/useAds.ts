@@ -1,11 +1,11 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { listAds } from "../services";
 
-export const useAds = (query: { organizationID: string, status: string, subStatus: string, logisticType: string }) => {
+export const useAds = (query: { organizationID: string, status: string, subStatus: string, logisticType: string, search: string }) => {
   const { data, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery({
-    queryKey: ['ads', query.organizationID, query.status, query.subStatus, query.logisticType],
+    queryKey: ['ads', query.organizationID, query.status, query.subStatus, query.logisticType, query.search],
     queryFn: ({ pageParam }) => {
-      return listAds(query.organizationID, pageParam, query.status, query.subStatus, query.logisticType)
+      return listAds(query.organizationID, pageParam, query.status, query.subStatus, query.logisticType, query.search)
     },
     getNextPageParam: (lastPage, pages) => {
       if (pages.flatMap(p => p.items).length < lastPage.total) {

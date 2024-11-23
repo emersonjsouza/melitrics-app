@@ -110,7 +110,7 @@ export interface ChannelRegister {
 
 export interface TaxRegister {
   organization_id: string
-  sku: string
+  external_item_id: string
   cost: number | null
   tax_rate: number | null
   charge_flex_sales: boolean | null
@@ -132,6 +132,7 @@ export interface SubscriptionRegisterRespoinse {
 export interface Tax {
   id: string
   sku: string
+  external_item_id: string
   cost: number | null
   tax_rate: number | null
   charge_flex_sales: boolean | null

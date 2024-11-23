@@ -25,17 +25,18 @@ type Props = PropsWithChildren<{
   itemID?: string
   taxID?: string
   defaultSku?: string
-  externalItemID?: string,
+  externalItemID: string,
   callback?: () => void
 }>
 
-export default forwardRef(({ itemID, taxID, defaultSku, callback }: Props, ref) => {
+export default forwardRef(({ itemID, taxID, externalItemID, callback }: Props, ref) => {
 
   const { currentOrg } = useAuth()
   const [isModalVisible, setIsModalVisible] = React.useState(false);
   const { refetch } = useTaxes({
     organizationID: currentOrg?.organization_id || '',
-    sku: defaultSku || '',
+    externalItemID: externalItemID || '',
+    taxID: taxID || '',
   })
 
   useImperativeHandle(ref, () => ({
@@ -49,7 +50,6 @@ export default forwardRef(({ itemID, taxID, defaultSku, callback }: Props, ref) 
           ...value,
           cost: data?.cost || null,
           tax_rate: data?.tax_rate || null,
-          sku: data?.sku || String(defaultSku),
           charge_flex_sales: data?.charge_flex_sales || null
         }))
       }
@@ -58,12 +58,13 @@ export default forwardRef(({ itemID, taxID, defaultSku, callback }: Props, ref) 
 
   const defaultTax = {
     organization_id: currentOrg?.organization_id || '',
+    external_item_id: externalItemID,
+    tax_id: taxID,
     cost: 0,
-    sku: String(defaultSku),
-    item_id: itemID,
     tax_rate: 0,
     charge_flex_sales: false,
   }
+
   const [inputRequest, setInputRequest] = useState<TaxRegister>(defaultTax);
 
   const { mutateAsync, isPending } = useTaxMutation()
@@ -74,12 +75,8 @@ export default forwardRef(({ itemID, taxID, defaultSku, callback }: Props, ref) 
       return
     }
 
-    if (!inputRequest?.sku) {
-      Alert.alert('Atenção!', 'Informe o SKU do produto')
-      return
-    }
-
     try {
+      
       await mutateAsync(inputRequest)
       if (callback) {
         callback()
@@ -99,18 +96,9 @@ export default forwardRef(({ itemID, taxID, defaultSku, callback }: Props, ref) 
       <Modal.Container>
         <Modal.Header title='Custos & Impostos' />
         <Modal.Body>
-          <View style={{ height: 360 }}>
+          <View style={{ height: 280 }}>
             <KeyboardAvoidingView style={styles.safeAreaContainer}>
               <View style={styles.formContainer}>
-                <Text style={styles.label}>SKU:</Text>
-                <TextInput
-                  placeholderTextColor={'#CCC'}
-                  returnKeyType={'next'}
-                  value={inputRequest.sku}
-                  onChangeText={(sku) => setInputRequest({ ...inputRequest, sku })}
-                  style={styles.input}
-                />
-
                 <Text style={styles.label}>Custo do Produto:</Text>
                 <CurrencyInput
                   value={inputRequest.cost}

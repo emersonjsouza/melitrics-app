@@ -10,6 +10,7 @@ type CardProps = PropsWithChildren<{
   title: string,
   amount: number,
   amount_sold?: number,
+  amount_unit?: number,
 }>
 
 export default function (props: CardProps): React.JSX.Element {
@@ -20,7 +21,10 @@ export default function (props: CardProps): React.JSX.Element {
         <Text style={styles.cardTitle}>{props.title}</Text>
         <Text style={styles.cardTotalAmount}>{formatToBRL(props.amount)}</Text>
       </View>
-      <Text style={styles.cardUnitText}>{props.amount_sold?.toString()} vendas</Text>
+      <View style={{flexDirection: 'column', alignItems: 'flex-end'}}>
+        <Text style={styles.cardUnitText}>{props.amount_sold?.toString()} vendas</Text>
+        {props.amount_unit && <Text style={styles.cardUnitText}>{props.amount_unit?.toString()} unidades</Text>}
+      </View>
     </View>
   )
 }
@@ -33,7 +37,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     flexDirection: 'row',
     borderStartColor: '#34495e',
-    borderStartWidth:  10,
+    borderStartWidth: 10,
     height: 70, padding: 20,
     marginBottom: 10,
   },

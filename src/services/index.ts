@@ -39,22 +39,22 @@ export const getIndicatorsByMonth = async (organizationID: string) => {
 }
 
 
-export const listTax = async (organizationID: string, sku: string, offset: number) => {
-  console.log(`fetching taxes sku: ${sku}`)
+export const listTax = async (organizationID: string, externalItemID: string, taxID: string, offset: number) => {
+  console.log(`fetching taxes`)
 
-  const resp = await server.get<List<Tax>>(`/v1/taxes/${organizationID}?sku=${sku}&offset=${offset}&limit=10`)
+  const resp = await server.get<List<Tax>>(`/v1/taxes/${organizationID}?taxID=${taxID}&external_item_id=${externalItemID}&offset=${offset}&limit=10`)
   return resp.data
 }
 
-export const listAds = async (organizationID: string, offset: number, status: string, subStatus: string, logisticType: string) => {
+export const listAds = async (organizationID: string, offset: number, status: string, subStatus: string, logisticType: string, search: string) => {
   console.log('fetching ads')
-  const resp = await server.get<List<Ad>>(`/v1/items/${organizationID}?offset=${offset}&status=${status}&sub_status=${subStatus}&logistic_type=${logisticType}&limit=10`)
+  const resp = await server.get<List<Ad>>(`/v1/items/${organizationID}?offset=${offset}&status=${status}&sub_status=${subStatus}&logistic_type=${logisticType}&search=${search}&limit=10`)
   return resp.data
 }
 
-export const listOrders = async (organizationID: string, status: string, shippingType: string, start: string, end: string, offset: number) => {
-  console.log(`fetching orders offset: ${offset} limit: 20`)
-  let request = `/v1/orders/${organizationID}?start_date=${start}&end_date=${end}&offset=${offset}&limit=20&status=${status}&shipping_type=${shippingType}`
+export const listOrders = async (organizationID: string, status: string, shippingType: string, start: string, end: string, search: string, offset: number) => {
+  console.log(`fetching orders offset: ${offset} limit: 20 search ${search}`)
+  let request = `/v1/orders/${organizationID}?start_date=${start}&end_date=${end}&offset=${offset}&limit=20&status=${status}&shipping_type=${shippingType}&search=${search}`
   const resp = await server.get<List<Order>>(request)
   return resp.data
 }
@@ -70,6 +70,7 @@ export const createChannel = async (payload: ChannelRegister) => {
 }
 
 export const createTax = async (payload: TaxRegister) => {
+  console.log('payload', payload)
   const resp = await server.post<any>(`/v1/taxes`, payload)
   return resp.data
 }

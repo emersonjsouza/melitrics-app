@@ -56,7 +56,7 @@ export default function ({ item: AdInfo, visibility, onRefresh }: CardProps): Re
   return (
     <View
       style={{ borderStartColor: sideStatusColor, ...styles.cardContainer, height: cardHeight }}>
-      <Tax ref={taxModalRef} defaultSku={item.sku} callback={onRefresh} />
+      <Tax ref={taxModalRef} externalItemID={item.external_item_id} defaultSku={item.sku} callback={onRefresh} />
       <View style={{ flexDirection: 'row', alignSelf: 'flex-end' }}>
         {item.is_advertising && <View style={{ flexDirection: 'row', borderColor: '#ddd', borderWidth: 0.5, marginLeft: 10, width: 120, marginBottom: 5, borderBottomStartRadius: 10, borderBottomEndRadius: 10, height: 25, justifyContent: 'center', alignItems: 'center' }}>
           <Image style={{ width: 20, height: 20, padding: 10 }}

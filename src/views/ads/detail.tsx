@@ -167,10 +167,10 @@ export default function ({ route, navigation }: any) {
           <Text style={{ color: '#43ba73', fontSize: 10, fontWeight: 600 }}>Full</Text>
         </View>}
       </View>
-        <Tax ref={taxModalRef} defaultSku={item.sku} itemID={item.id} taxID={item.tax_id} />
+        <Tax ref={taxModalRef} externalItemID={item.external_id} taxID={item.tax_id} />
         <View style={{ flexDirection: 'row', marginTop: TITLE_MARGIN_TOP ? 0 : 15 }}>
           <View style={{ marginLeft: 10, flex: 1 }}>
-            <Text style={styles.cardSubText}>SKU: {adInfoVisibility ? item.sku.toUpperCase() : ''}{!item.sku && ' - '}</Text>
+            <Text style={styles.cardSubText}>SKU: {adInfoVisibility ? (item.sku || '').toUpperCase() : ''}{!item.sku && ' - '}</Text>
             <Text style={styles.cardTitle}>{adInfoVisibility ? item.title : 'Informação indisponível'}</Text>
             <View style={{ flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
               <Text style={{ fontSize: 20, color: '#718093', textAlign: 'center' }}>{formatToBRL(item.price)}</Text>
